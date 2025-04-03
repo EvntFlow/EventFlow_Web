@@ -1,11 +1,11 @@
 import React from 'react';
-import Header from './Header';
-import Search from './Search';
-import Categories from './Categories';
-import Feature from './Feature';
-import EventSection from './EventSection';
-import TestimonialSection from './TestimonialSection';
-import Footer from './Footer';
+import Header from '../../components/Header';
+import Search from '../../components/Search';
+import Categories from '../../components/Categories';
+import Feature from '../../components/Feature';
+import EventSection from '../../components/EventSection';
+import TestimonialSection from '../../components/TestimonialSection';
+import Footer from '../../components/Footer';
 
 import { Toolbar } from '@mui/material';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@material-ui/core';
