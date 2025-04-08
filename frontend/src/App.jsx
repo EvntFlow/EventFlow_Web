@@ -1,12 +1,12 @@
 import React from 'react';
 import Homepage from './views/Homepage/Homepage';
-import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
+import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 
 const App= () => {
   return (
     <div>
       {/* <Homepage/> */}
-      <LoginRegistrationHome/>
+      <EventDetailsPage/>
     </div>
   );
 }

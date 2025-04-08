@@ -7,7 +7,7 @@ import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
 
-import { Toolbar } from '@mui/material';
+import { Toolbar, Box } from '@mui/material';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@material-ui/core';
 
 // Top events array with event details
@@ -87,9 +87,12 @@ const Homepage = () => {
         <Search />
         <Categories />
         <Feature />
-        <EventSection headTitle="TOP EVENTS $10 AND UNDER" events={eventsData} />
-        <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
-        <EventSection headTitle="THIS WEEKEND" events={eventsData} />
+        <Box sx={{ ml: 10 }}>
+          <EventSection headTitle="TOP EVENTS $10 AND UNDER" events={eventsData} />
+          <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
+          <EventSection headTitle="THIS WEEKEND" events={eventsData} />
+        </Box>
+        
         <TestimonialSection testimonials={testimonialsData} />
         <Footer />
     </div>

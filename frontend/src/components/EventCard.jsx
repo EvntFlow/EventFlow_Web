@@ -25,7 +25,8 @@ const EventCard = ({
       sx={{
         borderRadius: 2,
         boxShadow: 1,
-        maxWidth: 320, // Adjust as needed
+        width: '100%', // Take full width of grid item
+        maxWidth: { xs: 280, sm: 300, md: 320, lg: 340 }, // responsive width
       }}
     >
       {/* Image with a star icon in the top-right corner */}
@@ -46,7 +47,6 @@ const EventCard = ({
               backgroundColor: 'grey.200',
             },
           }}
-          // Optionally handle "favorite" logic here
         >
           <StarBorderIcon />
         </IconButton>

@@ -5,7 +5,6 @@ import {
   Box,
   TextField,
   IconButton,
-  InputAdornment,
   Typography
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
