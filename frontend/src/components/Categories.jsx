@@ -4,19 +4,19 @@ import Category from './Category';
 
 const categoryData = [
   {
-    image: '/logo192.png',
+    image: '/img/logo192.png',
     title: 'Music',
   },
   {
-    image: 'https://via.placeholder.com/64?text=Nightlife',
+    image: '../../src/img/TopEvent.png',
     title: 'Nightlife',
   },
   {
-    image: 'https://via.placeholder.com/64?text=Performing',
+    image: '../../img/TopEvent.png',
     title: 'Performing',
   },
   {
-    image: 'https://via.placeholder.com/64?text=Dating',
+    image: './src/img/TopEvent.png',
     title: 'Dating',
   },
   {

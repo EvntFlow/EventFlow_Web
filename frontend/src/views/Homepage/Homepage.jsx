@@ -14,7 +14,7 @@ import { Toolbar, Box } from '@mui/material';
 const eventsData = [
   {
     id: 1,
-    image: 'https://fullstack.edu.vn/assets/f8-icon-lV2rGpF0.png',
+    image: '/img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '22',
     title: 'Event title that can go up to two lines',
@@ -26,7 +26,7 @@ const eventsData = [
   },
   {
     id: 2,
-    image: 'https://via.placeholder.com/320x180?text=Event+Image',
+    image: '/img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '23',
     title: 'Another event title that might be a bit longer',
@@ -38,7 +38,7 @@ const eventsData = [
   },
   {
     id: 3,
-    image: 'https://via.placeholder.com/320x180?text=Event+Image',
+    image: '/img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '24',
     title: 'A third event title goes here',

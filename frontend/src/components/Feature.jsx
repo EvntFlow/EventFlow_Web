@@ -71,7 +71,7 @@ const Feature = () => {
             <CardMedia
               component="img"
               height="180"
-              image="https://via.placeholder.com/300x180?text=Perk+1"
+              image="/img/Homepage_FeatureEvent1.png"
               alt="Perk 1"
             />
             <CardContent>
@@ -89,7 +89,7 @@ const Feature = () => {
             <CardMedia
               component="img"
               height="180"
-              image="https://via.placeholder.com/300x180?text=Perk+2"
+              image="/img/Homepage_FeatureEvent2.png"
               alt="Perk 2"
             />
             <CardContent>
@@ -107,7 +107,7 @@ const Feature = () => {
             <CardMedia
               component="img"
               height="180"
-              image="https://via.placeholder.com/300x180?text=Perk+3"
+              image="/img/Homepage_FeatureEvent3.png"
               alt="Perk 3"
             />
             <CardContent>
