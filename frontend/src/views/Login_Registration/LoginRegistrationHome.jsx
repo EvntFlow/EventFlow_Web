@@ -2,7 +2,7 @@ import React from 'react';
 import SocialLoginCard from '../../components/SocialLoginCard';
 import LoginInfoSection from '../../components/LoginInfoSection'
 
-import loginImage from '../../img/Login_Image1.png';
+// import loginImage from '../../img/Login_Image1.png';
 import {
     Grid,
     Box,
@@ -17,13 +17,13 @@ import {
     Checkbox} from '@mui/material';
 
 const LoginRegistrationHome = () => {
-    console.log('loginImage:', loginImage);
+    // console.log('loginImage:', loginImage);
     return (
         <Grid container sx={{ minHeight: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F4F7FA' }}>
             {/* Left Side: Image (40% on larger screens) */}
             <Grid container sx={{width: '40%', justifyContent: 'right', padding: '20px'}}>
                 <img
-                src={loginImage}
+                src="/img/Login_Image1.png"
                 alt="Your placeholder"
                 style={{
                     // width: '100%',
