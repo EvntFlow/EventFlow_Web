@@ -76,7 +76,7 @@ const LoginInfoCard = ({
             </Box>
           </Box>
 
-          <IconButton onClick={handleTogglePassword}>
+          <IconButton onClick={handleTogglePassword} size="large">
             {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
           </IconButton>
         </Box>

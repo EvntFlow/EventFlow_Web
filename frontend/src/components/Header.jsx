@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
-
+// import { Link } from 'react-router-dom'; // added import
 const Header = () => {
   return (
     <AppBar
@@ -29,6 +29,8 @@ const Header = () => {
         <Button 
           variant="outlined" 
           color="inherit"
+          // component={Link}
+          // to="/login" 
         >
           Sign In
         </Button>

@@ -47,11 +47,10 @@ const EventCard = ({
               backgroundColor: 'grey.200',
             },
           }}
-        >
+          size="large">
           <StarBorderIcon />
         </IconButton>
       </Box>
-
       {/* Card Content: Date, Title, Address, Time, Price, Interested */}
       <CardContent sx={{ display: 'flex', gap: 2 }}>
         {/* Date Section */}

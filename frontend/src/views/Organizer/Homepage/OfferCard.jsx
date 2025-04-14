@@ -13,7 +13,7 @@ const OfferCard = () => {
   return (
     <Card
       sx={{
-        maxWidth: 1200,
+        // maxWidth: 1200,
         mx: 'auto',    // center horizontally
         p: { xs: 2, md: 4 },
         boxShadow: 3,
@@ -24,7 +24,7 @@ const OfferCard = () => {
         {/* Section Title */}
         <Typography
           variant="h5"
-          sx={{ fontWeight: 'bold' }}
+          // sx={{ fontWeight: 900}}
           align="center"
           gutterBottom
         >
@@ -35,10 +35,13 @@ const OfferCard = () => {
         <Grid container spacing={4} justifyContent="center">
           {/* Offer 1 */}
           <Grid item xs={12} sm={6} md={3}>
-            <Box textAlign="center">
+            <Box 
+              sx={{ maxWidth: 220, mx: 'auto' }} 
+              textAlign="center"
+            >
               {/* Icon */}
               <img
-                src="/img/EventTicketing.png" 
+                src="/img/OrganizerHomepage/ticket-2.png" 
                 alt="Event Ticketing"
                 style={{ width: 40, height: 40 }}
               />
@@ -59,9 +62,12 @@ const OfferCard = () => {
 
           {/* Offer 2 */}
           <Grid item xs={12} sm={6} md={3}>
-            <Box textAlign="center">
+            <Box 
+              sx={{ maxWidth: 220, mx: 'auto' }} 
+              textAlign="center"
+            >
               <img
-                src="/img/EventFlowAds.png"
+                src="/img/OrganizerHomepage/video-play.png"
                 alt="EventFlow Ads"
                 style={{ width: 40, height: 40 }}
               />
@@ -80,9 +86,12 @@ const OfferCard = () => {
 
           {/* Offer 3 */}
           <Grid item xs={12} sm={6} md={3}>
-            <Box textAlign="center">
+            <Box 
+              sx={{ maxWidth: 220, mx: 'auto' }} 
+              textAlign="center"
+            >
               <img
-                src="/img/Payments.png"
+                src="/img/OrganizerHomepage/dollar-circle.png"
                 alt="Payments"
                 style={{ width: 40, height: 40 }}
               />
@@ -101,9 +110,12 @@ const OfferCard = () => {
 
           {/* Offer 4 */}
           <Grid item xs={12} sm={6} md={3}>
-            <Box textAlign="center">
+            <Box 
+              sx={{ maxWidth: 220, mx: 'auto' }} 
+              textAlign="center"
+            >
               <img
-                src="/img/Reporting.png"
+                src="/img/OrganizerHomepage/chart-square.png"
                 alt="Reporting & Analytics"
                 style={{ width: 40, height: 40 }}
               />
