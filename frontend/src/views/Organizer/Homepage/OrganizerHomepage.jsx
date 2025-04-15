@@ -3,13 +3,14 @@ import Header from '../../../components/Header';
 import OrganizerStartCard from './OrganizerStartCard';
 import SolutionCard from './SolutionsCard';
 import OfferCard from './OfferCard';
-import Feature from '../../../components/Feature';
-import EventSection from '../../../components/EventSection';
+import Feature from './Feature';
+import FeatureNews from './FeatureNews';
 import TestimonialSection from '../../../components/TestimonialSection';
+import SubscribeSection from '../../../components/SucribeCard';
 import Footer from '../../../components/Footer';
 
 import { Toolbar, Box } from '@mui/material';
-// import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@material-ui/core';
+// import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
 const eventsData = [
@@ -90,12 +91,8 @@ const OrganizerHomepage = () => {
         <SolutionCard/>
         <OfferCard/>
         <Feature />
-        <Box sx={{ ml: 10 }}>
-          <EventSection headTitle="TOP EVENTS $10 AND UNDER" events={eventsData} />
-          <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
-          <EventSection headTitle="THIS WEEKEND" events={eventsData} />
-        </Box>
-        
+        <FeatureNews />
+        <SubscribeSection/>
         <TestimonialSection testimonials={testimonialsData} />
         <Footer />
     </div>

@@ -4,31 +4,31 @@ import Category from './Category';
 
 const categoryData = [
   {
-    image: '/img/logo192.png',
+    image: '/img/TopEvent.png',
     title: 'Music',
   },
   {
-    image: '../../src/img/TopEvent.png',
+    image: '/img/TopEvent.png',
     title: 'Nightlife',
   },
   {
-    image: '../../img/TopEvent.png',
+    image: '/img/TopEvent.png',
     title: 'Performing',
   },
   {
-    image: './src/img/TopEvent.png',
+    image: '/img/TopEvent.png',
     title: 'Dating',
   },
   {
-    image: 'https://via.placeholder.com/64?text=Marketing',
+    image: '/img/TopEvent.png',
     title: 'Marketing',
   },
   {
-    image: 'https://via.placeholder.com/64?text=Business',
+    image: '/img/TopEvent.png',
     title: 'Business',
   },
   {
-    image: 'https://via.placeholder.com/64?text=Food+and+Drinks',
+    image: '/img/TopEvent.png',
     title: 'Food and Drinks',
   },
 ];

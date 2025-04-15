@@ -6,9 +6,9 @@ import Feature from '../../components/Feature';
 import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
-
+import SubscribeSection from '../../components/SucribeCard';
 import { Toolbar, Box } from '@mui/material';
-// import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@material-ui/core';
+// import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
 const eventsData = [
@@ -92,7 +92,7 @@ const Homepage = () => {
           <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
           <EventSection headTitle="THIS WEEKEND" events={eventsData} />
         </Box>
-        
+        <SubscribeSection/>
         <TestimonialSection testimonials={testimonialsData} />
         <Footer />
     </div>

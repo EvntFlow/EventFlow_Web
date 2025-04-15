@@ -83,12 +83,11 @@ const AttendeeDetailsForm = ({ open, onClose, onContinue, ticketDetails, totalQu
         borderBottom: '1px solid',
         borderColor: 'divider'
       }}>
-        <IconButton edge="start" onClick={onClose} sx={{ mr: 1 }}>
+        <IconButton edge="start" onClick={onClose} sx={{ mr: 1 }} size="large">
           <ArrowBack />
         </IconButton>
         <Typography variant="h6">Attendee Details</Typography>
       </DialogTitle>
-      
       <DialogContent sx={{ p: 0, bgcolor: 'grey.50' }}>
         <Box sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>

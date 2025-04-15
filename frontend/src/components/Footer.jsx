@@ -91,22 +91,13 @@ const Footer = () => {
               Social
             </Typography>
             <Stack direction="row" spacing={1}>
-              <IconButton
-                aria-label="Facebook"
-                sx={{ color: '#fff' }}
-              >
+              <IconButton aria-label="Facebook" sx={{ color: '#fff' }} size="large">
                 <FacebookIcon />
               </IconButton>
-              <IconButton
-                aria-label="Twitter"
-                sx={{ color: '#fff' }}
-              >
+              <IconButton aria-label="Twitter" sx={{ color: '#fff' }} size="large">
                 <TwitterIcon />
               </IconButton>
-              <IconButton
-                aria-label="YouTube"
-                sx={{ color: '#fff' }}
-              >
+              <IconButton aria-label="YouTube" sx={{ color: '#fff' }} size="large">
                 <YouTubeIcon />
               </IconButton>
             </Stack>

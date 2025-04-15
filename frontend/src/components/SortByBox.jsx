@@ -12,13 +12,13 @@ const SortByDropdown = () => {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mb: 3 }}>
-      <FormControl sx={{width: 200}}>
+      <FormControl variant="standard" sx={{width: 200}}>
         <InputLabel>Sort By</InputLabel>
         <Select
+          variant="standard"
           value={sortOption}
           label="Sort By"
-          onChange={handleSortChange}
-        >
+          onChange={handleSortChange}>
           <MenuItem value="relevance">Relevance</MenuItem>
           <MenuItem value="date">Date</MenuItem>
           <MenuItem value="price">Price</MenuItem>

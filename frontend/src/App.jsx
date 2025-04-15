@@ -4,6 +4,7 @@ import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
 import EventSearchResult from './views/EventExploration/EventSearchResult';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+
 const App= () => {
   return (
     <div>
@@ -12,6 +13,7 @@ const App= () => {
       {/* <EventSearchResult/> */}
       {/* <LoginRegistrationHome/> */}
       <OrganizerHomepage/>
+      {/* <AttendeeDetailsForm/> */}
     </div>
   );
 }

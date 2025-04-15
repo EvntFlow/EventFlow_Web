@@ -93,7 +93,7 @@ const SearchCard = () => {
                 backgroundColor: 'primary.dark',
               },
             }}
-          >
+            size="large">
             <SearchIcon />
           </IconButton>
         </Box>
