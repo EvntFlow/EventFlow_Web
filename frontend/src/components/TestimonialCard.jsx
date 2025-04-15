@@ -29,7 +29,6 @@ const TestimonialCard = ({ avatar, name, role, stars, description }) => {
         boxShadow: 3,
         overflow: 'hidden',
         position: 'relative',
-        maxWidth: 300,
       }}
     >
       <CardContent sx={{ p: 3 }}>

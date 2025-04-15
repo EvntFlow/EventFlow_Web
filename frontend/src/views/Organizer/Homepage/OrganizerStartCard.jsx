@@ -6,7 +6,6 @@ import {
   CardMedia,
   Typography,
   Button,
-  Grid,
 } from '@mui/material';
 const EventStartCard = () => {
   return (
