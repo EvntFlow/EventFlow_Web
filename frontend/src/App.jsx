@@ -1,18 +1,19 @@
 import React from 'react';
+// import PaymentPage from './components/PaymentPage';
 // import Homepage from './views/Homepage/Homepage';
-// import EventDetailsPage from './views/EventExploration/EventDetailsPage';
+import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 // import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
-import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+// import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 
 const App= () => {
   return (
     <div>
       {/* <Homepage/> */}
-      {/* <EventDetailsPage/> */}
+      <EventDetailsPage/>
       {/* <EventSearchResult/> */}
       {/* <LoginRegistrationHome/> */}
-      <OrganizerHomepage/>
+      {/* <OrganizerHomepage/> */}
       {/* <AttendeeDetailsForm/> */}
     </div>
   );
