@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../../components/Header';
 import Search from '../../components/Search';
 import Categories from '../../components/Categories';
 import Feature from '../../components/Feature';
@@ -7,7 +6,7 @@ import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
 import SubscribeSection from '../../components/SucribeCard';
-import { Toolbar, Box } from '@mui/material';
+import { Box } from '@mui/material';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
@@ -84,7 +83,20 @@ const Homepage = () => {
         {/* <Toolbar /> */}
         <Toolbar />
         {/* Main Content */}
+        <Box sx={{ position: 'relative', height: '500px',  }}>
+        {/* Background Image Layer */}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            backgroundImage: 'url(/img/header.jpeg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
         <Search />
+        </Box>
         <Categories />
         <Feature />
         <Box sx={{ ml: 10 }}>
@@ -92,8 +104,8 @@ const Homepage = () => {
           <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
           <EventSection headTitle="THIS WEEKEND" events={eventsData} />
         </Box>
-        <SubscribeSection/>
         <TestimonialSection testimonials={testimonialsData} />
+        <SubscribeSection/>
         <Footer />
     </div>
   );
