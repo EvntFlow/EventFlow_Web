@@ -99,8 +99,8 @@ const Homepage = () => {
           <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
           <EventSection headTitle="THIS WEEKEND" events={eventsData} />
         </Box>
-        <SubscribeSection/>
         <TestimonialSection testimonials={testimonialsData} />
+        <SubscribeSection/>
         <Footer />
     </div>
   );
