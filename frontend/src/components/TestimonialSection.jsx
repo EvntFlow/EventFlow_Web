@@ -4,10 +4,10 @@ import TestimonialCard from './TestimonialCard';
 
 const TestimonialSection = ({ testimonials }) => {
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f5f5' }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f5f5',backgroundImage:'url(/img/testimonial.png)', backgroundSize: 'cover' }}>
       <Container>
-        {/* Section Title /}
-        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, textAlign: '' }}>
+        {/* Section Title */}
+        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, textAlign: '', color: 'white' }}>
           Testimonials
         </Typography>
 

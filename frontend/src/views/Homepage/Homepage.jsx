@@ -78,11 +78,6 @@ const testimonialsData = [
 const Homepage = () => {
   return (
     <div>
-        {/* Fixed header */}
-        <Header />
-        {/* <Toolbar /> */}
-        <Toolbar />
-        {/* Main Content */}
         <Box sx={{ position: 'relative', height: '500px',  }}>
         {/* Background Image Layer */}
         <Box

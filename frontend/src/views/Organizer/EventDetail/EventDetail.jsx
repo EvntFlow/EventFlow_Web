@@ -10,7 +10,6 @@ import {
   Link,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import {AccessTime, CalendarMonth, ConfirmationNumber, LocationOn, FullscreenOutlined, AddOutlined, RemoveOutlined} from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PhotoIcon from '@mui/icons-material/Photo';
