@@ -4,11 +4,11 @@ import React from 'react';
 // import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-// import Dashboard from './views/Organizer/Dashboard/Dashboard';
+import Dashboard from './views/Organizer/Dashboard/Dashboard';
 // import AttendanceDetailCard from './views/Organizer/AttendanceList/AttendanceDetailCard';
 // import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 // import EventList from './views/Organizer/Dashboard/EventList';
-import EventDetail from './views/Organizer/EventDetail/EventDetail';
+// import EventDetail from './views/Organizer/EventDetail/EventDetail';
 
 const App= () => {
   return (
@@ -17,10 +17,10 @@ const App= () => {
       {/* <EventDetailsPage/> */}
       {/* <EventSearchResult/> */}
       {/* <LoginRegistrationHome/> */}
-      {/* <OrganizerHomepage/> */}
-      {/* <Dashboard/> */}
+      {/*<OrganizerHomepage/>*/}
+      { <Dashboard/> }
       {/* <EventList/> */}
-      <EventDetail/>
+      {/*<EventDetail/>*/}
       {/* <AttendanceList/> */}
       {/* <AttendanceDetailCard/> */}
       

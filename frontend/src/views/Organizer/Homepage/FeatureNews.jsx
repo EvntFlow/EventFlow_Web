@@ -1,4 +1,5 @@
 import React from 'react';
+//import Slider from 'react-slick';
 import {
   Container,
   Typography,
@@ -11,6 +12,8 @@ import {
   Box,
 } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+//import 'slick-carousel/slick/slick.css';
+//import 'slick-carousel/slick/slick-theme.css';
 
 const FeatureNews = () => {
   // Sample data, but you can fetch yours dynamically

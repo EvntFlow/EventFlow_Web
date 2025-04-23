@@ -14,11 +14,12 @@ const EventStartCard = () => {
         maxWidth: 800,
         mx: 'auto', 
         mb: 0,
-        mt: 8,
+        mt: 7,
         textAlign: 'center',
         p: 4,
         boxShadow: 3,
-        borderRadius: 2,
+        borderRadius: 6,
+        
       }}
     >
       <CardContent>
@@ -49,11 +50,11 @@ const EventStartCard = () => {
             gap: 2,
           }}
         >
-          <Button variant="contained" size="large">
-            Get started
+          <Button variant="contained" size="large" style={{ borderRadius: "25px"}}>
+            Get started &#8594;
           </Button>
-          <Button variant="outlined" size="large">
-            Contact sales
+          <Button variant="outlined" size="large" style={{ borderRadius: "25px"}}>
+            Contact sales &#8594;
           </Button>
         </Box>
       </CardContent>
