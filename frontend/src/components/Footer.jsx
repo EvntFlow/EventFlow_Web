@@ -15,9 +15,9 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 
 // Placeholder payment icons (use your own images or icon set)
 const paymentIcons = [
-  'https://via.placeholder.com/50x30?text=Visa',
-  'https://via.placeholder.com/50x30?text=MasterCard',
-  'https://via.placeholder.com/50x30?text=PayPal',
+  '/img/visa.png',
+  '/img/mastercard.png',
+  '/img/paypal.png',
 ];
 
 const Footer = () => {

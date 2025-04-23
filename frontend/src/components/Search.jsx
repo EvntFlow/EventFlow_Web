@@ -16,6 +16,8 @@ const SearchCard = () => {
         borderRadius: 4,
         boxShadow: 4,
         overflow: 'visible', // Ensures the circular button doesn't get clipped
+        position: 'relative',
+        top: 302
       }}
     >
       <CardContent
@@ -24,7 +26,7 @@ const SearchCard = () => {
         }}
       >
         {/* Title & Subtitle (optional) */}
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
+        <Typography variant="h4" fontWeight="bold" gutterBottom color= '#008EC4'>
           Welcome back!
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
