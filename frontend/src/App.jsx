@@ -1,4 +1,5 @@
 import React from 'react';
+
  import Homepage from './views/Homepage/Homepage';
 // import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 // import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
@@ -9,6 +10,7 @@ import React from 'react';
 // import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 // import EventList from './views/Organizer/Dashboard/EventList';
 // import EventDetail from './views/Organizer/EventDetail/EventDetail';
+
 
 const App= () => {
   return (
@@ -23,7 +25,6 @@ const App= () => {
       {/*<EventDetail/>*/}
       {/* <AttendanceList/> */}
       {/* <AttendanceDetailCard/> */}
-      
       {/* <AttendeeDetailsForm/> */}
     </div>
   );

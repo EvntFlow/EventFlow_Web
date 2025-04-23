@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../../components/Header';
 import Search from '../../components/Search';
 import Categories from '../../components/Categories';
 import Feature from '../../components/Feature';
@@ -7,7 +6,7 @@ import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
 import SubscribeSection from '../../components/SucribeCard';
-import { Toolbar, Box } from '@mui/material';
+import { Box } from '@mui/material';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
