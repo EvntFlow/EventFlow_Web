@@ -6,7 +6,8 @@ import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
 import SubscribeSection from '../../components/SucribeCard';
-import { Box } from '@mui/material';
+import Header from '../../components/Header'
+import { Box, Toolbar } from '@mui/material';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
