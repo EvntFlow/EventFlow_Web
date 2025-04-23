@@ -6,12 +6,12 @@ const TestimonialSection = ({ testimonials }) => {
   return (
     <Box sx={{ py: 6, backgroundColor: '#f5f5f5' }}>
       <Container>
-        {/* Section Title */}
+        {/* Section Title /}
         <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, textAlign: '' }}>
           Testimonials
         </Typography>
 
-        {/* Render testimonial cards */}
+        {/ Render testimonial cards */}
         <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
           {testimonials.map((testimonial, index) => (
             <Grid item xs={4} sm={4} md={4} key={index}>

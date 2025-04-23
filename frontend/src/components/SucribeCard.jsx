@@ -23,7 +23,7 @@ const SubscribeSection = () => {
           spacing={0}
           sx={{
             boxShadow: 3,
-            borderRadius: 2,
+            borderRadius: 7,
             overflow: 'hidden',
           }}
         >
@@ -60,6 +60,8 @@ const SubscribeSection = () => {
                 sx={{
                   fontWeight: 'bold',
                   mb: 2,
+                  marginLeft: "200px",
+                  textAlign: 'center',
                 }}
               >
                 Get notified of upcoming events, 
@@ -71,23 +73,48 @@ const SubscribeSection = () => {
               <Box
                 sx={{
                   display: 'flex',
-                  gap: 2,
-                  maxWidth: 500,
-                  mt: 3,
+                  alignItems: 'center',
+                  backgroundColor: 'white',
+                  borderRadius: '50px',
+                  boxShadow: 2,
+                  p: '5px',
+                  maxWidth: 600,
+                  //mx: 'auto',
+                  marginLeft: "160px"
+                  
                 }}
               >
                 <TextField
-                  variant="outlined"
+                  variant="standard"
                   placeholder="Enter your email"
                   fullWidth
+                  //sx={{ marginLeft: "200px"}}
+                  InputProps={{
+                    disableUnderline: true,
+                    sx: {
+                      pl: 2,
+                      //flex: 1,
+                      fontSize: '16px',
+                    },
+                  }}
+                  sx={{
+                    borderTopLeftRadius: '50px',
+                    borderBottomLeftRadius: '50px',
+                    backgroundColor: 'transparent',
+                  }}
                 />
                 <Button
                   variant="contained"
-                  size="large"
                   sx={{
-                    whiteSpace: 'nowrap',
-                    textTransform: 'none',
+                    borderRadius: '50px',
+                    px: 4,
+                    py: 1.5,
+                    backgroundColor: '#008b99',
                     fontWeight: 'bold',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: '#007a88',
+                    },
                   }}
                 >
                   Subscribe

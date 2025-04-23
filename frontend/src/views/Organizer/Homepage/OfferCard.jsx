@@ -7,7 +7,7 @@ import {
   Box,
   Button,
 } from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+//import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const OfferCard = () => {
   return (
@@ -23,10 +23,11 @@ const OfferCard = () => {
       <CardContent>
         {/* Section Title */}
         <Typography
-          variant="h5"
-          // sx={{ fontWeight: 900}}
+          variant="h4"
+          sx={{ fontWeight: 1000}}
           align="center"
           gutterBottom
+          style={{marginBottom: "30px"}}
         >
           OUR OFFERS
         </Typography>
@@ -43,10 +44,10 @@ const OfferCard = () => {
               <img
                 src="/img/OrganizerHomepage/ticket-2.png" 
                 alt="Event Ticketing"
-                style={{ width: 40, height: 40 }}
+                style={{ width: 40, height: 40}}
               />
               {/* Title */}
-              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }} style={{textDecorationLine: 'underline'}}>
                 Event Ticketing
               </Typography>
               {/* Description */}
@@ -71,7 +72,7 @@ const OfferCard = () => {
                 alt="EventFlow Ads"
                 style={{ width: 40, height: 40 }}
               />
-              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }} style={{textDecorationLine: 'underline'}}>
                 EventFlow Ads
               </Typography>
               <Typography
@@ -95,7 +96,7 @@ const OfferCard = () => {
                 alt="Payments"
                 style={{ width: 40, height: 40 }}
               />
-              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }} style={{textDecorationLine: 'underline'}}>
                 Payments
               </Typography>
               <Typography
@@ -119,7 +120,7 @@ const OfferCard = () => {
                 alt="Reporting & Analytics"
                 style={{ width: 40, height: 40 }}
               />
-              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }} style={{textDecorationLine: 'underline'}}>
                 Reporting &amp; Analytics
               </Typography>
               <Typography
@@ -137,10 +138,10 @@ const OfferCard = () => {
         <Box textAlign="center" sx={{ mt: 4 }}>
           <Button
             variant="contained"
-            endIcon={<ArrowForwardIosIcon />}
             sx={{ textTransform: 'none', fontWeight: 'bold' }}
+            style={{ borderRadius: "25px"}}
           >
-            Join us now
+            Join us now &#8594;
           </Button>
         </Box>
       </CardContent>
