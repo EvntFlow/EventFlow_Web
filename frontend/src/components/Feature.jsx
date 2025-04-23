@@ -50,7 +50,7 @@ const Feature = () => {
             borderBottom: '2px solid'
            }}
         >
-          FEATURED EVENTS
+          FEATURE EVENTS
         </Typography>
 
         {/* Subtitle / Description */}
