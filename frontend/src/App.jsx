@@ -1,19 +1,10 @@
 import React from 'react';
-import Header from './components/Header';
-import Homepage from './views/Homepage/Homepage';
-// import EventDetailsPage from './views/EventExploration/EventDetailsPage';
-import LoginRegistrationHome from './views/LoginRegistration/LoginRegistrationHome';
-import AccountPage from './views/Attendees/AccountPage';
+// import PaymentPage from './components/PaymentPage';
+// import Homepage from './views/Homepage/Homepage';
+import EventDetailsPage from './views/EventExploration/EventDetailsPage';
+// import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-// import Dashboard from './views/Organizer/Dashboard/Dashboard';
-// import AttendanceDetailCard from './views/Organizer/AttendanceList/AttendanceDetailCard';
-// import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
-// import EventList from './views/Organizer/Dashboard/EventList';
-// import EventDetail from './views/Organizer/EventDetail/EventDetail';
-
-import { Toolbar } from '@mui/material';
-import { Routes, Route } from 'react-router-dom';
 
 const App= () => {
   return (
@@ -41,16 +32,12 @@ const App= () => {
       </div>
       {/* Main Content */}    
       {/* <Homepage/> */}
-      {/* <EventDetailsPage/> */}
+      <EventDetailsPage/>
       {/* <EventSearchResult/> */}
       {/* <LoginRegistrationHome/> */}
       {/* <OrganizerHomepage/> */}
-      {/* <Dashboard/> */}
-      {/* <EventList/> */}
-      {/* <EventDetail/> */}
-      {/* <AttendanceList/> */}
-      {/* <AttendanceDetailCard/> */}
-      
+
+
       {/* <AttendeeDetailsForm/> */}
     </div>
   );
