@@ -37,21 +37,6 @@ const SearchCard = () => {
           Explore exciting events happening now with EventFlow
         </Typography>
 
-        {/* Search Form */}
-        <Box
-          component="form"
-          sx={{
-            p: { xs: 2, md: 3 },
-          }}
-        >
-          {/* Title & Subtitle (optional) */}
-          <Typography variant="h4" fontWeight="bold" gutterBottom color='#0284c7'>
-            Welcome back!
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-            Explore exciting events happening now with EventFlow
-          </Typography>
-
           {/* Search Form */}
           <Box
             component="form"

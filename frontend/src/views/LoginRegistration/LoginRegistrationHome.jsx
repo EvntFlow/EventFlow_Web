@@ -1,6 +1,6 @@
 import React from 'react';
 import SocialLoginCard from '../../components/SocialLoginCard';
-import LoginInfoSection from '../../components/LoginInfoSection'
+import LoginInfoSection from './LoginInfoSection'
 
 // import loginImage from '../../img/Login_Image1.png';
 import {
