@@ -37,6 +37,7 @@ const SearchCard = () => {
           Explore exciting events happening now with EventFlow
         </Typography>
 
+<<<<<<< HEAD
         {/* Search Form */}
         <Box
           component="form"
@@ -52,6 +53,8 @@ const SearchCard = () => {
             Explore exciting events happening now with EventFlow
           </Typography>
 
+=======
+>>>>>>> b46c5eb43ea519ae8ef51788de3eb6d702374dcd
           {/* Search Form */}
           <Box
             component="form"
