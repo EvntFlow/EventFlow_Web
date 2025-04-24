@@ -10,8 +10,7 @@ import {
   Link,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import {AccessTime, CalendarMonth, ConfirmationNumber, LocationOn, FullscreenOutlined, AddOutlined, RemoveOutlined} from '@mui/icons-material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PhotoIcon from '@mui/icons-material/Photo';
 
@@ -37,56 +36,73 @@ function EventDetail() {
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccessTimeIcon color="action" sx={{ mr: 1 }} />
             <Typography variant="subtitle1">Date and Time</Typography>
             <IconButton aria-label="edit" size="small" sx={{ ml: 1 }}>
               <EditIcon fontSize="inherit" />
             </IconButton>
           </Box>
-          <Typography variant="body2" color="textSecondary">
-            Day, Date
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            Time
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <CalendarMonth sx={{ mr: 1 }} />
+            <Typography>Day, Date</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <AccessTime sx={{ mr: 1 }} />
+            <Typography>Time</Typography>
+          </Box>
         </Grid>
       </Grid>
       <Divider sx={{ mb: 2 }} />
 
       {/* Location */}
-      <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid item xs={12} sm={6}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <LocationOnIcon color="action" sx={{ mr: 1 }} />
-            <Typography variant="subtitle1">Location</Typography>
-            <IconButton aria-label="edit" size="small" sx={{ ml: 1 }}>
-              <EditIcon fontSize="inherit" />
-            </IconButton>
-          </Box>
-          <Typography variant="body2" color="textSecondary">
-            Address
-          </Typography>
-        </Grid>
-        {/* Map Placeholder */}
-        <Grid item xs={12} sx={{ height: 200, bgcolor: '#f0f0f0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {/* In a real application, you'd embed a map here */}
-          <LocationOnIcon sx={{ fontSize: 80, color: 'grey.400' }} />
-        </Grid>
-      </Grid>
+      <Box sx={{ mb: 4 }}>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                      Location
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <LocationOn sx={{ mr: 1 }} />
+                      <Typography>Address</Typography>
+                    </Box>
+                    <Paper 
+                      sx={{ 
+                        height: 160, 
+                        position: 'relative', 
+                        bgcolor: 'grey.300',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Box sx={{ color: 'error.main' }}>
+                        <LocationOn sx={{ fontSize: 40 }} />
+                      </Box>
+                      <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
+                        <Paper elevation={1} sx={{ mb: 1, p: 0.5 }}>
+                          <FullscreenOutlined fontSize="small" />
+                        </Paper>
+                        <Paper elevation={1} sx={{ mb: 1, p: 0.5 }}>
+                          <AddOutlined fontSize="small" />
+                        </Paper>
+                        <Paper elevation={1} sx={{ p: 0.5 }}>
+                          <RemoveOutlined fontSize="small" />
+                        </Paper>
+                      </Box>
+                    </Paper>
+                  </Box>
       <Divider sx={{ mb: 2 }} />
 
       {/* Ticket Information */}
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <AttachMoneyIcon color="action" sx={{ mr: 1 }} />
-          <Typography variant="subtitle1">Ticket Information</Typography>
+          <Typography variant="subtitle1" fontWeight={'bold'}>Ticket Information</Typography>
           <IconButton aria-label="edit" size="small" sx={{ ml: 1 }}>
             <EditIcon fontSize="inherit" />
           </IconButton>
         </Box>
-        <Typography variant="body2" color="textSecondary">
-          Ticket Type: Price ticket
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <ConfirmationNumber sx={{ mr: 1 }} />
+          <Typography>Ticket Type: Price /ticket</Typography>
+        </Box>
       </Box>
       <Divider sx={{ mb: 2 }} />
 
@@ -122,20 +138,6 @@ function EventDetail() {
         </Box>
       </Box>
       <Divider sx={{ mb: 2 }} />
-
-      {/* Links */}
-      <Box>
-        <Typography variant="subtitle1" sx={{ mb: 1 }}>
-          Links
-        </Typography>
-        <Link href="#" color="primary" display="block" variant="body2">
-          Link 1
-        </Link>
-        <Link href="#" color="primary" display="block" variant="body2">
-          Link 2
-        </Link>
-        {/* Add more links as needed */}
-      </Box>
     </Box>
   );
 }

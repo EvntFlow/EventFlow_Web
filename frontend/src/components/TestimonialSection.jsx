@@ -4,14 +4,14 @@ import TestimonialCard from './TestimonialCard';
 
 const TestimonialSection = ({ testimonials }) => {
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f5f5' }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f5f5',backgroundImage:'url(/img/testimonial.png)', backgroundSize: 'cover' }}>
       <Container>
         {/* Section Title */}
-        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, textAlign: '' }}>
+        <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, textAlign: '', color: 'white' }}>
           Testimonials
         </Typography>
 
-        {/* Render testimonial cards */}
+        {/ Render testimonial cards */}
         <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
           {testimonials.map((testimonial, index) => (
             <Grid item xs={4} sm={4} md={4} key={index}>

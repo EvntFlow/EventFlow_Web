@@ -78,7 +78,20 @@ const testimonialsData = [
 const Homepage = () => {
   return (
     <div>
+        <Box sx={{ position: 'relative', height: '500px',  }}>
+        {/* Background Image Layer */}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            backgroundImage: 'url(/img/header.jpeg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
         <Search />
+        </Box>
         <Categories />
         <Feature />
         <Box sx={{ ml: 10 }}>
@@ -86,8 +99,8 @@ const Homepage = () => {
           <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
           <EventSection headTitle="THIS WEEKEND" events={eventsData} />
         </Box>
-        <SubscribeSection/>
         <TestimonialSection testimonials={testimonialsData} />
+        <SubscribeSection/>
         <Footer />
     </div>
   );

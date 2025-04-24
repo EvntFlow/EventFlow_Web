@@ -28,6 +28,8 @@ const Feature = () => {
           position: 'absolute',
           inset: 0,
           backgroundColor: 'rgba(0,0,0,0.4)',
+          backgroundImage: 'url(/img/Homepage_FeatureEventBg.png)',
+          backgroundSize: 'cover'
         }}
       />
 
@@ -40,87 +42,46 @@ const Feature = () => {
       >
         {/* Title */}
         <Typography
-          variant="h3"
+          variant="h1"
           fontWeight="bold"
-          sx={{ mb: 2 }}
+          align='center'
+          sx={{ 
+            mb: 2,
+            borderBottom: '2px solid'
+           }}
         >
           FEATURE EVENTS
         </Typography>
 
         {/* Subtitle / Description */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',            
+            width: '100%',
+            padding: 4,
+            gap: 10
+          }}
+        >
+        <Box
+          sx={{
+            mt: -25
+          }}
+        >
         <Typography
-          variant="body1"
-          sx={{ maxWidth: 500, mb: 4 }}
+          sx={{ 
+            maxWidth: 500, 
+            mb: 4,
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}
         >
           Lorem ipsum is simply dummy text of the printing and typesetting industry. 
           Lorem ipsum has been the industry's standard dummy text ever since the 1500s.
         </Typography>
-
-        {/* Cards Container */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: 2,
-            justifyContent: { xs: 'center', md: 'flex-start' },
-            mb: 4,
-          }}
-        >
-          {/* Card 1 */}
-          <Card sx={{ maxWidth: 300 }}>
-            <CardMedia
-              component="img"
-              height="180"
-              image="/img/Homepage_FeatureEvent1.png"
-              alt="Perk 1"
-            />
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">
-                Perk 1
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                A brief description of Perk 1.
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Card 2 */}
-          <Card sx={{ maxWidth: 300 }}>
-            <CardMedia
-              component="img"
-              height="180"
-              image="/img/Homepage_FeatureEvent2.png"
-              alt="Perk 2"
-            />
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">
-                Perk 2
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                A brief description of Perk 2.
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Card 3 */}
-          <Card sx={{ maxWidth: 300 }}>
-            <CardMedia
-              component="img"
-              height="180"
-              image="/img/Homepage_FeatureEvent3.png"
-              alt="Perk 3"
-            />
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">
-                Perk 3
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                A brief description of Perk 3.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-
+        
         {/* "See all" button */}
         <Button
           variant="contained"
@@ -131,12 +92,88 @@ const Feature = () => {
             fontWeight: 'bold',
             '&:hover': {
               backgroundColor: '#e0e0e0',
-            }
+            },
           }}
         >
           See all
         </Button>
-      </Container>
+        </Box>  
+        {/* Cards Container */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: 2,
+            justifyContent: { xs: 'center', md: 'flex-end' },
+            mb: 4,
+            alignSelf: 'right'
+          }}
+        >
+          {/* Card 1 */}
+          <Card sx={{ maxWidth: 300 , background:'transparent', boxShadow: 'none', border:'none'}}>
+            <CardMedia
+              component="img"
+              height="200"
+              image="/img/Homepage_FeatureEvent1.png"
+              alt="Perk 1"
+              sx={{
+                borderRadius: 4
+              }}
+            />
+            <CardContent>
+              <Typography variant="h6" fontWeight="bold" color='white'>
+                Perk 1
+              </Typography>
+              <Typography variant="body2" color="white">
+                A brief description of Perk 1.
+              </Typography>
+            </CardContent>
+          </Card>
+
+          {/* Card 2 */}
+          <Card sx={{ maxWidth: 300, background:'transparent' , boxShadow: 'none', border:'none'}}>
+            <CardMedia
+              component="img"
+              height="200"
+              image="/img/Homepage_FeatureEvent2.png"
+              alt="Perk 2"
+              sx={{
+                borderRadius: 4
+              }}
+            />
+            <CardContent>
+              <Typography variant="h6" fontWeight="bold" color='white'>
+                Perk 2
+              </Typography>
+              <Typography variant="body2" color="white">
+                A brief description of Perk 2.
+              </Typography>
+            </CardContent>
+          </Card>
+
+          {/* Card 3 */}
+          <Card sx={{ maxWidth: 300,  background:'transparent' , boxShadow: 'none', border:'none'}}>
+            <CardMedia
+              component="img"
+              height="200"
+              image="/img/Homepage_FeatureEvent3.png"
+              alt="Perk 3"
+              sx={{
+                borderRadius: 4
+              }}
+            />
+            <CardContent>
+              <Typography variant="h6" fontWeight="bold" color='white'>
+                Perk 3
+              </Typography>
+              <Typography variant="body2" color="white">
+                A brief description of Perk 3.
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
+      </Box>
+    </Container>
     </Box>
   );
 };
