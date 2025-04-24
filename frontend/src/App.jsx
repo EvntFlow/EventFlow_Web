@@ -2,7 +2,6 @@ import React from 'react';
 import Header from './components/Header';
 import Homepage from './views/Homepage/Homepage';
 // import EventDetailsPage from './views/EventExploration/EventDetailsPage';
-
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 import Dashboard from './views/Organizer/Dashboard/Dashboard';
@@ -10,10 +9,6 @@ import Dashboard from './views/Organizer/Dashboard/Dashboard';
 // import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 // import EventList from './views/Organizer/Dashboard/EventList';
 // import EventDetail from './views/Organizer/EventDetail/EventDetail';
-organizer
-
-
-master
 
 const App= () => {
   return (
