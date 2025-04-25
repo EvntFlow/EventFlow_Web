@@ -118,8 +118,9 @@ const SearchCard = () => {
               <SearchIcon />
             </IconButton>
           </Box>
-        </CardContent>
-      </Card>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
 
