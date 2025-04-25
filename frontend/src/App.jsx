@@ -10,10 +10,6 @@ import Dashboard from './views/Organizer/Dashboard/Dashboard';
 // import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 // import EventList from './views/Organizer/Dashboard/EventList';
 // import EventDetail from './views/Organizer/EventDetail/EventDetail';
-organizer
-
-
-master
 
 const App= () => {
   return (
