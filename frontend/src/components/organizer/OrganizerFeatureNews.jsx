@@ -15,7 +15,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 //import 'slick-carousel/slick/slick.css';
 //import 'slick-carousel/slick/slick-theme.css';
 
-const FeatureNews = () => {
+const OrganizerFeatureNews = () => {
   // Sample data, but you can fetch yours dynamically
   const newsData = [
     {
@@ -134,4 +134,4 @@ const FeatureNews = () => {
 }
 
 
-export default FeatureNews;
+export default OrganizerFeatureNews;

@@ -1,10 +1,10 @@
 import React from 'react';
 import Header from '../../../components/Header';
-import OrganizerStartCard from './OrganizerStartCard';
-import SolutionCard from './SolutionsCard';
-import OfferCard from './OfferCard';
-import Feature from './Feature';
-import FeatureNews from './FeatureNews';
+import OrganizerStartCard from '../../../components/organizer/OrganizerStartCard';
+import OrganizerSolutionsCard from '../../../components/organizer/OrganizerSolutionsCard';
+import OrganizerOfferCard from '/../../components/organizer/OrganizerOfferCard';
+import OrganizerFeature from '../../../components/organizer/OrganizerFeature';
+import OrganizerFeatureNews from '../../../components/organizer/OrganizerFeatureNews';
 import TestimonialSection from '../../../components/TestimonialSection';
 import SubscribeSection from '../../../components/SucribeCard';
 import Footer from '../../../components/Footer';
@@ -47,10 +47,10 @@ const OrganizerHomepage = () => {
         <Toolbar />
         {/* Main Content */}
         <OrganizerStartCard />
-        <SolutionCard/>
-        <OfferCard/>
-        <Feature />
-        <FeatureNews />
+        <OrganizerSolutionsCard/>
+        <OrganizerOfferCard/>
+        <OrganizerFeature />
+        <OrganizerFeatureNews />
         <SubscribeSection/>
         <TestimonialSection testimonials={testimonialsData} />
         <Footer />

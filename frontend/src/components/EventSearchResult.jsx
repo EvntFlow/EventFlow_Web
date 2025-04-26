@@ -1,12 +1,12 @@
 import React from 'react';
-import Header from '../../components/Header';
-import Search from '../../components/Search';
-import EventSection from '../../components/EventSection';
-import Footer from '../../components/Footer';
+import Header from './Header';
+import Search from './Search';
+import EventSection from './EventSection';
+import Footer from './Footer';
 
 import { Toolbar,Box } from '@mui/material';
-import SortByDropdown from '../../components/SortByBox';
-import FilterSidebar from '../../components/FilterSideBar';
+import SortByDropdown from './SortByBox';
+import FilterSidebar from './FilterSideBar';
 
 // Top events array with event details
 const eventsData = [
