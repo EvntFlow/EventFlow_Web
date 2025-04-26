@@ -6,8 +6,7 @@ import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
 import SubscribeSection from '../../components/SucribeCard';
-import { Box, Toolbar } from '@mui/material';
-import Header from '../../components/Header';
+import { Box} from '@mui/material';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
@@ -79,8 +78,6 @@ const testimonialsData = [
 const Homepage = () => {
   return (
     <div>
-        <Header/>
-        <Toolbar/>
         <Box sx={{ position: 'relative', height: '500px',  }}>
         {/* Background Image Layer */}
         <Box
