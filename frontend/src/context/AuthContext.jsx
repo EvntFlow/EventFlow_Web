@@ -1,15 +1,15 @@
 // src/context/AuthContext.js
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 // import api from '../services/api'; // Import the api helper
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(() => {
-        // Initialize user state from localStorage if available
-        const stored = localStorage.getItem('user');
-        return stored ? JSON.parse(stored) : null;
-    });
+    // const [user, setUser] = useState(() => {
+    //     // Initialize user state from localStorage if available
+    //     const stored = localStorage.getItem('user');
+    //     return stored ? JSON.parse(stored) : null;
+    // });
 
     // register function - THIS MAKES THE API CALL
     async function register(data) {
