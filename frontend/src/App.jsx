@@ -23,6 +23,10 @@ import { EventContextProvider } from './views/Organizer/CreateEvent/EventContext
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 
 // import Dashboard from './views/Organizer/Dashboard/Dashboard';
+// import EventDetailsPage from './views/EventExploration/EventDetailsPage';
+// import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
+// import EventSearchResult from './views/EventExploration/EventSearchResult';
+// import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 // import AttendanceDetailCard from './views/Organizer/AttendanceList/AttendanceDetailCard';
 // import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 // import EventList from './views/Organizer/Dashboard/EventList';
