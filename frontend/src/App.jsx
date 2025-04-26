@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Homepage from './views/Homepage/Homepage';
+// import Homepage from './views/Homepage/Homepage';
 // import Dashboard from './views/Organizer/Dashboard/Dashboard';
-// import EventDetailsPage from './views/EventExploration/EventDetailsPage';
+import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 // import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
@@ -14,8 +14,8 @@ import Homepage from './views/Homepage/Homepage';
 const App= () => {
   return (
     <div>
-      { <Homepage/>}
-      {/* <EventDetailsPage/> */}
+      {/* { <Homepage/>} */}
+      <EventDetailsPage/>
       {/* <EventSearchResult/> */}
       {/* <LoginRegistrationHome/> */}
       {/*<OrganizerHomepage/>*/}
