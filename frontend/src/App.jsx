@@ -1,11 +1,11 @@
 import React from 'react';
 
- import Homepage from './views/Homepage/Homepage';
+import Homepage from './views/Homepage/Homepage';
+// import Dashboard from './views/Organizer/Dashboard/Dashboard';
 // import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 // import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-import Dashboard from './views/Organizer/Dashboard/Dashboard';
 // import AttendanceDetailCard from './views/Organizer/AttendanceList/AttendanceDetailCard';
 // import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 // import EventList from './views/Organizer/Dashboard/EventList';
@@ -19,7 +19,7 @@ const App= () => {
       {/* <EventSearchResult/> */}
       {/* <LoginRegistrationHome/> */}
       {/*<OrganizerHomepage/>*/}
-      { <Dashboard/> }
+      {/* { <Dashboard/> } */}
       {/* <EventList/> */}
       {/*<EventDetail/>*/}
       {/* <AttendanceList/> */}
