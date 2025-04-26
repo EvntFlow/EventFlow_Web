@@ -90,8 +90,8 @@ const Homepage = () => {
             backgroundPosition: 'center',
           }}
         />
-        <Search />
         </Box>
+        <Search />
         <Categories />
         <Feature />
         <Box sx={{ ml: 10 }}>
@@ -99,7 +99,7 @@ const Homepage = () => {
           <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
           <EventSection headTitle="THIS WEEKEND" events={eventsData} />
         </Box>
-        <TestimonialSection testimonials={testimonialsData} />
+        {/* <TestimonialSection testimonials={testimonialsData} /> */}
         <SubscribeSection/>
         <Footer />
     </div>

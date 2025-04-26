@@ -1,7 +1,7 @@
 // src/pages/Register.jsx
 import React, { useState, useContext } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
@@ -9,19 +9,20 @@ export default function Register() {
     const { register } = useContext(AuthContext);
     const nav = useNavigate();
 
-    const handleChange = e =>
+    const handleChange = e => {
         setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+    }
 
     const handleSubmit = async e => {
         e.preventDefault();
         // simple client‐side check
         if (form.password !== form.confirmPassword) return alert("Passwords must match");
         try {
-        await register({ email: form.email, password: form.password });
-        nav('/login');      // send user to login
+            await register({ email: form.email, password: form.password });
+            nav('/login');      // send user to login
         } catch (err) {
-        console.error(err);
-        alert(err.response?.data?.message || 'Registration failed');
+            console.error(err);
+            alert(err.response?.data?.message || 'Registration failed');
         }
     };
 

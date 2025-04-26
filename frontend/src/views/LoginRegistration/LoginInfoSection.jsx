@@ -1,88 +1,66 @@
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  IconButton
-} from '@mui/material';
-import EmailIcon from '@mui/icons-material/Email';
-import KeyIcon from '@mui/icons-material/Key';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+// src/pages/LoginInfoSection.jsx
+import React, { useState, useContext } from 'react';
+import { Button, Box, TextField } from '@mui/material';
+import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';           // ← your axios instance
+import { useNavigate } from 'react-router-dom';
 
-const LoginInfoCard = ({
-  email = 'example@gmail.com',
-  password = 'password123',
-}) => {
-  const [showPassword, setShowPassword] = useState(false);
+export default function LoginInfoSection() {
+  const { setUser /* or your context’s login() */ } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleTogglePassword = () => {
-    setShowPassword((prev) => !prev);
+  const [creds, setCreds] = useState({ email: '', password: '' });
+
+  const handleChange = e =>
+    setCreds(c => ({ ...c, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      // 1) Send email/password
+      const response = await api.post('/api/Account/Login', {
+        email: creds.email,
+        password: creds.password
+      });
+      // 2) Grab the token & user from the response
+      const { token, user } = response.data;
+      // 3) Persist them (your context’s login() can do this too)
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
+      // 4) Navigate on success
+      navigate('/events');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Login failed');
+    }
   };
 
   return (
-    <Card
-      sx={{
-        borderRadius: 2,
-        boxShadow: 2,
-        maxWidth: 480,
-        margin: '0 auto',
-      }}
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
     >
-      <CardContent sx={{ p: 2 }}>
-        {/* Email Row */}
-        <Box
-          sx={{
-            backgroundColor: '#f3f3f3',
-            borderRadius: 2,
-            p: 2,
-            mb: 2,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <EmailIcon sx={{ fontSize: 28 }} />
-          <Box sx={{ ml: 2 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              example@gmail.com
-            </Typography>
-            <Typography variant="body1" fontWeight="bold">
-              {email}
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Password Row */}
-        <Box
-          sx={{
-            backgroundColor: '#f3f3f3',
-            borderRadius: 2,
-            p: 2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <KeyIcon sx={{ fontSize: 28 }} />
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" color="text.secondary">
-                Password
-              </Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {showPassword ? password : '•'.repeat(password.length)}
-              </Typography>
-            </Box>
-          </Box>
-
-          <IconButton onClick={handleTogglePassword} size="large">
-            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-          </IconButton>
-        </Box>
-      </CardContent>
-    </Card>
+      <TextField
+        name="email"
+        label="Email"
+        type="email"
+        value={creds.email}
+        onChange={handleChange}
+        required
+      />
+      <TextField
+        name="password"
+        label="Password"
+        type="password"
+        value={creds.password}
+        onChange={handleChange}
+        required
+      />
+      <Button type="submit" variant="contained" disabled={!creds.email || !creds.password}>
+        Login
+      </Button>
+    </Box>
   );
-};
-
-export default LoginInfoCard;
+}
