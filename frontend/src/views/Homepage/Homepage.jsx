@@ -93,8 +93,8 @@ const Homepage = () => {
             backgroundPosition: 'center',
           }}
         />
-        </Box>
         <Search />
+        </Box>
         <Categories />
         <Feature />
         <Box sx={{ ml: 10 }}>
