@@ -27,7 +27,7 @@ const PaymentPage = ({ orderData, onBackToOverlay }) => {
 
   const handleSuccessClose = () => {
     setShowSuccess(false);
-    onBackToOverlay(); // Go back to TicketOverlay or wherever you need
+    onBackToOverlay();
   };
 
   const subtotal = orderData?.totalPrice || 0;
