@@ -10,8 +10,7 @@ const TestimonialSection = ({ testimonials }) => {
         <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, textAlign: '', color: 'white' }}>
           Testimonials
         </Typography>
-
-        {/ Render testimonial cards */}
+        
         <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
           {testimonials.map((testimonial, index) => (
             <Grid item xs={4} sm={4} md={4} key={index}>
