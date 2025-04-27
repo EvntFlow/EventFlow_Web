@@ -77,7 +77,7 @@ const Login = () => {
                 {/* Link to registration */}
                 <Typography variant="body2" align="center" sx={{ mt: 3 }}>
                 Don’t have an account?{' '}
-                <Link component={RouterLink} to="/Account/Register">
+                <Link component={RouterLink} to="/account/register">
                     Sign Up
                 </Link>
                 </Typography>
