@@ -8,7 +8,7 @@ import {
   Grid,
 } from '@mui/material';
 
-const SolutionCard = () => {
+const OrganizerSolutionCard = () => {
     return (
         <>
         <Card sx={{ p: 4 }}>
@@ -118,4 +118,4 @@ const SolutionCard = () => {
     );
 };
 
-export default SolutionCard;
+export default OrganizerSolutionCard;

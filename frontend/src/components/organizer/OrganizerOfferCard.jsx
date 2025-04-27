@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 //import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-const OfferCard = () => {
+const OrganizerOfferCard = () => {
   return (
     <Card
       sx={{
@@ -149,4 +149,4 @@ const OfferCard = () => {
   );
 };
 
-export default OfferCard;
+export default OrganizerOfferCard;

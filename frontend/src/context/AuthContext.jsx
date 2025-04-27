@@ -1,43 +1,72 @@
-// src/context/AuthContext.js
-import { createContext, useState, useEffect } from 'react';
+// // src/context/AuthContext.js
+// import React, { createContext, useState } from 'react';
+// import api from '../services/api'; // Import the api helper
 
-// mock “fetchUser” just for illustration
-async function fetchUser() {
-    const token = localStorage.getItem('jwt');
-    if (!token) return null;
-    // call your API…
-    return { 
-        name: 'Binh Nguyen', 
-        role: 'attendee',      // or 'organizer'
-        canSwitch: true        // set to false if they only ever have a single view
-    };
-}
+// export const AuthContext = createContext();
 
-export const AuthContext = createContext({ user: null });
+// export function AuthProvider({ children }) {
+//     const [user, setUser] = useState(() => {
+//         // Initialize user state from localStorage if available
+//         const stored = localStorage.getItem('user');
+//         return stored ? JSON.parse(stored) : null;
+//     });
 
-export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
+//     // register function - THIS MAKES THE API CALL
+//     async function register(data) {
+//         // The data object here will contain { email, password } from your Register component
+//         console.log("Attempting to register with data:", data);
+//         // Use the 'api' object to post to the backend endpoint
+//         // Based on your Swagger link and convention, the endpoint is likely /api/Account/Register
+//         await api.post('/api/Account/Register', data);
+//         console.log("Registration request sent successfully.");
+//         // After successful registration, you might want to auto-login
+//         // or simply let the user navigate to the login page (as your Register component does).
+//     }
 
-    useEffect(() => {
-        fetchUser().then(setUser);
-    }, []);
+//     // login function (implement similarly if needed)
+//     async function login(credentials) {
+//         try {
+//             const { data } = await api.post('/api/Account/Login', credentials);
+//             // Assume API returns { token, user: { ... } } upon successful login
+//             localStorage.setItem('token', data.token); // Store the JWT
+//             localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
+//             setUser(data.user); // Update context state
+//             // Maybe navigate the user somewhere after login
+//         } catch (error) {
+//             console.error("Login failed:", error);
+//             // Rethrow or handle error display
+//             throw error;
+//         }
+//     }
 
-    const logout = () => {
-        localStorage.removeItem('jwt');
-        setUser(null);
-    };
+//     // logout function
+//     function logout() {
+//         localStorage.removeItem('token');
+//         localStorage.removeItem('user');
+//         setUser(null);
+//         // Maybe navigate the user to the login page
+//     }
 
-    const toggleRole = () => {
-        // if your back‑end supports role switching, call that here
-        setUser(u => ({
-        ...u,
-        role: u.role === 'attendee' ? 'organizer' : 'attendee'
-        }));
-    };
+//     // (optional) switch role function
+//     function toggleRole() {
+//         if (!user || !user.canSwitch) return; // Add a check if user or canSwitch exists
 
-    return (
-        <AuthContext.Provider value={{ user, logout, toggleRole }}>
-        {children}
-        </AuthContext.Provider>
-    );
-}
+//         // This is a frontend-only toggle in this example.
+//         // A real implementation might need an API call.
+//         const newRole = user.role === 'attendee' ? 'organizer' : 'attendee';
+//         const updated = { ...user, role: newRole };
+//         localStorage.setItem('user', JSON.stringify(updated)); // Update local storage
+//         setUser(updated); // Update context state
+//     }
+
+//     // Provide the functions and user state through the context
+//     return (
+//         <AuthContext.Provider value={{ user, register, login, logout, toggleRole }}>
+//             {children}
+//         </AuthContext.Provider>
+//     );
+// }
+
+// // Optional: Custom hook for easier context consumption
+// // import { useContext } from 'react';
+// // export const useAuth = () => useContext(AuthContext);

@@ -9,7 +9,7 @@ import {
   CardContent
 } from '@mui/material';
 
-const Feature = () => {
+const OrganizerFeature = () => {
   return (
     <Box
       sx={{
@@ -175,4 +175,4 @@ const Feature = () => {
   );
 };
 
-export default Feature;
+export default OrganizerFeature;
