@@ -7,7 +7,6 @@ import {
   IconButton,
   Divider,
   Chip,
-  Link,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import {AccessTime, CalendarMonth, ConfirmationNumber, LocationOn, FullscreenOutlined, AddOutlined, RemoveOutlined} from '@mui/icons-material';
