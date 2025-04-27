@@ -1,8 +1,8 @@
 import React from 'react';
 import Header from './components/Header';
 import Homepage from './views/Homepage/Homepage';
-import Login from './views/LoginRegistration/Login';
-import Register from './views/LoginRegistration/Register';
+import Login from './views/Account/Login';
+import Register from './views/Account/Register';
 import AccountPage from './views/Attendees/AccountPage';
 import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
@@ -35,7 +35,7 @@ const App= () => {
           <Route path="/event-details-page" element={<EventDetailsPage />} />
           <Route path="/event-details" element={<EventDetail />} />
           {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
-          
+
           {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} /> */}
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           {/* <Route path="/event-list" element={<EventList />} /> */}

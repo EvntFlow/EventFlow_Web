@@ -7,7 +7,7 @@ const SocialLoginCard = ({ icon, name }) => {
       sx={{
         borderRadius: 2,
         boxShadow: 2,
-        maxWidth: 400,
+        width: "100%",
         margin: '0 auto',
       }}
     >
@@ -27,8 +27,7 @@ const SocialLoginCard = ({ icon, name }) => {
         >
           {/* Application Icon */}
           <Box
-            component="img"
-            src={icon}
+            component={icon}
             alt={`${name} icon`}
             sx={{ width: 24, height: 24 }}
           />
