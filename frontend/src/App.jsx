@@ -6,7 +6,7 @@ import Login from './views/LoginRegistration/Login';
 import Register from './views/LoginRegistration/Register';
 import AccountPage from './views/Attendees/AccountPage';
 
-import { AuthProvider } from './context/AuthContext';
+// import { AuthProvider } from './context/AuthContext';
 // import EventSearchResult from './views/EventExploration/EventSearchResult';
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 // import Dashboard from './views/Organizer/Dashboard/Dashboard';

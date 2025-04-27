@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Switch, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
 // import { AuthContext } from '../context/AuthContext';  // no longer needed
@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 const Header = () => {
   // Temporarily hard-code guest mode:
   const user = null;                    // always guest
-  const logout = () => {};              // no-op
-  const toggleRole = () => {};          // no-op
+  // const logout = () => {};              // no-op
+  // const toggleRole = () => {};          // no-op
 
   // Define your nav items per role
   const navConfig = {
