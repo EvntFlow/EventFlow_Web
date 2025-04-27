@@ -1,11 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Switch, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { AuthContext } from '../context/AuthContext';
+// import NotificationsIcon from '@mui/icons-material/Notifications';
+// import { AuthContext } from '../context/AuthContext';  // no longer needed
 
 const Header = () => {
-  const { user, logout, toggleRole } = useContext(AuthContext);
+  // Temporarily hard-code guest mode:
+  const user = null;                    // always guest
+  const logout = () => {};              // no-op
+  const toggleRole = () => {};          // no-op
 
   // Define your nav items per role
   const navConfig = {
@@ -67,32 +70,8 @@ const Header = () => {
             </Button>
           ))}
 
-          {/* If logged in, show notifications / role toggle / logout */}
-          {user ? (
-            <>
-              <IconButton color="inherit" sx={{ mr: 1 }}>
-                <NotificationsIcon />
-              </IconButton>
-
-              {user.canSwitch && (
-                <>
-                  <Switch
-                    checked={user.role === 'organizer'}
-                    onChange={toggleRole}
-                    color="default"
-                  />
-                  <Typography variant="button" sx={{ mr: 2 }}>
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </Typography>
-                </>
-              )}
-
-              <Button color="inherit" onClick={logout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            // Guest view → Sign In
+          {/* Guest view → Sign In */}
+          {!user && (
             <Button
               variant="outlined"
               color="inherit"
