@@ -20,7 +20,7 @@ import { Routes, Route } from 'react-router-dom';
 
 const App= () => {
   return (
-    <AuthProvider>
+    <div>
       {/* Fixed header */}
       <Header />
       {/* <Toolbar /> */}
@@ -43,7 +43,7 @@ const App= () => {
           {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
         </Routes>
       </div>
-    </AuthProvider>
+    </div>
   );
 }
 
