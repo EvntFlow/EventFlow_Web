@@ -1,7 +1,7 @@
 // src/pages/LoginRegistrationHome.jsx
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Facebook, Google } from '@mui/icons-material';
+import { Google, Microsoft } from '@mui/icons-material';
 import {
   Button,
   Grid,
@@ -24,6 +24,8 @@ const Login = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const returnUrl = urlParams.get("returnUrl") ?? "/";
     const error = urlParams.get("error");
+
+    const [isPersistent, setIsPersistent] = React.useState(false);
 
     /**
      * @param {string} url
@@ -69,14 +71,20 @@ const Login = () => {
                             <SocialLoginCard
                                 icon={ () => <Google /> }
                                 action="Login"
-                                name="Google"/>
+                                provider="Google"
+                                isPersistent={isPersistent}
+                                returnUrl={returnUrl}/>
                             <SocialLoginCard
-                                icon={ () => <Facebook /> }
+                                icon={ () => <Microsoft /> }
                                 action="Login"
-                                name="Facebook"/>
+                                provider="Microsoft"
+                                isPersistent={isPersistent}
+                                returnUrl={returnUrl}/>
                         </Box>
 
-                        <Divider sx={{ my: 3 }}>OR</Divider>
+                        <Divider sx={{ my: 3 }}>
+                            <Typography>OR</Typography>
+                        </Divider>
 
                         <Box component="form"
                              method="post"
@@ -135,7 +143,13 @@ const Login = () => {
                                 <Grid size={6} sx={{ alignItems: 'start' }}>
                                     {/* Optional “Remember me” checkbox */}
                                     <FormControlLabel
-                                        control={<Checkbox name="isPersistent" />}
+                                        control={
+                                            <Checkbox name="isPersistent"
+                                                      value={isPersistent}
+                                                      onChange={(e) =>
+                                                        setIsPersistent(e.target.checked)
+                                                      }/>
+                                        }
                                         label="Remember Me"
                                     />
                                 </Grid>

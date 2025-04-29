@@ -49,8 +49,7 @@ const ForgotPasswordConfirmation = () => {
                             Please check your email to finish resetting your password.
                         </Typography>
 
-                        <Button type="submit"
-                                variant="contained"
+                        <Button variant="contained"
                                 fullWidth={true}
                                 href={returnUrl}
                                 sx={{ my: 2 }}>

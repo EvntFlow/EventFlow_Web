@@ -1,6 +1,6 @@
 // src/pages/Register.jsx
 // import React, { useState, useContext } from 'react';
-import { Facebook, Google } from '@mui/icons-material';
+import { Google, Microsoft } from '@mui/icons-material';
 import EmailIcon from '@mui/icons-material/Email';
 import KeyIcon from '@mui/icons-material/Key';
 import {
@@ -68,14 +68,20 @@ export default function Register() {
                             <SocialLoginCard
                                 icon={ () => <Google /> }
                                 action="Register"
-                                name="Google"/>
+                                provider="Google"
+                                isPersistent={false}
+                                returnUrl={returnUrl}/>
                             <SocialLoginCard
-                                icon={ () => <Facebook /> }
+                                icon={ () => <Microsoft /> }
                                 action="Register"
-                                name="Facebook"/>
+                                provider="Microsoft"
+                                isPersistent={false}
+                                returnUrl={returnUrl}/>
                         </Box>
 
-                        <Divider sx={{ my: 3 }}>OR</Divider>
+                        <Divider sx={{ my: 3 }}>
+                            <Typography>OR</Typography>
+                        </Divider>
 
                         <Box component="form"
                              method="post"

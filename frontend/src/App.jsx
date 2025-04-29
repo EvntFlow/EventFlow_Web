@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Homepage from './views/Homepage/Homepage';
 import Login from './views/Account/Login';
 import Register from './views/Account/Register';
+import ExternalLogin from './views/Account/ExternalLogin';
 import ConfirmEmail from './views/Account/ConfirmEmail';
 import ForgotPassword from './views/Account/ForgotPassword';
 import ForgotPasswordConfirmation from './views/Account/ForgotPasswordConfirmation';
@@ -36,6 +37,7 @@ const App= () => {
           <Route path="/" element={<Homepage />} />
           <Route path="/account/login" element={<Login />} />
           <Route path="/account/register" element={<Register />} />
+          <Route path="/account/externallogin" element={<ExternalLogin />} />
           <Route path="/account/confirmemail" element={<ConfirmEmail />} />
           <Route path="/account/forgotpassword" element={<ForgotPassword />} />
           <Route path="/account/forgotpasswordconfirmation"

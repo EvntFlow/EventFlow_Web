@@ -59,12 +59,14 @@ const ConfirmEmail = () => {
                                    name="userId"
                                    value={userId}
                                    required={true}
+                                   readOnly={true}
                                    style={{display: 'none'}} />
 
                             <Input hidden={true}
                                    name="code"
                                    value={code}
                                    required={true}
+                                   readOnly={true}
                                    style={{display: 'none'}} />
 
                             {
@@ -74,7 +76,8 @@ const ConfirmEmail = () => {
                                 </Typography>
                             }
 
-                            <Button variant="contained"
+                            <Button type="submit"
+                                    variant="contained"
                                     fullWidth={true}
                                     sx={{ my: 2 }}>
                                 Confirm
