@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardActionArea, Box, Typography } from '@mui/material';
 
-const SocialLoginCard = ({ icon, name }) => {
+const SocialLoginCard = ({ icon, action, name }) => {
   return (
     <Card
       sx={{
@@ -14,7 +14,7 @@ const SocialLoginCard = ({ icon, name }) => {
       <CardActionArea
         onClick={() => {
           // Handle login logic here (e.g., redirect to OAuth)
-          console.log(`Login with ${name}`);
+          console.log(`${action} with ${name}`);
         }}
       >
         <Box
@@ -33,7 +33,7 @@ const SocialLoginCard = ({ icon, name }) => {
           />
           {/* Login Text */}
           <Typography variant="body1" fontWeight="bold">
-            Login with {name}
+            {action} with {name}
           </Typography>
         </Box>
       </CardActionArea>
