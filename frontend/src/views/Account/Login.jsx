@@ -1,7 +1,7 @@
 // src/pages/LoginRegistrationHome.jsx
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Facebook, Google } from '@mui/icons-material';
+import { Google, Microsoft } from '@mui/icons-material';
 import {
   Button,
   Grid,
@@ -13,7 +13,7 @@ import {
   FormControlLabel,
   Checkbox,
   Link,
-  TextField
+  TextField,
 } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import KeyIcon from '@mui/icons-material/Key';
@@ -25,73 +25,79 @@ const Login = () => {
     const returnUrl = urlParams.get("returnUrl") ?? "/";
     const error = urlParams.get("error");
 
+    const [isPersistent, setIsPersistent] = React.useState(false);
+
+    /**
+     * @param {string} url
+     * @param {string | undefined} currentReturnUrl
+     */
+    function getPageUrl(url, currentReturnUrl) {
+        currentReturnUrl ??= returnUrl;
+        return `/${url}?returnUrl=${encodeURIComponent(currentReturnUrl)}`
+    }
+
     return (
-        <Grid
-        container
-        sx={{
-            minHeight: '100vh',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#F4F7FA'
-        }}
-        >
-        {/* Left Side: Illustration */}
-        <Grid
-            item
-            xs={12}
-            md={5}
-            sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', p: 2 }}
-        >
-            <img
-            src="/img/Login_Image1.png"
-            alt="Login illustration"
-            style={{ maxWidth: '100%', objectFit: 'cover' }}
-            />
-        </Grid>
+        <Grid container
+              sx={{
+                    minHeight: '100vh',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#F4F7FA'
+              }}>
 
-        {/* Right Side: Login card */}
-        <Grid item xs={12} md={7} sx={{ p: 4 }}>
-            <Card sx={{ boxShadow: 4 }}>
-            <CardContent sx={{ p: 4 }}>
-                <Typography variant="h3" gutterBottom>
-                Welcome to <br />
-                EVENTFLOW
-                </Typography>
+            {/* Left Side: Illustration */}
+            <Grid item
+                  size={5}
+                  alignContent="center"
+                  sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', p: 2 }}>
+                <img src="/img/Login_Image1.png"
+                     alt="Login illustration"
+                     style={{ width: '100%', objectFit: 'scale-down' }} />
+            </Grid>
 
-                {/* Social logins */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
-                <SocialLoginCard
-                    icon={ () => <Google /> }
-                    name="Google"
-                />
-                <SocialLoginCard
-                    icon={ () => <Facebook /> }
-                    name="Facebook"
-                />
-                </Box>
+            {/* Right Side: Login card */}
+            <Grid item size={7} md={7} sx={{ p: 4, maxWidth: 800 }}>
+                <Card sx={{ boxShadow: 4 }}>
+                    <CardContent sx={{ p: 4 }}>
+                        <Typography variant="h5">
+                            <b>Welcome to</b>
+                        </Typography>
+                        <Typography variant="h4" color="primary" gutterBottom>
+                            <b>EVENTFLOW</b>
+                        </Typography>
 
-                <Divider sx={{ my: 3 }}>OR</Divider>
+                        {/* Social logins */}
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+                            <SocialLoginCard
+                                icon={ () => <Google /> }
+                                action="Login"
+                                provider="Google"
+                                isPersistent={isPersistent}
+                                returnUrl={returnUrl}/>
+                            <SocialLoginCard
+                                icon={ () => <Microsoft /> }
+                                action="Login"
+                                provider="Microsoft"
+                                isPersistent={isPersistent}
+                                returnUrl={returnUrl}/>
+                        </Box>
 
-                <Box component="form"
-                     method="post"
-                     action={getApiUrl("Account/Login", { returnUrl: returnUrl })}>
+                        <Divider sx={{ my: 3 }}>
+                            <Typography>OR</Typography>
+                        </Divider>
 
-                    <Card sx={{
-                            borderRadius: 2,
-                            boxShadow: 2,
-                            width: "100%",
-                            maxWidth: 480,
-                            margin: '0 auto',
-                          }}>
-                        <CardContent sx={{ p: 2 }}>
+                        <Box component="form"
+                             method="post"
+                             action={getApiUrl("Account/Login", { returnUrl: returnUrl })}>
+
                             {/* Email Row */}
                             <Box sx={{
-                                    backgroundColor: '#f3f3f3',
-                                    borderRadius: 2,
-                                    p: 2,
-                                    mb: 2,
-                                    display: 'flex',
-                                    alignItems: 'center',
+                                        backgroundColor: '#f3f3f3',
+                                        borderRadius: 2,
+                                        p: 2,
+                                        my: 2,
+                                        display: 'flex',
+                                        alignItems: 'center',
                                  }}>
                                 <EmailIcon sx={{ fontSize: 28 }} />
                                 <Box sx={{ ml: 2 }} width="100%">
@@ -101,20 +107,21 @@ const Login = () => {
                                            label="Email"
                                            name="email"
                                            type="email"
+                                           required={true}
                                            fullWidth={true} />
                                 </Box>
                             </Box>
 
                             {/* Password Row */}
                             <Box sx={{
-                                    backgroundColor: '#f3f3f3',
-                                    borderRadius: 2,
-                                    p: 2,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                 }}
-                            >
+                                        backgroundColor: '#f3f3f3',
+                                        borderRadius: 2,
+                                        p: 2,
+                                        my: 2,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                 }}>
                                 <KeyIcon sx={{ fontSize: 28 }} />
                                 <Box sx={{ ml: 2 }} width="100%">
                                 <TextField variant="standard"
@@ -123,43 +130,65 @@ const Login = () => {
                                            label="Password"
                                            name="password"
                                            type="password"
+                                           required={true}
                                            fullWidth={true} />
                                 </Box>
                             </Box>
-                        </CardContent>
-                    </Card>
 
-                    {/* Optional “Remember me” checkbox */}
-                    <FormControlLabel
-                        sx={{ mt: 2 }}
-                        control={<Checkbox name="remember" />}
-                        label="Remember Me"
-                    />
+                            <Grid container
+                                  sx={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                  }}>
+                                <Grid size={6} sx={{ alignItems: 'start' }}>
+                                    {/* Optional “Remember me” checkbox */}
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox name="isPersistent"
+                                                      value={isPersistent}
+                                                      onChange={(e) =>
+                                                        setIsPersistent(e.target.checked)
+                                                      }/>
+                                        }
+                                        label="Remember Me"
+                                    />
+                                </Grid>
+                                <Grid size={6} sx={{ alignItems: 'end' }}>
+                                    <Link component={RouterLink}
+                                          to={getPageUrl(
+                                                "Account/ForgotPassword",
+                                                getPageUrl("Account/Login")
+                                             )}>
+                                        <Typography width="100%" align="right">
+                                            Forgot Password?
+                                        </Typography>
+                                    </Link>
+                                </Grid>
+                            </Grid>
 
-                    {
-                        error == null ? null :
-                        <Typography color="error" align="center" sx={{ mt: 2 }}>
-                            {error}
+                            {
+                                error == null ? null :
+                                <Typography color="error" align="center" sx={{ my: 2 }}>
+                                    {error}
+                                </Typography>
+                            }
+
+                            <Button type="submit" variant="contained" fullWidth sx={{ my: 2 }}>
+                                Login
+                            </Button>
+                        </Box>
+
+                        {/* Link to registration */}
+                        <Typography variant="body2" align="center" sx={{ my: 3 }}>
+                            Don’t have an account?{' '}
+                            <Link component={RouterLink}
+                                  to={getPageUrl("Account/Register", getPageUrl("Account/Login"))}>
+                                Sign Up
+                            </Link>
                         </Typography>
-                    }
-
-                    {/* <Button type="submit" variant="contained" disabled={!creds.email || !creds.password}> */}
-                    <Button type="submit" variant="contained" fullWidth={true} sx={{ mt: 2 }}>
-                        Login
-                    </Button>
-                </Box>
-
-
-                {/* Link to registration */}
-                <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-                    Don’t have an account?{' '}
-                    <Link component={RouterLink} to="/account/register">
-                        Sign Up
-                    </Link>
-                </Typography>
-            </CardContent>
-            </Card>
-        </Grid>
+                    </CardContent>
+                </Card>
+            </Grid>
         </Grid>
     );
 };
