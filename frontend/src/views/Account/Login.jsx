@@ -141,7 +141,10 @@ const Login = () => {
                                 </Grid>
                                 <Grid size={6} sx={{ alignItems: 'end' }}>
                                     <Link component={RouterLink}
-                                          to={getPageUrl("/Account/ForgotPassword")}>
+                                          to={getPageUrl(
+                                                "Account/ForgotPassword",
+                                                getPageUrl("Account/Login")
+                                             )}>
                                         <Typography width="100%" align="right">
                                             Forgot Password?
                                         </Typography>
