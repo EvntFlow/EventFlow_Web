@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../../../components/Header';
 import OrganizerStartCard from '../../../components/organizer/OrganizerStartCard';
 import OrganizerSolutionsCard from '../../../components/organizer/OrganizerSolutionsCard';
-import OrganizerOfferCard from '/../../components/organizer/OrganizerOfferCard';
+import OrganizerOfferCard from '../../../components/organizer/OrganizerOfferCard';
 import OrganizerFeature from '../../../components/organizer/OrganizerFeature';
 import OrganizerFeatureNews from '../../../components/organizer/OrganizerFeatureNews';
 import TestimonialSection from '../../../components/TestimonialSection';

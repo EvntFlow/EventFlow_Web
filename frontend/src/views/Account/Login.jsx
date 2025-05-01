@@ -1,4 +1,4 @@
-// src/pages/LoginRegistrationHome.jsx
+// src/views/Account/Login.jsx
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Google, Microsoft } from '@mui/icons-material';
@@ -87,8 +87,10 @@ const Login = () => {
                         </Divider>
 
                         <Box component="form"
-                             method="post"
-                             action={getApiUrl("Account/Login", { returnUrl: returnUrl })}>
+                            method="post"
+                            action={getApiUrl("Account/Login", { returnUrl: returnUrl })}
+                            onSubmit={() => localStorage.setItem('role', 'attendee')}
+                        >
 
                             {/* Email Row */}
                             <Box sx={{
