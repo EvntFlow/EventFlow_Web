@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -409,7 +410,12 @@ const PaymentPage = ({ orderData, onBackToOverlay }) => {
 
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2 }}>Payment Details</Typography>
+            <Paper sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>Payment Details</Typography>
 
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography>Order</Typography><Typography>${subtotal.toFixed(2)}</Typography>
+              </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography>Order</Typography><Typography>${subtotal.toFixed(2)}</Typography>
               </Box>
@@ -417,9 +423,16 @@ const PaymentPage = ({ orderData, onBackToOverlay }) => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography>Tax</Typography><Typography>${tax.toFixed(2)}</Typography>
               </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography>Tax</Typography><Typography>${tax.toFixed(2)}</Typography>
+              </Box>
 
               <Divider sx={{ my: 2 }} />
+              <Divider sx={{ my: 2 }} />
 
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography fontWeight="bold">Total</Typography><Typography fontWeight="bold">${total.toFixed(2)}</Typography>
+              </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography fontWeight="bold">Total</Typography><Typography fontWeight="bold">${total.toFixed(2)}</Typography>
               </Box>

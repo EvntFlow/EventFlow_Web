@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './components/Header';
+
 import Homepage from './views/Homepage/Homepage';
 import Login from './views/Account/Login';
 import Register from './views/Account/Register';
@@ -55,7 +55,6 @@ const App= () => {
           <Route path="/event-details-page" element={<EventDetailsPage />} />
           <Route path="/event-details" element={<EventDetail />} />
 
-          {/* Event Creation Routes with Context Provider */}
           <Route path="/create-event" element={
             <EventContextProvider>
               <EditDetailsPage />
