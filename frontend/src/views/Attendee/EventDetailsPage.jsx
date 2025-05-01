@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Toolbar, Typography, Box, Button, Container, Grid, IconButton, Paper, Avatar, Chip
-} from '@mui/material';
-import {
-  CalendarMonth, AccessTime, AddCircleOutline, LocationOn, ConfirmationNumber,
-  Star, Share, Add
-} from '@mui/icons-material';
+import { Typography, Box, Button, Container, Grid, IconButton, Paper, Avatar, Chip} from '@mui/material';
+import { CalendarMonth, AccessTime, AddCircleOutline, LocationOn, ConfirmationNumber, Star, Share, Add } from '@mui/icons-material';
 import TicketOverlay from '../../components/TicketOverlay';
 import PaymentPage from '../../components/PaymentPage';
 import EventSection from '../../components/EventSection';
