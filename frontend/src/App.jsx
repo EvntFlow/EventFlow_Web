@@ -12,6 +12,12 @@ import ResetPasswordConfirmation from './views/Account/ResetPasswordConfirmation
 import AccountPage from './views/Attendees/AccountPage';
 import EventDetailsPage from './views/EventExploration/EventDetailsPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
+import EditDetailsPage from './views/Organizer/CreateEvent/EditDetailsPage';
+import BannerPage from './views/Organizer/CreateEvent/BannerPage';
+import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
+import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
+import { EventContextProvider } from './views/Organizer/CreateEvent/EventContext';
+
 // import EventSearchPage from './EventSearchPage';
 
 // import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
@@ -48,6 +54,29 @@ const App= () => {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/event-details-page" element={<EventDetailsPage />} />
           <Route path="/event-details" element={<EventDetail />} />
+
+          {/* Event Creation Routes with Context Provider */}
+          <Route path="/create-event" element={
+            <EventContextProvider>
+              <EditDetailsPage />
+            </EventContextProvider>
+          } />
+          <Route path="/banner" element={
+            <EventContextProvider>
+              <BannerPage />
+            </EventContextProvider>
+          } />
+          <Route path="/ticketing" element={
+            <EventContextProvider>
+              <TicketingPage />
+            </EventContextProvider>
+          } />
+          <Route path="/review" element={
+            <EventContextProvider>
+              <ReviewPage />
+            </EventContextProvider>
+          } />
+
           {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
           {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} /> */}

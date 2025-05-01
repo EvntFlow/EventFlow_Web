@@ -13,18 +13,18 @@ const Header = () => {
   // Define your nav items per role
   const navConfig = {
     guest: [
-      { label: 'Events', to: '/events' },
+      { label: 'Events', to: '/' },
       { label: 'Contact', to: '/contact' },
       { label: 'Find your ticket', to: '/ticket' },
       { label: 'Account', to: '/account' },
     ],
     attendee: [
-      { label: 'Events', to: '/events' },
+      { label: 'Events', to: '/' },
       { label: 'Contact us', to: '/contact' },
       { label: 'Find your ticket', to: '/ticket', variant: 'contained' },
     ],
     organizer: [
-      { label: 'Create Events', to: '/create' },
+      { label: 'Create Events', to: '/create-event' },
       { label: 'Contact us', to: '/contact' },
       { label: 'Dashboard', to: '/dashboard', variant: 'contained' },
     ],
