@@ -1,22 +1,34 @@
+import { Box, Card, CardActionArea, Typography } from '@mui/material';
 import React from 'react';
-import { Card, CardActionArea, Box, Typography } from '@mui/material';
+import { getApiUrl } from '../api';
 
-const SocialLoginCard = ({ icon, name }) => {
+const SocialLoginCard = (
+/** @type {{ action: string, provider: string, isPersistent: bool, returnUrl: ?string }} */
+{
+    icon,
+    action,
+    provider,
+    isPersistent,
+    returnUrl
+}) => {
+
+  const buttonUrl = getApiUrl("Account/ExternalLogin", {
+    "provider": provider,
+    "isPersistent": isPersistent,
+    "referrer": window.location.origin,
+    "returnUrl": returnUrl
+  });
+
   return (
     <Card
       sx={{
         borderRadius: 2,
         boxShadow: 2,
-        maxWidth: 400,
+        width: "100%",
         margin: '0 auto',
       }}
     >
-      <CardActionArea
-        onClick={() => {
-          // Handle login logic here (e.g., redirect to OAuth)
-          console.log(`Login with ${name}`);
-        }}
-      >
+      <CardActionArea href={buttonUrl}>
         <Box
           sx={{
             display: 'flex',
@@ -27,14 +39,13 @@ const SocialLoginCard = ({ icon, name }) => {
         >
           {/* Application Icon */}
           <Box
-            component="img"
-            src={icon}
-            alt={`${name} icon`}
+            component={icon}
+            alt={`${provider} icon`}
             sx={{ width: 24, height: 24 }}
           />
           {/* Login Text */}
           <Typography variant="body1" fontWeight="bold">
-            Login with {name}
+            {action} with {provider}
           </Typography>
         </Box>
       </CardActionArea>
