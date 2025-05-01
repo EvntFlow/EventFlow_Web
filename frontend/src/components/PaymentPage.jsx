@@ -220,7 +220,7 @@ const PaymentPage = ({ orderData, onBackToOverlay }) => {
                     id="payment-form"
                     method="post"
                     encType="multipart/form-data"
-                    action={getApiUrl("Payment/Card", { returnUrl: returnUrl})}
+                    action={getApiUrl("Payment/Card", { returnUrl })}
                   >
                     <Grid container spacing={2}>
                       {/* Card Nickname */}
@@ -374,24 +374,6 @@ const PaymentPage = ({ orderData, onBackToOverlay }) => {
                   <Typography variant="body1" sx={{ mb: 2 }}>
                     You'll be redirected to Google Pay to complete your payment securely.
                   </Typography>
-                  
-                  {/* Hidden fields for Google Pay */}
-                  <input type="hidden" name="paymentMethod" value="Google" />
-                  <input type="hidden" name="subtotal" value={subtotal.toFixed(2)} />
-                  <input type="hidden" name="tax" value={tax.toFixed(2)} />
-                  <input type="hidden" name="total" value={total.toFixed(2)} />
-                  
-                  {/* Attendee details */}
-                  <input type="hidden" name="email" value={orderData.attendee?.email || 'email@example.com'} />
-                  <input type="hidden" name="address" value={orderData.attendee?.address || '12, WLS Regancy'} />
-                  
-                  {/* Ticket details */}
-                  {orderData?.tickets?.map((ticket, idx) => (
-                    <React.Fragment key={`ticket-${idx}`}>
-                      <input type="hidden" name="ticketType" value={ticket.type} />
-                      <input type="hidden" name="ticketPrice" value={ticket.price} />
-                    </React.Fragment>
-                  ))}
                 </Card>
               </Box>
             )}

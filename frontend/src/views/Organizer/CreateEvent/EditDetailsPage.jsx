@@ -11,7 +11,7 @@ import {
   Grid
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { EventOutlined, AccessTimeOutlined } from '@mui/icons-material';
+import { EventOutlined} from '@mui/icons-material';
 import { EventContext } from './EventContext';
 import Stepper from '../../../components/Stepper';
 
@@ -56,7 +56,7 @@ const EditDetailsPage = () => {
     if (!eventData.name) newErrors.name = 'Event title is required';
     if (!eventData.category) newErrors.category = 'Event category is required';
     if (!eventData.startDate) newErrors.startDate = 'Start date is required';
-    if (!eventData.startTime) newErrors.startTime = 'Start time is required';
+    if (!eventData.endDate) newErrors.endDate = 'End date is required';
     if (!eventData.location) newErrors.location = 'Location is required';
     if (!eventData.description) newErrors.description = 'Description is required';
 
@@ -164,40 +164,21 @@ const EditDetailsPage = () => {
           
           <Grid item xs={12} sm={4}>
             <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
-              Start Time <RequiredLabel>*</RequiredLabel>
+              End Date <RequiredLabel>*</RequiredLabel>
             </FormLabel>
             <TextField
               fullWidth
-              name="startTime"
-              placeholder="12:00 AM"
-              value={eventData.startTime || ''}
+              name="endDate"
+              type="text"
+              placeholder="DD/MM/YY"
+              value={eventData.endDate || ''}
               onChange={handleChange}
-              error={!!errors.startTime}
-              helperText={errors.startTime}
+              error={!!errors.endDate}
+              helperText={errors.endDate}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <AccessTimeOutlined />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          
-          <Grid item xs={12} sm={4}>
-            <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
-              End Time
-            </FormLabel>
-            <TextField
-              fullWidth
-              name="endTime"
-              placeholder="12:00 AM"
-              value={eventData.endTime || ''}
-              onChange={handleChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccessTimeOutlined />
+                    <EventOutlined />
                   </InputAdornment>
                 ),
               }}

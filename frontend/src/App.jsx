@@ -16,6 +16,7 @@ import EditDetailsPage from './views/Organizer/CreateEvent/EditDetailsPage';
 import BannerPage from './views/Organizer/CreateEvent/BannerPage';
 import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
+import Header from './components/Header';
 import { EventContextProvider } from './views/Organizer/CreateEvent/EventContext';
 
 // import EventSearchPage from './EventSearchPage';
