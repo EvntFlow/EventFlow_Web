@@ -8,7 +8,6 @@ import {
 } from '@mui/icons-material';
 import TicketOverlay from '../../components/TicketOverlay';
 import PaymentPage from '../../components/PaymentPage';
-import Header from '../../components/Header';
 import EventSection from '../../components/EventSection';
 
 const eventsData = [
@@ -34,8 +33,6 @@ const EventDetailsPage = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
-      <Toolbar />
 
       {!showPaymentPage ? (
         <>
