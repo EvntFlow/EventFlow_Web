@@ -1,19 +1,21 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Typography, 
-  TextField, 
+import {
   Box,
-  MenuItem, 
-  Button, 
+  Button,
   FormLabel,
-  InputAdornment,
-  Grid
+  Grid,
+  MenuItem,
+  TextField,
+  Typography
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { EventOutlined} from '@mui/icons-material';
-import { EventContext } from './EventContext';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Stepper from '../../../components/Stepper';
+import { EventContext } from './EventContext';
 
 const FormSectionTitle = styled(Typography)(({ theme }) => ({
   fontSize: '1.5rem',
@@ -52,7 +54,7 @@ const EditDetailsPage = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!eventData.name) newErrors.name = 'Event title is required';
     if (!eventData.category) newErrors.category = 'Event category is required';
     if (!eventData.startDate) newErrors.startDate = 'Start date is required';
@@ -75,22 +77,23 @@ const EditDetailsPage = () => {
       <Typography variant="h4" component="h1" fontWeight="700" gutterBottom sx={{ mb: 4 }}>
         CREATE A NEW EVENT
       </Typography>
-      
+
       {/* Stepper */}
       <Stepper currentStep={0} />
-      
+
       {/* Event Details Section */}
       <Box component="section" sx={{ mb: 6 }}>
         <FormSectionTitle variant="h5">
           Event Details
         </FormSectionTitle>
-        
+
         <Box sx={{ mb: 3 }}>
           <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
             Event Title <RequiredLabel>*</RequiredLabel>
           </FormLabel>
           <TextField
             fullWidth
+            required
             name="name"
             placeholder="Enter the name of your event"
             value={eventData.name || ''}
@@ -101,7 +104,7 @@ const EditDetailsPage = () => {
             size="medium"
           />
         </Box>
-        
+
         <Box sx={{ mb: 3 }}>
           <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
             Event Category <RequiredLabel>*</RequiredLabel>
@@ -109,6 +112,7 @@ const EditDetailsPage = () => {
           <TextField
             select
             fullWidth
+            required
             name="category"
             value={eventData.category || ''}
             onChange={handleChange}
@@ -125,74 +129,77 @@ const EditDetailsPage = () => {
           </TextField>
         </Box>
       </Box>
-      
+
       {/* Date & Time Section */}
       <Box component="section" sx={{ mb: 6 }}>
         <FormSectionTitle variant="h5">
           Date & Time
         </FormSectionTitle>
-        
+
         <Box sx={{ mb: 2 }}>
           <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
             Session(s) <RequiredLabel>*</RequiredLabel>
           </FormLabel>
         </Box>
-        
+
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
               Start Date <RequiredLabel>*</RequiredLabel>
             </FormLabel>
-            <TextField
-              fullWidth
-              name="startDate"
-              type="text"
-              placeholder="DD/MM/YY"
-              value={eventData.startDate || ''}
-              onChange={handleChange}
-              error={!!errors.startDate}
-              helperText={errors.startDate}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EventOutlined />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker fullWidth
+                              required
+                              disablePast
+                              name="startDate"
+                              value={eventData.startDate ? dayjs(eventData.startDate) : null}
+                              format="DD/MM/YYYY HH:mm"
+                              ampm={false}
+                              onChange={(val) => setEventData({ ...eventData, "startDate": val.toString() }) }
+                              helperText={errors.startDate}
+                              slotProps={{
+                                field: { openPickerButtonPosition: "start" },
+                                textField: {
+                                  error: !!errors.startDate,
+                                  helperText: errors.startDate,
+                                  onChange: () => setErrors({ ...errors, "startDate": null })
+                                }
+                              }} />
+            </LocalizationProvider>
           </Grid>
-          
+
           <Grid item xs={12} sm={4}>
             <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
               End Date <RequiredLabel>*</RequiredLabel>
             </FormLabel>
-            <TextField
-              fullWidth
-              name="endDate"
-              type="text"
-              placeholder="DD/MM/YY"
-              value={eventData.endDate || ''}
-              onChange={handleChange}
-              error={!!errors.endDate}
-              helperText={errors.endDate}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EventOutlined />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker fullWidth
+                              required
+                              disablePast
+                              name="endDate"
+                              value={eventData.endDate ? dayjs(eventData.endDate) : null}
+                              format="DD/MM/YYYY HH:mm"
+                              ampm={false}
+                              onChange={(val) => setEventData({ ...eventData, "endDate": val.toString() })}
+                              slotProps={{
+                                field: { openPickerButtonPosition: "start" },
+                                textField: {
+                                  error: !!errors.endDate,
+                                  helperText: errors.endDate,
+                                  onChange: () => setErrors({ ...errors, "startDate": null })
+                                }
+                              }} />
+            </LocalizationProvider>
           </Grid>
         </Grid>
       </Box>
-      
+
       {/* Location Section */}
       <Box component="section" sx={{ mb: 6 }}>
         <FormSectionTitle variant="h5">
           Location
         </FormSectionTitle>
-        
+
         <Box sx={{ mb: 3 }}>
           <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
             Where will your event take place? <RequiredLabel>*</RequiredLabel>
@@ -200,6 +207,7 @@ const EditDetailsPage = () => {
           <TextField
             select
             fullWidth
+            required
             name="location"
             value={eventData.location || ''}
             onChange={handleChange}
@@ -215,13 +223,13 @@ const EditDetailsPage = () => {
           </TextField>
         </Box>
       </Box>
-      
+
       {/* Additional Information Section */}
       <Box component="section" sx={{ mb: 6 }}>
         <FormSectionTitle variant="h5">
           Additional Information
         </FormSectionTitle>
-        
+
         <Box sx={{ mb: 3 }}>
           <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
             Event Description <RequiredLabel>*</RequiredLabel>
@@ -240,17 +248,17 @@ const EditDetailsPage = () => {
           />
         </Box>
       </Box>
-      
+
       {/* Submit Button */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
+        <Button
+          variant="contained"
+          color="primary"
           onClick={handleSubmit}
           size="large"
-          sx={{ 
-            py: 1, 
-            px: 4, 
+          sx={{
+            py: 1,
+            px: 4,
             borderRadius: 1,
             backgroundColor: '#4285f4'
           }}
