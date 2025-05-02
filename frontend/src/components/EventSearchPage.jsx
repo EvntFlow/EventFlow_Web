@@ -165,37 +165,35 @@ const event_filters = {
     Location: ['Wollongong', 'Sydney CBD', 'Dapto', 'Canberra', 'Pick a Location',],
   };
 
-const EventSearchPage = () => {
-  const { searchData } = useContext(SearchContext);
-  const location = useLocation();
+
+  const EventSearchPage = () => {
+    //const { searchData } = useContext(SearchContext);
+    const location = useLocation();
+    const [events, setEvents] = useState([]);
   
-  const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    const query = new URLSearchParams(window.location.search);
-    const date = query.get('date') || searchData.date;
-    const price = query.get('price') || searchData.price;
-    const keywords = query.get('keywords') || searchData.name || '';
-    const locationParam = query.get('location') || searchData.location;
-
-    if (keywords.trim()) params.append('keywords', keywords);
-    if (locationParam) params.append('location', locationParam);
-    if (date) params.append('date', date);
-    if (price) params.append('price', price);
-
-      fetchApi("Event/FindEvents", params)
-        .then((res) => {
+    useEffect(() => {
+      
+      const query = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams();
+  
+      const date = query.get('date');
+      const price = query.get('price');
+      const keywords = query.get('keywords');
+      const locationParam = query.get('location');
+  
+      if (keywords?.trim()) params.append('keywords', keywords);
+      if (locationParam) params.append('location', locationParam);
+      if (date) params.append('date', date);
+      if (price) params.append('price', price);
+  
+      fetchApi('Event/FindEvents', params)
+        .then(res => {
           if (!res.ok) throw new Error('Failed to fetch events');
           return res.json();
         })
-        .then((data) => {
-          setEvents(data);
-        })
-        .catch((err) => {
-          console.error("Error fetching data:", err);
-        });
-  }, [location.search,date,price,name,location]); 
+        .then(data => setEvents(data))
+        .catch(err => console.error('Error fetching events:', err));
+    }, [location.search]);
   return (
     <div>
         {/* Fixed header */}
