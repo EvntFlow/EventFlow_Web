@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
 import Header from './Header';
 import Search from './Search';
 import EventSection from './EventSection';
 import Footer from './Footer';
-
+import { getApiUrl } from '../api';
 import { Toolbar,Box } from '@mui/material';
 import SortByDropdown from './SortByBox';
 import FilterSidebar from './FilterSideBar';
+import { SearchContext } from './SearchContext';
+import { useLocation } from 'react-router-dom';
 
 // Top events array with event details
 const eventsData = [
@@ -47,7 +49,7 @@ const eventsData = [
     interested: 8,
   },
   {
-    id: 1,
+    id: 4,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '22',
@@ -59,7 +61,7 @@ const eventsData = [
     interested: 10,
   },
   {
-    id: 2,
+    id: 5,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '23',
@@ -71,7 +73,7 @@ const eventsData = [
     interested: 5,
   },
   {
-    id: 3,
+    id: 6,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '24',
@@ -83,7 +85,7 @@ const eventsData = [
     interested: 8,
   },
   {
-    id: 1,
+    id: 7,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '22',
@@ -95,7 +97,7 @@ const eventsData = [
     interested: 10,
   },
   {
-    id: 2,
+    id: 8,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '23',
@@ -107,7 +109,7 @@ const eventsData = [
     interested: 5,
   },
   {
-    id: 3,
+    id: 9,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '24',
@@ -119,7 +121,7 @@ const eventsData = [
     interested: 8,
   },
   {
-    id: 1,
+    id: 10,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '22',
@@ -131,7 +133,7 @@ const eventsData = [
     interested: 10,
   },
   {
-    id: 2,
+    id: 11,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '23',
@@ -143,7 +145,7 @@ const eventsData = [
     interested: 5,
   },
   {
-    id: 3,
+    id: 12,
     image: '../../img/TopEvent.png',
     dateMonth: 'NOV',
     dateDay: '24',
@@ -164,6 +166,45 @@ const event_filters = {
   };
 
 const EventSearchPage = () => {
+  const { searchData } = useContext(SearchContext);
+  const location = useLocation();
+  const query = new URLSearchParams(window.location.search);
+
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    const category = query.get('category') || searchData.category;
+    const minDate = query.get('minDate') || searchData.minDate;
+    const maxDate = query.get('maxDate') || searchData.maxDate;
+    const minPrice = query.get('minPrice') || searchData.minPrice;
+    const maxPrice = query.get('maxPrice') || searchData.maxPrice;
+    const keywords = query.get('keywords') || searchData.keywords || '';
+    const [name, locationFromQuery] = keywords.split(', ');
+
+    if (name) params.append('name', name);
+    if (locationFromQuery) params.append('location', locationFromQuery);
+    if (category) params.append('category', category);
+    if (minDate) params.append('minDate', minDate);
+    if (maxDate) params.append('maxDate', maxDate);
+    if (minPrice) params.append('minPrice', minPrice);
+    if (maxPrice) params.append('maxPrice', maxPrice);
+
+    const apiUrl = getApiUrl("Event/FindEvents", params);
+
+    fetch(apiUrl)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch events');
+        return res.json();
+      })
+      .then((data) => {
+        setEvents(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching data:", err);
+      });
+  }, [location.search, searchData]); 
   return (
     <div>
         {/* Fixed header */}

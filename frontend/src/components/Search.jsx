@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -8,8 +8,43 @@ import {
   Typography
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { SearchContext } from './SearchContext';
+import { useNavigate } from 'react-router-dom';
 
 const SearchCard = () => {
+  const {searchData,setSearchData} = useContext(SearchContext);
+  const navigate = useNavigate();
+
+  const handleChange = (e) =>{
+    const {name, value} = e.target;
+    setSearchData(prev => ({ ...prev, [name]: value }));
+  }
+
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+    const queryParams = new URLSearchParams();
+
+  if (searchData.category) queryParams.append('category', searchData.category);
+  if (searchData.date) queryParams.append('minDate', new Date(searchData.date).toISOString());
+  if (searchData.date) queryParams.append('maxDate', new Date(searchData.date).toISOString());  
+  if (searchData.price) {
+    const parsedPrice = parseFloat(searchData.price);
+    if (!isNaN(parsedPrice)) {
+      queryParams.append('minPrice', '0');
+      queryParams.append('maxPrice', parsedPrice.toString());
+    }
+  }
+  let keywords = searchData.name || '';
+  if (searchData.location) {
+    keywords += `, ${searchData.location}`;
+  }
+
+  // Append keywords to query params
+  if (keywords.trim()) {
+    queryParams.append('keywords', keywords);
+  }
+    navigate(`/event-search?${queryParams.toString()}`);
+  };
   return (
     <Card
       sx={{
@@ -35,7 +70,6 @@ const SearchCard = () => {
 
         {/* Search Form */}
         <Box
-          component="form"
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -43,41 +77,54 @@ const SearchCard = () => {
             mt: 3,
             gap: 2,
           }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            // Handle form submission
-          }}
+          component ="form"
+          onSubmit={handleSubmit}
         >
           <TextField
             label="Location"
+            name="location"
             placeholder="Add destination"
             variant="outlined"
+            value={searchData.location || ''}
+            onChange={handleChange}
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
             label="Date"
+            name="date"
             placeholder="Add dates"
             variant="outlined"
             type="date"
+            value={searchData.date || ''}
+            onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
             label="Price"
+            name="price"
             placeholder="Price range"
             variant="outlined"
+            value={searchData.price || ''}
+            onChange={handleChange}
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
             label="Categories"
+            name="category"
             placeholder="Add categories"
             variant="outlined"
+            value={searchData.category || ''}
+            onChange={handleChange}
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
             label="Search event name"
+            name ="name"
             placeholder="Search event name"
             variant="outlined"
+            value={searchData.name || ''}
+            onChange={handleChange}
             sx={{ flex: 2, minWidth: 200 }}
           />
 
