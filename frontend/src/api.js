@@ -1,12 +1,44 @@
-const API_BASE = process.env.NODE_ENV === "development" ?
+// @ts-check
+
+const API_BASE = env() === "development" ?
     "https://ishar.tail35ead.ts.net:8443/api/" : "/api/"
 
 /**
  * @param {String} path
- * @param {URLSearchParams | undefined} query
+ * @param {URLSearchParams | Record<string, any>=} query
  * @returns {String}
  */
 export function getApiUrl(path, query) {
+    const url = getApiUrlInternal(path, query);
+
+    if (!url.searchParams.has("returnUrl")) {
+        url.searchParams.append("returnUrl", "/");
+    }
+
+    return url.toString();
+}
+
+/**
+ * @param {String} path
+ * @param {URLSearchParams | Record<string, any>=} query
+ * @returns {Promise<Response>}
+ */
+export async function fetchApi(path, query) {
+    const url = getApiUrlInternal(path, query);
+
+    const response = await fetch(url.toString(), {
+        credentials: env() === "development" ? "include" : "same-origin"
+    });
+
+    return response;
+}
+
+/**
+ * @param {String} path
+ * @param {URLSearchParams | Record<string, any>=} query
+ * @returns {URL}
+ */
+function getApiUrlInternal(path, query) {
     let base = new URL(API_BASE, window.location.href);
     let url = new URL(path, base);
 
@@ -18,9 +50,13 @@ export function getApiUrl(path, query) {
         url.searchParams.append(key, value);
     });
 
-    if (!url.searchParams.has("returnUrl")) {
-        url.searchParams.append("returnUrl", "/");
-    }
+    return url;
+}
 
-    return url.toString();
+/**
+ * @returns { "development" | "production" }
+ */
+function env() {
+    // @ts-ignore
+    return process.env.NODE_ENV;
 }

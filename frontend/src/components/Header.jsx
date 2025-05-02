@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
 // import { useAuth } from '../context/AuthContext';
 
@@ -26,19 +26,10 @@ const navConfig = {
 };
 
 const Header = () => {
-    // const { user, login, logout } = useAuth();
-    // const mode = user ? user.role : 'guest';
-    // read role from localStorage on first render
+    const { role, logout, switchRole } = useAuth();
 
-    const [mode, setMode] = useState('guest');
     const navigate = useNavigate();
-    useEffect(() => {
-        const r = localStorage.getItem('role');
-        if (r === 'attendee' || r === 'organizer') {
-            setMode(r);
-        }
-    }, []);
-    const links = navConfig[mode];
+    const links = navConfig[role];
 
     return (
         <AppBar position="fixed" sx={{ backgroundColor: '#0284c7' }}>
@@ -75,7 +66,7 @@ const Header = () => {
 
                 {/* Guest view → Sign In */}
                 {/* {user ? ( */}
-                {mode !== 'guest' ? (
+                {role !== 'guest' ? (
                     <>
                         {/* Role‐toggle button */}
                         <Button
@@ -83,27 +74,21 @@ const Header = () => {
                             color="inherit"
                             // onClick={() => user.role === 'attendee' ? login('organizer') : login('attendee') }
                             onClick={()  => {
-                                const next = mode === 'attendee' ? 'organizer' : 'attendee';
-                                localStorage.setItem('role', next);
-                                setMode(next);
-                                navigate(next === 'organizer'
-                                    ? '/organizer-homepage'
-                                    : '/');
+                                const next = role === "attendee" ? "organizer" : "attendee";
+                                switchRole(next);
+                                navigate(next === "organizer"
+                                    ? `/organizer-homepage?role=${next}`
+                                    : `/?role=${next}`);
                             }}
                             sx={{ mr: 2 }}
                         >
-                            Switch to {mode === 'attendee' ? 'Organizer' : 'Attendee'}
+                            Switch to {role === 'attendee' ? 'Organizer' : 'Attendee'}
                         </Button>
                         {/* Logout stub */}
-                        <Button 
-                            variant="outlined" 
-                            color="inherit" 
-                            // onClick={logout}
-                            onClick={() => {
-                                localStorage.removeItem('role');
-                                setMode('guest');
-                                navigate('/');        // back to public home
-                            }}
+                        <Button
+                            variant="outlined"
+                            color="inherit"
+                            onClick={logout}
                         >
                             Logout
                         </Button>
