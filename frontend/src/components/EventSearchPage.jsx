@@ -170,31 +170,34 @@ const EventSearchPage = () => {
   const location = useLocation();
   
   const [events, setEvents] = useState([]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialSearchValues = {
+    date: searchData.date,
+    price: searchData.price,
+    name: searchData.name,
+    location: searchData.location,
+  };
+
   useEffect(() => {
     const params = new URLSearchParams();
     const query = new URLSearchParams(window.location.search);
-    const date = query.get('date') || searchData.date;
-    const price = query.get('price') || searchData.price;
-    const keywords = query.get('keywords') || searchData.name || '';
-    const locationParam = query.get('location') || searchData.location;
+
+    const date = query.get('date') || initialSearchValues.date;
+    const price = query.get('price') || initialSearchValues.price;
+    const keywords = query.get('keywords') || initialSearchValues.name || '';
+    const locationParam = query.get('location') || initialSearchValues.location;
 
     if (keywords.trim()) params.append('keywords', keywords);
     if (locationParam) params.append('location', locationParam);
     if (date) params.append('date', date);
     if (price) params.append('price', price);
 
-      fetchApi("Event/FindEvents", params)
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed to fetch events');
-          return res.json();
-        })
-        .then((data) => {
-          setEvents(data);
-        })
-        .catch((err) => {
-          console.error("Error fetching data:", err);
-        });
+    fetchApi('Event/FindEvents', params)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch events');
+        return res.json();
+      })
+      .then(data => setEvents(data))
+      .catch(err => console.error('Error fetching events:', err));
   }, [location.search]); 
   return (
     <div>
