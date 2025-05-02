@@ -1,4 +1,4 @@
-import React, { use, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Header from './Header';
 import Search from './Search';
 import EventSection from './EventSection';
@@ -168,35 +168,34 @@ const event_filters = {
 const EventSearchPage = () => {
   const { searchData } = useContext(SearchContext);
   const location = useLocation();
-  const query = new URLSearchParams(window.location.search);
-
+  
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const params = new URLSearchParams();
+    const query = new URLSearchParams(window.location.search);
+    const date = query.get('date') || searchData.date;
+    const price = query.get('price') || searchData.price;
+    const keywords = query.get('keywords') || searchData.name || '';
+    const locationParam = query.get('location') || searchData.location;
 
-  const date = query.get('date') || searchData.startDate;
-  const price = query.get('price') || searchData.price;
-  const keywords = query.get('keywords') || searchData.name || '';
-  const locationParam = query.get('location') || searchData.location;
+    if (keywords.trim()) params.append('keywords', keywords);
+    if (locationParam) params.append('location', locationParam);
+    if (date) params.append('date', date);
+    if (price) params.append('price', price);
 
-  if (keywords.trim()) params.append('keywords', keywords);
-  if (locationParam) params.append('location', locationParam);
-  if (date) params.append('date', date);
-  if (price) params.append('price', price);
-
-    fetchApi("Event/FindEvents", params)
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch events');
-        return res.json();
-      })
-      .then((data) => {
-        setEvents(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-      });
-  }, [location.search, searchData]); 
+      fetchApi("Event/FindEvents", params)
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch events');
+          return res.json();
+        })
+        .then((data) => {
+          setEvents(data);
+        })
+        .catch((err) => {
+          console.error("Error fetching data:", err);
+        });
+  }, [location.search]); 
   return (
     <div>
         {/* Fixed header */}
@@ -213,7 +212,7 @@ const EventSearchPage = () => {
             <Box sx={{ flexGrow: 1, ml: '10%', p: 1 }}>
                 {/* Main Content */}
                 <SortByDropdown/>
-                <EventSection events={eventsData} button_flag={false} />
+                <EventSection events={events} button_flag={false} />
             </Box>
         </Box>
         <Footer />

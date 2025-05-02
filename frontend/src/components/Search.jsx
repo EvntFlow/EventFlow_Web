@@ -24,7 +24,7 @@ const SearchCard = () => {
     e.preventDefault();
     const queryParams = new URLSearchParams();
     if (searchData.date) {
-      queryParams.append('date', new Date(searchData.startDate).toISOString());
+      queryParams.append('date', new Date(searchData.date).toISOString());
     }
     if (searchData.price) {
       const parsedPrice = parseFloat(searchData.price);
