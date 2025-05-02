@@ -23,26 +23,23 @@ const SearchCard = () => {
   const handleSubmit = (e) =>{
     e.preventDefault();
     const queryParams = new URLSearchParams();
-
-  if (searchData.category) queryParams.append('category', searchData.category);
-  if (searchData.date) queryParams.append('minDate', new Date(searchData.date).toISOString());
-  if (searchData.date) queryParams.append('maxDate', new Date(searchData.date).toISOString());  
-  if (searchData.price) {
-    const parsedPrice = parseFloat(searchData.price);
-    if (!isNaN(parsedPrice)) {
-      queryParams.append('minPrice', '0');
-      queryParams.append('maxPrice', parsedPrice.toString());
+    if (searchData.date) {
+      queryParams.append('date', new Date(searchData.startDate).toISOString());
     }
-  }
-  let keywords = searchData.name || '';
-  if (searchData.location) {
-    keywords += `, ${searchData.location}`;
-  }
-
-  // Append keywords to query params
-  if (keywords.trim()) {
-    queryParams.append('keywords', keywords);
-  }
+    if (searchData.price) {
+      const parsedPrice = parseFloat(searchData.price);
+      if (!isNaN(parsedPrice)) {
+        queryParams.append('price', parsedPrice.toString());
+      }
+    }
+  
+    if (searchData.name?.trim()) {
+      queryParams.append('keywords', searchData.name.trim());
+    }
+  
+    if (searchData.location?.trim()) {
+      queryParams.append('location', searchData.location.trim());
+    }
     navigate(`/event-search?${queryParams.toString()}`);
   };
   return (

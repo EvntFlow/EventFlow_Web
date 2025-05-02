@@ -3,7 +3,7 @@ import Header from './Header';
 import Search from './Search';
 import EventSection from './EventSection';
 import Footer from './Footer';
-import { getApiUrl } from '../api';
+import { fetchApi } from '../api';
 import { Toolbar,Box } from '@mui/material';
 import SortByDropdown from './SortByBox';
 import FilterSidebar from './FilterSideBar';
@@ -175,25 +175,17 @@ const EventSearchPage = () => {
   useEffect(() => {
     const params = new URLSearchParams();
 
-    const category = query.get('category') || searchData.category;
-    const minDate = query.get('minDate') || searchData.minDate;
-    const maxDate = query.get('maxDate') || searchData.maxDate;
-    const minPrice = query.get('minPrice') || searchData.minPrice;
-    const maxPrice = query.get('maxPrice') || searchData.maxPrice;
-    const keywords = query.get('keywords') || searchData.keywords || '';
-    const [name, locationFromQuery] = keywords.split(', ');
+  const date = query.get('date') || searchData.startDate;
+  const price = query.get('price') || searchData.price;
+  const keywords = query.get('keywords') || searchData.name || '';
+  const locationParam = query.get('location') || searchData.location;
 
-    if (name) params.append('name', name);
-    if (locationFromQuery) params.append('location', locationFromQuery);
-    if (category) params.append('category', category);
-    if (minDate) params.append('minDate', minDate);
-    if (maxDate) params.append('maxDate', maxDate);
-    if (minPrice) params.append('minPrice', minPrice);
-    if (maxPrice) params.append('maxPrice', maxPrice);
+  if (keywords.trim()) params.append('keywords', keywords);
+  if (locationParam) params.append('location', locationParam);
+  if (date) params.append('date', date);
+  if (price) params.append('price', price);
 
-    const apiUrl = getApiUrl("Event/FindEvents", params);
-
-    fetch(apiUrl)
+    fetchApi("Event/FindEvents", params)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch events');
         return res.json();
