@@ -11,7 +11,7 @@ import { SearchContext } from './SearchContext';
 import { useLocation } from 'react-router-dom';
 
 // Top events array with event details
-const eventsData = [
+/*const eventsData = [
   {
     id: 1,
     image: '../../img/TopEvent.png',
@@ -156,7 +156,7 @@ const eventsData = [
     price: '$10',
     interested: 8,
   },
-];
+];*/
 
 const event_filters = {
     Price: ['Free', 'Paid'],
@@ -195,7 +195,7 @@ const EventSearchPage = () => {
         .catch((err) => {
           console.error("Error fetching data:", err);
         });
-  }, [location.search]); 
+  }, [location.search,date,price,name,location]); 
   return (
     <div>
         {/* Fixed header */}
