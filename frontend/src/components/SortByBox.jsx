@@ -1,31 +1,38 @@
+// @ts-check
+
 import React, { useState } from 'react';
-import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Select, MenuItem, Typography } from '@mui/material';
 
-const SortByDropdown = () => {
-  const [sortOption, setSortOption] = useState('relevance'); // Default value
+/** @typedef {"relevance" | "date" | "price"} SortOption */
 
-  const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-    // Handle sorting logic based on selected option here
-    console.log('Selected Sort Option:', event.target.value);
-  };
+/**
+ * @typedef SortByDropdownProps
+ * @property {(s: SortOption) => void} onChange
+ */
+
+/**
+ *
+ * @param {SortByDropdownProps} props
+ * @returns
+ */
+export default function SortByDropdown(props) {
+  const [sortOption, setSortOption] = useState(/** @type {SortOption} */('relevance'));
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mb: 3 }}>
-      <FormControl variant="standard" sx={{width: 200}}>
-        <InputLabel>Sort By</InputLabel>
-        <Select
-          variant="standard"
-          value={sortOption}
-          label="Sort By"
-          onChange={handleSortChange}>
+      <Typography sx={{ m: 1 }}>Sort by: </Typography>
+      <Select
+        variant="outlined"
+        value={sortOption}
+        onChange={(e) => {
+          setSortOption(/** @type {SortOption} */(e.target.value));
+          props.onChange?.apply(props, [e.target.value])
+        }}
+        sx={{ m: 1, minWidth: "10rem" }}>
           <MenuItem value="relevance">Relevance</MenuItem>
           <MenuItem value="date">Date</MenuItem>
           <MenuItem value="price">Price</MenuItem>
-        </Select>
-      </FormControl>
+      </Select>
     </Box>
   );
 };
-
-export default SortByDropdown;

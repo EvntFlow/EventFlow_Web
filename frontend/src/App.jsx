@@ -23,6 +23,7 @@ import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
 import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+import EventSearchPage from './components/EventSearchPage';
 
 
 const App= () => {
@@ -46,6 +47,7 @@ const App= () => {
           <Route path="/account/resetpasswordconfirmation"
                  element={<ResetPasswordConfirmation />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/event/search" element={<EventSearchPage />} />
           <Route path="/event-details-page" element={<EventDetailsPage />} />
           <Route path="/event-details" element={<EventDetail />} />
 
@@ -71,7 +73,6 @@ const App= () => {
             </EventContextProvider>
           } />
 
-          {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
           <Route path="/organizer" element={<OrganizerHomepage />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}

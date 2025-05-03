@@ -1,12 +1,12 @@
 import React from 'react';
-import Search from '../../components/Search';
 import Categories from '../../components/Categories';
-import Feature from '../../components/Feature';
+import Featured from '../../components/Featured';
 import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
 import Footer from '../../components/Footer';
 import SubscribeSection from '../../components/SucribeCard';
 import { Box } from '@mui/material';
+import SearchCard from '../../components/Search';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
 // Top events array with event details
@@ -78,30 +78,21 @@ const testimonialsData = [
 const Homepage = () => {
   return (
     <div>
-        <Box sx={{ position: 'relative', height: '380px',  }}>
+      <Box sx={{ position: "relative", mb: "15vh" }}>
         {/* Background Image Layer */}
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            backgroundImage: 'url(/img/header.jpeg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        </Box>
-        <Search />
-        <Categories />
-        <Feature />
-        <Box sx={{ ml: 10 }}>
-          <EventSection headTitle="TOP EVENTS $10 AND UNDER" events={eventsData} />
-          <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
-          <EventSection headTitle="THIS WEEKEND" events={eventsData} />
-        </Box>
-        <SubscribeSection/>
-        <TestimonialSection testimonials={testimonialsData} />
-        <Footer />
+        <img alt="" src="/img/header.jpeg" width="100%" />
+        <SearchCard title="Welcome Back!" />
+      </Box>
+      <Categories />
+      <Featured />
+      <Box sx={{ ml: 10 }}>
+        <EventSection headTitle="TOP EVENTS $10 AND UNDER" events={eventsData} />
+        <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
+        <EventSection headTitle="THIS WEEKEND" events={eventsData} />
+      </Box>
+      <SubscribeSection />
+      <TestimonialSection testimonials={testimonialsData} />
+      <Footer />
     </div>
   );
 }

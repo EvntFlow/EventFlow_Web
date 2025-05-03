@@ -1,0 +1,68 @@
+// @ts-check
+
+import { fetchApi } from "./api";
+
+/** @typedef {import("./models/Category").default} Category */
+/** @typedef {import("./models/Event").default} Event */
+
+/**
+ * @returns {Promise<Category[]>}
+ */
+export async function getCategories() {
+    const response = await fetchApi("Event/Category");
+    if (!response.ok) {
+        return [];
+    } else {
+        return await response.json();
+    }
+}
+
+/**
+ * @typedef FindEventParams
+ * @property {string[]=} category
+ * @property {string=} minDate
+ * @property {string=} maxDate
+ * @property {string=} minPrice
+ * @property {string=} maxPrice
+ * @property {string[]=} location
+ * @property {string=} keywords
+ */
+
+/**
+ * @param {FindEventParams} params
+ * @returns {Promise<Event[]>}
+ */
+export async function findEvents(params) {
+    const searchParams = new URLSearchParams();
+    if (params.category) {
+        for (let c of params.category) {
+            searchParams.append("category", c);
+        }
+    }
+    if (params.minDate) {
+        searchParams.append("minDate", params.minDate);
+    }
+    if (params.maxDate) {
+        searchParams.append("maxDate", params.maxDate);
+    }
+    if (params.minPrice) {
+        searchParams.append("minPrice", params.minPrice);
+    }
+    if (params.maxPrice) {
+        searchParams.append("maxPrice", params.maxPrice);
+    }
+    if (params.location) {
+        for (let c of params.location) {
+            searchParams.append("location", c);
+        }
+    }
+    if (params.keywords) {
+        searchParams.append("keywords", params.keywords);
+    }
+    let response = await fetchApi("Event/FindEvents", searchParams);
+    if (!response.ok) {
+        return [];
+    } else {
+        return await response.json();
+    }
+}

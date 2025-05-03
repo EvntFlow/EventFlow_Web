@@ -9,7 +9,7 @@ import {
   CardContent
 } from '@mui/material';
 
-const Feature = () => {
+const Featured = () => {
   return (
     <Box
       sx={{
@@ -45,12 +45,12 @@ const Feature = () => {
           variant="h1"
           fontWeight="bold"
           align='center'
-          sx={{ 
+          sx={{
             mb: 2,
             borderBottom: '2px solid'
            }}
         >
-          FEATURE EVENTS
+          FEATURED EVENTS
         </Typography>
 
         {/* Subtitle / Description */}
@@ -58,7 +58,7 @@ const Feature = () => {
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',            
+            alignItems: 'center',
             width: '100%',
             padding: 4,
             gap: 10
@@ -70,23 +70,23 @@ const Feature = () => {
           }}
         >
         <Typography
-          sx={{ 
-            maxWidth: 500, 
+          sx={{
+            maxWidth: 500,
             mb: 4,
             display: 'flex',
             justifyContent: 'flex-start',
             alignItems: 'center',
           }}
         >
-          Lorem ipsum is simply dummy text of the printing and typesetting industry. 
+          Lorem ipsum is simply dummy text of the printing and typesetting industry.
           Lorem ipsum has been the industry's standard dummy text ever since the 1500s.
         </Typography>
-        
+
         {/* "See all" button */}
         <Button
           variant="contained"
           color="secondary"
-          sx={{ 
+          sx={{
             backgroundColor: '#fff',
             color: 'primary.main',
             fontWeight: 'bold',
@@ -97,7 +97,7 @@ const Feature = () => {
         >
           See all
         </Button>
-        </Box>  
+        </Box>
         {/* Cards Container */}
         <Box
           sx={{
@@ -178,4 +178,4 @@ const Feature = () => {
   );
 };
 
-export default Feature;
+export default Featured;

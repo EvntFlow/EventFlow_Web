@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 
 const EventSection = ({ headTitle = "", events, button_flag = true, gridItemsPerRow = 3 }) => {
   return (
-    <Box sx={{ py: 6 }}>
-      <div>
+    <Box>
         {/* Section Title */}
         <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
           {headTitle}
@@ -57,7 +56,6 @@ const EventSection = ({ headTitle = "", events, button_flag = true, gridItemsPer
             </Button>
           </Box>
         )}
-      </div>
     </Box>
   );
 };

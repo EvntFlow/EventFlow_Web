@@ -1,83 +1,74 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import Header from './Header';
-import Search from './Search';
+// @ts-check
+
+import React, { useEffect, useState } from 'react';
 import EventSection from './EventSection';
-import Footer from './Footer';
-import { fetchApi } from '../api';
-import { Toolbar,Box } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import SortByDropdown from './SortByBox';
 import FilterSidebar from './FilterSideBar';
-import { SearchContext } from './SearchContext';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { findEvents } from '../backend';
+import SearchCard from './Search';
 
-const event_filters = {
-    Price: ['Free', 'Paid'],
-    Date: ['Today', 'This Week', 'This Month', 'Pick a Date'],
-    Category: ['Adventure', 'Art Performance', 'Auction', 'Festival', 'Music Show', 'Sports', 'Theater', 'Food & Drink', 'Workshop', 'Networking'],
-    Location: ['Wollongong', 'Sydney CBD', 'Dapto', 'Canberra', 'Pick a Location',],
-  };
+/** @typedef {import("../models/Event").default} Event */
+/** @typedef {import("../backend").FindEventParams} FindEventParams */
+/** @typedef {import("../components/SortByBox").SortOption} SortOption */
 
 const EventSearchPage = () => {
-  const { searchData } = useContext(SearchContext);
-  const location = useLocation();
-  
-  const [events, setEvents] = useState([]);
-  const frozenSearchData = useRef({
-    minDate: searchData.minDate,
-    maxDate: searchData.maxDate,
-    minPrice: searchData.minPrice,
-    maxPrice: searchData.maxPrice,
-    name: searchData.name,
-    location: searchData.location,
-  });
+  const [searchParams] = useSearchParams();
+  const [events, setEvents] = useState(/** @type {Event[]} */([]));
+  const [filteredEvents, setFilteredEvents] = useState(/** @type {Event[]} */([]));
+  const [sortBy, setSortBy] = useState(/** @type {SortOption} */("relevance"));
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    const query = new URLSearchParams(window.location.search);
+    (async function() {
+      /** @type {FindEventParams} */
+      let params = {}
 
-    const minDate = query.get('minDate') || frozenSearchData.current.minDate;
-    const maxDate = query.get('maxDate') || frozenSearchData.current.maxDate;
-    const minPrice = query.get('minPrice') || frozenSearchData.current.minPrice;
-    const maxPrice = query.get('maxPrice') || frozenSearchData.current.maxPrice;
-    const keywords = query.get('keywords') || frozenSearchData.current.name || '';
-    const locationParam = query.get('location') || frozenSearchData.current.location;
+      params.category = searchParams.getAll("category");
+      params.minDate = searchParams.get("minDate") ?? undefined;
+      params.maxDate = searchParams.get("maxDate") ?? undefined;
+      params.minPrice = searchParams.get("minPrice") ?? undefined;
+      params.maxPrice = searchParams.get("maxPrice") ?? undefined;
+      params.location = searchParams.getAll("location");
+      params.keywords = searchParams.get("keywords") ?? undefined;
 
-    if (keywords.trim()) params.append('keywords', keywords);
-    if (locationParam) params.append('location', locationParam);
-    if (minDate) params.append('minDate', minDate);
-    if (maxDate) params.append('maxDate', maxDate);
-    if (minPrice) params.append('minPrice', minPrice);
-    if (maxPrice) params.append('maxPrice', maxPrice);
+      setEvents(await findEvents(params));
+    })();
+  }, [searchParams]);
 
-    fetchApi('Event/FindEvents', params)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch events');
-        return res.json();
-      })
-      .then(data => setEvents(data))
-      .catch(err => console.error('Error fetching events:', err));
-  }, [location.search]); 
   return (
     <div>
-        {/* Fixed header */}
-        <Header />
-        {/* <Toolbar /> */}
-        <Toolbar />
-        <div style={{ marginBottom: '40px' }}>
-            <Search />  
-        </div>
-        <Box sx={{ display: 'flex' }}>
-            <FilterSidebar filters={event_filters} />
-            
-            {/* Main content area */}
-            <Box sx={{ flexGrow: 1, ml: '10%', p: 1 }}>
-                {/* Main Content */}
-                <SortByDropdown/>
-                <EventSection events={events} button_flag={false} />
-            </Box>
-        </Box>
-        <Footer />
-        
+      <Box sx={{ position: "relative", height: "15vh", mb: "15vh" }}>
+        <SearchCard title="Let's get started!" syncSearchParams={true} />
+      </Box>
+      <Box sx={{ height: "1rem" }} />
+      <Grid size={12} container={true}>
+        <Grid size={2}>
+          <FilterSidebar data={events} onFilter={setFilteredEvents} />
+        </Grid>
+        <Grid size={10}>
+          {/* Main content area */}
+          <Box sx={{ flexGrow: 1, ml: '10%', p: 1 }}>
+            {/* Main Content */}
+            <SortByDropdown onChange={setSortBy} />
+            <EventSection
+              events={filteredEvents.sort((e1, e2) => {
+                switch (sortBy) {
+                  case "date":
+                    const startDiff
+                      = new Date(e1.startDate).getTime() - new Date(e2.startDate).getTime();
+                    return startDiff !== 0 ? startDiff :
+                      new Date(e1.endDate).getTime() - new Date(e2.endDate).getTime();
+                  case "price":
+                    return e1.price - e2.price;
+                  default:
+                    return e1.id.localeCompare(e2.id);
+                }
+              })}
+              button_flag={false} />
+          </Box>
+        </Grid>
+      </Grid>
     </div>
   );
 }
