@@ -23,16 +23,26 @@ const SearchCard = () => {
   const handleSubmit = (e) =>{
     e.preventDefault();
     const queryParams = new URLSearchParams();
-    if (searchData.date) {
-      queryParams.append('date', new Date(searchData.date).toISOString());
+    if (searchData.minDate) {
+      queryParams.append('minDate', new Date(searchData.minDate).toISOString());
     }
-    if (searchData.price) {
-      const parsedPrice = parseFloat(searchData.price);
+    if (searchData.maxDate) {
+      const maxDate = new Date(searchData.maxDate);
+      maxDate.setHours(23, 59, 59, 999);
+      queryParams.append('maxDate', maxDate.toISOString());
+    }
+    if (searchData.minPrice) {
+      const parsedPrice = parseFloat(searchData.minPrice);
       if (!isNaN(parsedPrice)) {
-        queryParams.append('price', parsedPrice.toString());
+        queryParams.append('minPrice', parsedPrice.toString());
       }
     }
-  
+    if (searchData.maxPrice) {
+      const parsedPrice = parseFloat(searchData.maxPrice);
+      if (!isNaN(parsedPrice)) {
+        queryParams.append('maxPrice', parsedPrice.toString());
+      }
+    }
     if (searchData.name?.trim()) {
       queryParams.append('keywords', searchData.name.trim());
     }
@@ -85,31 +95,42 @@ const SearchCard = () => {
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
-            label="Date"
-            name="date"
-            placeholder="Add dates"
+            label="Start Date"
+            name="minDate"
+            placeholder="start dates"
             variant="outlined"
             type="date"
-            value={searchData.date || ''}
+            value={searchData.minDate || ''}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
-            label="Price"
-            name="price"
-            placeholder="Price range"
+            label="End Date"
+            name="maxDate"
+            placeholder="end dates"
             variant="outlined"
-            value={searchData.price || ''}
+            type="date"
+            value={searchData.maxDate || ''}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+            sx={{ flex: 1, minWidth: 150 }}
+          />
+          <TextField
+            label="Min Price"
+            name="minPrice"
+            placeholder="min price"
+            variant="outlined"
+            value={searchData.minPrice || ''}
             onChange={handleChange}
             sx={{ flex: 1, minWidth: 150 }}
           />
           <TextField
-            label="Categories"
-            name="category"
-            placeholder="Add categories"
+            label="Max Price"
+            name="maxPrice"
+            placeholder="Price range"
             variant="outlined"
-            value={searchData.category || ''}
+            value={searchData.maxPrice || ''}
             onChange={handleChange}
             sx={{ flex: 1, minWidth: 150 }}
           />
