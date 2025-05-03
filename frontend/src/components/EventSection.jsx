@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Button, Grid} from '@mui/material';
 import EventCard from './EventCard';
+import { Link } from 'react-router-dom';
 
 const EventSection = ({ headTitle = "", events, button_flag = true, gridItemsPerRow = 3 }) => {
   return (
@@ -29,7 +30,14 @@ const EventSection = ({ headTitle = "", events, button_flag = true, gridItemsPer
                 image={event.image}
                 dateMonth={event.dateMonth}
                 dateDay={event.dateDay}
-                title={event.title}
+                title={
+                  <Link
+                    to={`/event-details-page?id=${event.id}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    {event.name}
+                  </Link>
+                }
                 address={event.address}
                 timeStart={event.timeStart}
                 timeEnd={event.timeEnd}
