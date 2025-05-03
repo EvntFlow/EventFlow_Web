@@ -53,16 +53,16 @@ const App= () => {
             <Route path="/event-details" element={<EventDetail />} />
             {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
-            <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
-            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-            {/* <Route path="/event-list" element={<EventList />} /> */}
-            {/* <Route path="/event-detail" element={<EventDetail />} /> */}
-            {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
-            {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
-            </Routes>
-        </div>
-        </AuthProvider>
-    );
+          <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          {/* <Route path="/event-list" element={<EventList />} /> */}
+          {/* <Route path="/event-detail" element={<EventDetail />} /> */}
+          {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
+          {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
+        </Routes>
+      </div>
+    </AuthProvider>
+  );
 }
 
 export default App;
