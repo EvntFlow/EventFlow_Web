@@ -1,12 +1,38 @@
 // @ts-check
 
 import { Box, Button, Typography, useTheme } from "@mui/material";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function RoleSwitch() {
     const { role, switchRole } = useAuth();
     const theme = useTheme();
+    const [ foreground, setForeground ] = useState("");
+    const [ background, setBackground ] = useState("");
+
+    const ifRole = useCallback(
+        /**
+         * @template {any} T
+         * @param {T} attendeeValue
+         * @param {T} organizerValue
+         * @returns {T}
+         */
+        function (attendeeValue, organizerValue) {
+            switch (role) {
+                case "attendee":
+                    return attendeeValue;
+                case "organizer":
+                    return organizerValue;
+                default:
+                    return /** @type {T} */(null);
+            }
+    }, [ role ]);
+
+
+    useEffect(() => {
+        setForeground(ifRole(theme.palette.background.default, theme.palette.text.primary));
+        setBackground(ifRole(theme.palette.text.primary, theme.palette.background.default));
+    }, [ role, theme, ifRole ])
 
     switch (role) {
         case "attendee":
@@ -16,21 +42,11 @@ export default function RoleSwitch() {
             return null;
     }
 
-    /**
-     * @template {any} T
-     * @param {T} attendeeValue
-     * @param {T} organizerValue
-     * @returns {T}
-     */
-    function ifRole(attendeeValue, organizerValue) {
-        return role === "organizer" ? organizerValue : attendeeValue;
-    }
-
     function CircleIcon() {
         return (
             <Box
                 sx={{
-                    bgcolor: theme.palette.background.default,
+                    bgcolor: foreground,
                     minHeight: 24,
                     minWidth: 24,
                     borderRadius: 10
@@ -47,8 +63,8 @@ export default function RoleSwitch() {
                 }
                 sx={{
                     borderRadius: 10,
-                    bgcolor: theme.palette.text.primary,
-                    color: theme.palette.background.default,
+                    bgcolor: background,
+                    color: foreground,
                     textTransform: "initial",
                     minWidth: 128,
                     paddingLeft: ifRole(0, undefined),
@@ -63,7 +79,7 @@ export default function RoleSwitch() {
                     <Typography
                         sx={{
                             width: "100%",
-                            color: theme.palette.background.default,
+                            color: foreground,
                             fontWeight: theme.typography.fontWeightBold,
                             margin: 0
                         }}>
