@@ -49,7 +49,7 @@ const App= () => {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/event-details-page" element={<EventDetailsPage />} />
           <Route path="/event-details" element={<EventDetail />} />
-          {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
+          <Route path="/event-search" element={<EventSearchResult />} />
 
           <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
