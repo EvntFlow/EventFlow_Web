@@ -12,8 +12,6 @@ import ResetPasswordConfirmation from './views/Account/ResetPasswordConfirmation
 import AccountPage from './views/Attendee/AccountPage';
 import EventDetailsPage from './views/Attendee/EventDetailsPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
-import EventSearchPage from './components/EventSearchPage';
-import { SearchContextProvider } from './components/SearchContext';
 
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 
