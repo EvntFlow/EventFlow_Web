@@ -48,8 +48,6 @@ const SearchCard = () => {
         borderRadius: 4,
         boxShadow: 4,
         overflow: 'visible', // Ensures the circular button doesn't get clipped
-        position: 'relative',
-        top: 302
       }}
     >
       <CardContent

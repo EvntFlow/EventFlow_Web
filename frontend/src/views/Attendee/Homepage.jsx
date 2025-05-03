@@ -78,7 +78,7 @@ const testimonialsData = [
 const Homepage = () => {
   return (
     <div>
-        <Box sx={{ position: 'relative', height: '500px',  }}>
+        <Box sx={{ position: 'relative', height: '380px',  }}>
         {/* Background Image Layer */}
         <Box
           sx={{
@@ -90,8 +90,8 @@ const Homepage = () => {
             backgroundPosition: 'center',
           }}
         />
-        <Search />
         </Box>
+        <Search />
         <Categories />
         <Feature />
         <Box sx={{ ml: 10 }}>
