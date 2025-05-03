@@ -19,6 +19,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import KeyIcon from '@mui/icons-material/Key';
 import SocialLoginCard from '../../components/SocialLoginCard';
 import { getApiUrl } from '../../api';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -26,6 +27,11 @@ const Login = () => {
     const error = urlParams.get("error");
 
     const [isPersistent, setIsPersistent] = React.useState(false);
+
+    const { user } = useAuth();
+    if (user?.id) {
+        window.location.href = returnUrl;
+    }
 
     /**
      * @param {string} url

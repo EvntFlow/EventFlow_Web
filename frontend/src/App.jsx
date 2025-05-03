@@ -1,41 +1,28 @@
+// @ts-check
+
+import { Toolbar } from '@mui/material';
 import React from 'react';
-import Homepage from './views/Attendee/Homepage';
-import Login from './views/Account/Login';
-import Register from './views/Account/Register';
-import ExternalLogin from './views/Account/ExternalLogin';
+import { Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import { AuthProvider } from './context/AuthContext';
+import AccountPage from './views/Account/AccountPage';
 import ConfirmEmail from './views/Account/ConfirmEmail';
+import ExternalLogin from './views/Account/ExternalLogin';
 import ForgotPassword from './views/Account/ForgotPassword';
 import ForgotPasswordConfirmation from './views/Account/ForgotPasswordConfirmation';
+import Login from './views/Account/Login';
+import Register from './views/Account/Register';
 import ResetPassword from './views/Account/ResetPassword';
 import ResetPasswordConfirmation from './views/Account/ResetPasswordConfirmation';
-import AccountPage from './views/Attendee/AccountPage';
 import EventDetailsPage from './views/Attendee/EventDetailsPage';
-import EventDetail from './views/Organizer/EventDetail/EventDetail';
-import EditDetailsPage from './views/Organizer/CreateEvent/EditDetailsPage';
+import Homepage from './views/Attendee/Homepage';
 import BannerPage from './views/Organizer/CreateEvent/BannerPage';
-import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
-import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
-import Header from './components/Header';
+import EditDetailsPage from './views/Organizer/CreateEvent/EditDetailsPage';
 import { EventContextProvider } from './views/Organizer/CreateEvent/EventContext';
-
-// import EventSearchPage from './EventSearchPage';
-
+import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
+import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
+import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-
-// import Dashboard from './views/Organizer/Dashboard/Dashboard';
-// import EventDetailsPage from './views/EventExploration/EventDetailsPage';
-// import LoginRegistrationHome from './views/Login_Registration/LoginRegistrationHome';
-// import EventSearchResult from './views/EventExploration/EventSearchResult';
-// import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-// import Dashboard from './views/Organizer/Dashboard/Dashboard';
-// import AttendanceDetailCard from './views/Organizer/AttendanceList/AttendanceDetailCard';
-// import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
-// import EventList from './views/Organizer/Dashboard/EventList';
-
-import { AuthProvider } from './context/AuthContext';
-// ;
-import { Toolbar } from '@mui/material';
-import { Routes, Route } from 'react-router-dom';
 
 
 const App= () => {
@@ -86,7 +73,7 @@ const App= () => {
 
           {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
-          <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
+          <Route path="/organizer" element={<OrganizerHomepage />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           {/* <Route path="/event-list" element={<EventList />} /> */}
           {/* <Route path="/event-detail" element={<EventDetail />} /> */}

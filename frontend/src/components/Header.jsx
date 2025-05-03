@@ -1,35 +1,38 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+// @ts-check
+
+import React from 'react';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Popover } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-// import NotificationsIcon from '@mui/icons-material/Notifications';
-// import { useAuth } from '../context/AuthContext';
+import RoleSwitch from './RoleSwitch';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 // Define your nav items per role
 const navConfig = {
     guest: [
-    { label: 'Events', to: '/events' },
-    { label: 'Contact', to: '/contact' },
-    { label: 'Find your ticket', to: '/ticket' },
-    { label: 'Account', to: '/account' },
+        { label: 'Events', to: '/events' },
+        { label: 'Contact', to: '/contact' },
+        { label: 'Register', to: '/Account/Register' },
     ],
     attendee: [
-    { label: 'Events', to: '/events' },
-    { label: 'Contact us', to: '/contact' },
-    { label: 'Find your ticket', to: '/ticket' },
+        { label: 'Events', to: '/events' },
+        { label: 'Contact us', to: '/contact' },
+        { label: 'Find your ticket', to: '/ticket' },
+        { label: 'Account', to: '/Account' },
     ],
     organizer: [
-    { label: 'Create Events', to: '/create-event' },
-    { label: 'Contact us', to: '/contact' },
-    { label: 'Dashboard', to: '/dashboard' },
+        { label: 'Create Events', to: '/create-event' },
+        { label: 'Contact us', to: '/contact' },
+        { label: 'Dashboard', to: '/dashboard' },
+        { label: 'Account', to: '/account' },
     ],
 };
 
 const Header = () => {
-    const { role, logout, switchRole } = useAuth();
-
-    const navigate = useNavigate();
+    const { role, logout } = useAuth();
     const links = navConfig[role];
+
+    const [anchorEl, setAnchorEl] = React.useState(/** @type {HTMLElement | null} */(null));
 
     return (
         <AppBar position="fixed" sx={{ backgroundColor: '#0284c7' }}>
@@ -46,49 +49,44 @@ const Header = () => {
                     textDecoration: 'none',
                 }}
                 >
-                EVENTFLOW
+                    EventFlow
                 </Typography>
 
                 {/* Nav Links */}
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 {links.map(({ label, to, variant }) => (
                     <Button
-                    key={label}
-                    component={Link}
-                    to={to}
-                    color="inherit"
-                    variant={variant || 'text'}
-                    sx={{ mr: 2 }}
+                        key={label}
+                        component={Link}
+                        to={to}
+                        color="inherit"
+                        variant={variant || 'text'}
+                        sx={{ mr: 2 }}
                     >
                     {label}
                     </Button>
                 ))}
 
-                {/* Guest view → Sign In */}
                 {/* {user ? ( */}
                 {role !== 'guest' ? (
                     <>
-                        {/* Role‐toggle button */}
-                        <Button
-                            variant="outlined"
+                        {/* Notification Icon */}
+                        <IconButton
                             color="inherit"
-                            // onClick={() => user.role === 'attendee' ? login('organizer') : login('attendee') }
-                            onClick={()  => {
-                                const next = role === "attendee" ? "organizer" : "attendee";
-                                switchRole(next);
-                                navigate(next === "organizer"
-                                    ? `/organizer-homepage?role=${next}`
-                                    : `/?role=${next}`);
-                            }}
-                            sx={{ mr: 2 }}
-                        >
-                            Switch to {role === 'attendee' ? 'Organizer' : 'Attendee'}
-                        </Button>
+                            sx={{mr: 2}}
+                            onClick={(e) => setAnchorEl(e.currentTarget)}>
+                                <NotificationsIcon />
+                        </IconButton>
+
+                        {/* Role‐toggle button */}
+                        <RoleSwitch />
+
                         {/* Logout stub */}
                         <Button
                             variant="outlined"
                             color="inherit"
                             onClick={logout}
+                            sx={{ml: 2}}
                         >
                             Logout
                         </Button>
@@ -106,6 +104,17 @@ const Header = () => {
                 )}
                 </Box>
             </Toolbar>
+
+            <Popover
+                open={anchorEl !== null}
+                anchorEl={anchorEl}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}>
+                <Typography sx={{ p: 2 }}>Notifications</Typography>
+            </Popover>
         </AppBar>
   );
 };

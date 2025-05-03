@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 // @ts-check
 import React, { createContext, useState, useEffect, useContext, useRef, useCallback } from 'react';
-import { fetchApi, getApiUrl } from '../api';
+import { fetchApi, getApiUrl, postApi } from '../api';
 import { useSearchParams } from 'react-router-dom';
 
 /** @interface */
@@ -10,6 +10,26 @@ export class Account {
     id;
     /** @type {string} */
     email;
+    /** @type {string=} */
+    firstName;
+    /** @type {string=} */
+    lastName;
+    /** @type {string=} */
+    website;
+    /** @type {string=} */
+    company;
+    /** @type {string=} */
+    phoneNumber;
+    /** @type {string=} */
+    address1;
+    /** @type {string=} */
+    address2;
+    /** @type {string=} */
+    city;
+    /** @type {string=} */
+    country;
+    /** @type {string=} */
+    postcode;
 }
 
 /**
@@ -37,7 +57,8 @@ export function AuthProvider({ children }) {
 
     const [ searchParams, setSearchParams ] = useSearchParams();
 
-    const createProfileForm = useRef(/** @type {HTMLFormElement} */ ({}));
+    const toAttendeeForm = useRef(/** @type {HTMLFormElement} */ ({}));
+    const toOrganizerForm = useRef(/** @type {HTMLFormElement} */ ({}));
     const logoutForm = useRef(/** @type {HTMLFormElement} */ ({}));
 
     const logout = useCallback(async () => {
@@ -47,6 +68,8 @@ export function AuthProvider({ children }) {
     const switchRole = useCallback(
         /** @param {AccountRole} desiredRole */
         async (desiredRole) => {
+            let initialRole = role;
+
             if (desiredRole === role) {
                 return;
             }
@@ -54,11 +77,29 @@ export function AuthProvider({ children }) {
                 await logout();
             }
 
+            let response = await fetchApi(`Account/${desiredRole}`);
+            let hasDesiredRole = response.ok;
+
+            // If they don't, create that profile using the API.
+            if (!hasDesiredRole) {
+                await postApi(`Account/${desiredRole}`);
+                let response = await fetchApi(`Account/${desiredRole}`);
+                if (!response.ok) {
+                    return;
+                }
+            }
+
             setRole(desiredRole);
-            searchParams.set("role", desiredRole);
-            setSearchParams(searchParams);
+
+            if (initialRole !== "guest") {
+                if (desiredRole === "attendee") {
+                    toAttendeeForm.current.submit();
+                } else if (desiredRole === "organizer") {
+                    toOrganizerForm.current.submit();
+                }
+            }
         },
-        [role, logout, searchParams, setSearchParams]);
+        [role, logout]);
 
     // on mount, try to fetch current user from server
     useEffect(() => {
@@ -103,18 +144,11 @@ export function AuthProvider({ children }) {
 
             // Check if the user has the desired role
             /** @type {boolean} */
-            let hasDesiredRole = false;
-            if (desiredRole !== "guest") {
-                let response = await fetchApi(`Account/${desiredRole}`);
-                if (response.ok) {
-                    hasDesiredRole = true;
-                }
-            } else {
+            if (desiredRole === "guest") {
                 for (let testRole of /** @type {AccountRole[]} */(["attendee", "organizer"])) {
                     let response = await fetchApi(`Account/${testRole}`);
                     if (response.ok) {
                         desiredRole = testRole;
-                        hasDesiredRole = true;
                         break;
                     }
                 }
@@ -123,17 +157,7 @@ export function AuthProvider({ children }) {
                 }
             }
 
-            if (desiredRole !== role) {
-                switchRole(desiredRole);
-            }
-
-            // If they don't, create that profile using the API.
-            if (!hasDesiredRole) {
-                if (role === desiredRole) {
-                    // Submit the virtual form to trigger a POST.
-                    createProfileForm.current.submit();
-                }
-            }
+            switchRole(desiredRole);
         })();
     }, [user, role, searchParams, setSearchParams, switchRole]);
 
@@ -143,23 +167,27 @@ export function AuthProvider({ children }) {
         }}>
             <div style={{ display: "none" }}>
                 <form
-                    ref={createProfileForm}
-                    method="post"
-                    action={getApiUrl(`Account/${role}`, {
-                        returnUrl: (() => {
-                            const url = new URL(window.location.href);
-                            url.searchParams.append("role", role);
-                            return url.toString();
-                        })()
-                    })}
-                    hidden={true}
-                    style={{ display: "none" }} />
-                <form
                     ref={logoutForm}
                     method="post"
                     action={getApiUrl("Account/Logout")}
                     hidden={true}
                     style={{ display: "none" }} />
+                <form
+                    ref={toAttendeeForm}
+                    method="get"
+                    action="/"
+                    hidden={true}
+                    style={{ display: "none" }}>
+                        <input name="role" value="attendee" readOnly={true} />
+                </form>
+                <form
+                    ref={toOrganizerForm}
+                    method="get"
+                    action="/organizer"
+                    hidden={true}
+                    style={{ display: "none" }}>
+                        <input name="role" value="organizer" readOnly={true} />
+                </form>
             </div>
 
             {children}
