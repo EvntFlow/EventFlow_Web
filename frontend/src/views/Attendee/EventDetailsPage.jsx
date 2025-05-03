@@ -4,6 +4,7 @@ import { CalendarMonth, AccessTime, AddCircleOutline, LocationOn, ConfirmationNu
 import TicketOverlay from '../../components/TicketOverlay';
 import PaymentPage from '../../components/PaymentPage';
 import EventSection from '../../components/EventSection';
+import { fetchApi } from '../../api';
 
 const urlSearchParams = () => new URLSearchParams(window.location.search);
 
@@ -16,15 +17,18 @@ const eventsData = [
 const EventDetailsPage = () => {
   const query = urlSearchParams();
   const uuid = query.get("id");
-  const [eventData, setEventData] = useState(null);
+  //console.log(uuid);
+  const [eventData, setEventData] = useState(true);
   const [isTicketOverlayOpen, setIsTicketOverlayOpen] = useState(false);
   const [showPaymentPage, setShowPaymentPage] = useState(false);
   const [orderData, setOrderData] = useState(null);
 
   useEffect(() => {
     const fetchEventData = async() => {
-      const res = await fetch(`/api/event-details-page/${uuid}`);
+      
+      const res = await fetchApi('Event', { event: uuid });
       const data = await res.json();
+      console.log("Fetched event data:", data);
       setEventData(data);
     };
 
@@ -42,6 +46,24 @@ const EventDetailsPage = () => {
     setShowPaymentPage(false);
     setOrderData(null);
   };
+
+  const start = new Date(eventData.startDate); 
+  const end = new Date(eventData.endDate);
+
+  const formatDate = start.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const formatTime = `${start.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit'
+  })} - ${end.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit'
+  })}`;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -61,7 +83,7 @@ const EventDetailsPage = () => {
                 </Paper>
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-                  <Typography variant="h4" fontWeight="bold">{ eventData.title }</Typography>
+                  <Typography variant="h4" fontWeight="bold">{ eventData.name }</Typography>
                   <Box>
                     <IconButton><Star /></IconButton>
                     <IconButton><Share /></IconButton>
@@ -74,11 +96,11 @@ const EventDetailsPage = () => {
                       <Typography variant="h5" fontWeight="bold" gutterBottom>Date and Time</Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <CalendarMonth sx={{ mr: 1 }} />
-                        <Typography>Saturday, April 26, 2025</Typography>
+                        <Typography>{ formatDate }</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <AccessTime sx={{ mr: 1 }} />
-                        <Typography>7:00 PM – 11:30 PM</Typography>
+                        <Typography>{ formatTime }</Typography>
                       </Box>
                       <Button startIcon={<AddCircleOutline />} sx={{ ml: 3, textTransform: 'none' }}>Add to Calendar</Button>
                     </Box>
@@ -100,7 +122,7 @@ const EventDetailsPage = () => {
                       <Typography variant="h5" fontWeight="bold" gutterBottom>Location</Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <LocationOn sx={{ mr: 1 }} />
-                        <Typography>123 Event Venue, Main Street, New York</Typography>
+                        <Typography>{ eventData.location }</Typography>
                       </Box>
                       <Paper sx={{ height: 160, position: 'relative', bgcolor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <LocationOn sx={{ fontSize: 40, color: 'error.main' }} />
@@ -112,7 +134,7 @@ const EventDetailsPage = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
                         <Avatar sx={{ width: 48, height: 48, mr: 2 }}>AB</Avatar>
                         <Box>
-                          <Typography>ABC Events Co.</Typography>
+                          <Typography>{eventData?.organizer?.name}</Typography>
                           <Button size="small" variant="outlined" sx={{ textTransform: 'none', mr: 1 }}>Contact</Button>
                           <Button size="small" variant="contained" startIcon={<Add />} sx={{ textTransform: 'none' }}>Follow</Button>
                         </Box>
@@ -122,11 +144,9 @@ const EventDetailsPage = () => {
                     <Box sx={{ mb: 4 }}>
                       <Typography variant="h5" fontWeight="bold">Event Description</Typography>
                       <Typography paragraph>
-                        Join us for an unforgettable night of music, lights, and energy at the Awesome Music Festival 2025. Featuring top artists and DJs from around the world.
+                        { eventData.description }
                       </Typography>
-                      <Typography paragraph>
-                        Enjoy multiple stages, food trucks, and art installations. This event is for music lovers of all kinds — EDM, Hip-Hop, Indie, and more!
-                      </Typography>
+                      
                     </Box>
 
                     <Box>
