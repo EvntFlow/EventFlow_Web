@@ -16,12 +16,12 @@ const navConfig = {
     attendee: [
     { label: 'Events', to: '/events' },
     { label: 'Contact us', to: '/contact' },
-    { label: 'Find your ticket', to: '/ticket', variant: 'contained' },
+    { label: 'Find your ticket', to: '/ticket' },
     ],
     organizer: [
     { label: 'Create Events', to: '/create' },
     { label: 'Contact us', to: '/contact' },
-    { label: 'Dashboard', to: '/dashboard', variant: 'contained' },
+    { label: 'Dashboard', to: '/dashboard' },
     ],
 };
 
