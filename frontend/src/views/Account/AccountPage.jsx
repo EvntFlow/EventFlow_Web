@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getApiUrl } from '../../api';
 import { useAuth } from '../../context/AuthContext';
+import Authorized from '../../components/Authorized';
 
 /**
  * @typedef {import('@mui/material').TextFieldProps & {label: string}} EntryProps
@@ -71,6 +72,8 @@ const AccountPage = () => {
 
     return (
         <Grid container={true}>
+            <Authorized />
+
             <Grid size={2}>
                 <Tabs
                     orientation="vertical"

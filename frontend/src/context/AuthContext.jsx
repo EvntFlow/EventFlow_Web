@@ -42,6 +42,8 @@ export class AuthContextProvider {
     user;
     /** @type {AccountRole} */
     role;
+    /** @type {boolean} */
+    isComplete;
     /** @type {() => Promise<void>} */
     logout;
     /** @type {(r: AccountRole) => Promise<void>} */
@@ -54,6 +56,7 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(/** @type {Account | null} */(null));
     const [role, setRole] = useState(/** @type {AccountRole} */("guest"));
+    const [isAuthComplete, setIsAuthComplete] = useState(false);
 
     const [ searchParams, setSearchParams ] = useSearchParams();
 
@@ -109,6 +112,7 @@ export function AuthProvider({ children }) {
             if (!response.ok) {
                 setRole("guest");
                 setUser(null);
+                setIsAuthComplete(true);
                 return;
             }
 
@@ -116,6 +120,7 @@ export function AuthProvider({ children }) {
             /** @type {Account} */
             const data = await response.json();
             setUser(data);
+            setIsAuthComplete(true);
         })();
     }, []);
 
@@ -163,7 +168,11 @@ export function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={{
-            user: user, role: role, logout: logout, switchRole: switchRole
+            user: user,
+            role: role,
+            isComplete: isAuthComplete,
+            logout: logout,
+            switchRole: switchRole
         }}>
             <div style={{ display: "none" }}>
                 <form
