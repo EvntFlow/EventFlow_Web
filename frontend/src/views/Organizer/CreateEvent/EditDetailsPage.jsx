@@ -34,7 +34,7 @@ const EditDetailsPage = () => {
   const [errors, setErrors] = useState({});
 
   const categories = ['Conference', 'Workshop', 'Concert', 'Exhibition', 'Party', 'Other'];
-  const locations = ['Online', 'Venue A', 'Venue B', 'Venue C', 'Other'];
+  const locations = ['Wollongong', 'Sydney', 'Dapto', 'Shell Harbour', 'Albion', 'Kiama'];
 
   const handleChange = (e) => {
     const { name, value } = e.target;

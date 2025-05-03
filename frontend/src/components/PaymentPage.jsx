@@ -364,12 +364,7 @@ const PaymentPage = ({ orderData, onBackToOverlay }) => {
             )}
 
             {paymentMethod === 'Google' && (
-              <Box 
-                component="form"
-                id="payment-form"
-                method="post"
-                encType="multipart/form-data"
-              >
+              <Box >
                 <Card variant="outlined" sx={{ mb: 3, p: 3 }}>
                   <Typography variant="body1" sx={{ mb: 2 }}>
                     You'll be redirected to Google Pay to complete your payment securely.

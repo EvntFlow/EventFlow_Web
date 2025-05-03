@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from './components/Header';
 import Homepage from './views/Attendee/Homepage';
 import Login from './views/Account/Login';
 import Register from './views/Account/Register';

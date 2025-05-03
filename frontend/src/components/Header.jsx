@@ -19,7 +19,7 @@ const navConfig = {
     { label: 'Find your ticket', to: '/ticket' },
     ],
     organizer: [
-    { label: 'Create Events', to: '/create' },
+    { label: 'Create Events', to: '/create-event' },
     { label: 'Contact us', to: '/contact' },
     { label: 'Dashboard', to: '/dashboard' },
     ],
