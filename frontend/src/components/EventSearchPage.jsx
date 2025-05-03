@@ -23,8 +23,10 @@ const EventSearchPage = () => {
   
   const [events, setEvents] = useState([]);
   const frozenSearchData = useRef({
-    date: searchData.date,
-    price: searchData.price,
+    minDate: searchData.minDate,
+    maxDate: searchData.maxDate,
+    minPrice: searchData.minPrice,
+    maxPrice: searchData.maxPrice,
     name: searchData.name,
     location: searchData.location,
   });
@@ -33,15 +35,19 @@ const EventSearchPage = () => {
     const params = new URLSearchParams();
     const query = new URLSearchParams(window.location.search);
 
-    const date = query.get('date') || frozenSearchData.current.date;
-    const price = query.get('price') || frozenSearchData.current.price;
+    const minDate = query.get('minDate') || frozenSearchData.current.minDate;
+    const maxDate = query.get('maxDate') || frozenSearchData.current.maxDate;
+    const minPrice = query.get('minPrice') || frozenSearchData.current.minPrice;
+    const maxPrice = query.get('maxPrice') || frozenSearchData.current.maxPrice;
     const keywords = query.get('keywords') || frozenSearchData.current.name || '';
     const locationParam = query.get('location') || frozenSearchData.current.location;
 
     if (keywords.trim()) params.append('keywords', keywords);
     if (locationParam) params.append('location', locationParam);
-    if (date) params.append('date', date);
-    if (price) params.append('price', price);
+    if (minDate) params.append('minDate', minDate);
+    if (maxDate) params.append('maxDate', maxDate);
+    if (minPrice) params.append('minPrice', minPrice);
+    if (maxPrice) params.append('maxPrice', maxPrice);
 
     fetchApi('Event/FindEvents', params)
       .then(res => {

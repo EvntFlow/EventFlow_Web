@@ -4,7 +4,6 @@ export const SearchContext = createContext();
 
 export const SearchContextProvider = ({ children }) => {
     const [searchData, setSearchData] = useState({
-      category: '',
       minDate: '',
       maxDate: '',
       minPrice: '',

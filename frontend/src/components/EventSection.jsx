@@ -27,9 +27,9 @@ const EventSection = ({ headTitle = "", events, button_flag = true, gridItemsPer
             >
               <EventCard
                 image={event.image}
-                dateMonth={event.dateMonth}
+                dateMonth={event.date}
                 dateDay={event.dateDay}
-                title={event.title}
+                title={event.name}
                 address={event.address}
                 timeStart={event.timeStart}
                 timeEnd={event.timeEnd}
