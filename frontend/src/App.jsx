@@ -27,40 +27,40 @@ import { Toolbar } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 
 const App= () => {
-  return (
-    <AuthProvider>
-      {/* Fixed header */}
-      <Header />
-      {/* <Toolbar /> */}
-      <Toolbar />
-      <div className="container">
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/account/login" element={<Login />} />
-          <Route path="/account/register" element={<Register />} />
-          <Route path="/account/externallogin" element={<ExternalLogin />} />
-          <Route path="/account/confirmemail" element={<ConfirmEmail />} />
-          <Route path="/account/forgotpassword" element={<ForgotPassword />} />
-          <Route path="/account/forgotpasswordconfirmation"
-                 element={<ForgotPasswordConfirmation />} />
-          <Route path="/account/resetpassword" element={<ResetPassword />} />
-          <Route path="/account/resetpasswordconfirmation"
-                 element={<ResetPasswordConfirmation />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/event-details-page" element={<EventDetailsPage />} />
-          <Route path="/event-details" element={<EventDetail />} />
-          {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
+    return (
+        <AuthProvider>
+        {/* Fixed header */}
+        <Header />
+        {/* <Toolbar /> */}
+        <Toolbar />
+        <div className="container">
+            <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/account/login" element={<Login />} />
+            <Route path="/account/register" element={<Register />} />
+            <Route path="/account/externallogin" element={<ExternalLogin />} />
+            <Route path="/account/confirmemail" element={<ConfirmEmail />} />
+            <Route path="/account/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/account/forgotpasswordconfirmation"
+                    element={<ForgotPasswordConfirmation />} />
+            <Route path="/account/resetpassword" element={<ResetPassword />} />
+            <Route path="/account/resetpasswordconfirmation"
+                    element={<ResetPasswordConfirmation />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/event-details-page" element={<EventDetailsPage />} />
+            <Route path="/event-details" element={<EventDetail />} />
+            {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
-          <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          {/* <Route path="/event-list" element={<EventList />} /> */}
-          {/* <Route path="/event-detail" element={<EventDetail />} /> */}
-          {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
-          {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
-        </Routes>
-      </div>
-    </AuthProvider>
-  );
+            <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
+            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+            {/* <Route path="/event-list" element={<EventList />} /> */}
+            {/* <Route path="/event-detail" element={<EventDetail />} /> */}
+            {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
+            {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
+            </Routes>
+        </div>
+        </AuthProvider>
+    );
 }
 
 export default App;
