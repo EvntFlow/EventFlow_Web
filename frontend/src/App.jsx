@@ -49,7 +49,7 @@ const App= () => {
                  element={<ResetPasswordConfirmation />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/event/search" element={<EventSearchPage />} />
-          <Route path="/event-details-page" element={<EventDetailsPage />} />
+          <Route path="/event/details" element={<EventDetailsPage />} />
           <Route path="/event-details" element={<EventDetail />} />
 
           {/* Event Creation Routes with Context Provider */}

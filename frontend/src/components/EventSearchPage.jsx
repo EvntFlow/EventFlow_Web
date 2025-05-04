@@ -16,7 +16,7 @@ import SearchCard from './Search';
 const EventSearchPage = () => {
   const [searchParams] = useSearchParams();
   const [events, setEvents] = useState(/** @type {Event[]} */([]));
-  const [filteredEvents, setFilteredEvents] = useState(/** @type {Event[]} */([]));
+  const [filteredEvents, setFilteredEvents] = useState(/** @type {Event[] | null} */(null));
   const [sortBy, setSortBy] = useState(/** @type {SortOption} */("relevance"));
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const EventSearchPage = () => {
 
   return (
     <div>
-      <Box sx={{ position: "relative", height: "15vh", mb: "15vh" }}>
+      <Box sx={{ position: "relative", height: "7.5rem", mb: "7.5rem" }}>
         <SearchCard title="Let's get started!" syncSearchParams={true} />
       </Box>
       <Box sx={{ height: "1rem" }} />
@@ -48,11 +48,11 @@ const EventSearchPage = () => {
         </Grid>
         <Grid size={10}>
           {/* Main content area */}
-          <Box sx={{ flexGrow: 1, ml: '10%', p: 1 }}>
+          <Box sx={{ flexGrow: 1, width: "100%", p: 4, boxSizing: "border-box" }}>
             {/* Main Content */}
             <SortByDropdown onChange={setSortBy} />
             <EventSection
-              events={filteredEvents.sort((e1, e2) => {
+              events={filteredEvents?.sort((e1, e2) => {
                 switch (sortBy) {
                   case "date":
                     const startDiff
@@ -65,7 +65,7 @@ const EventSearchPage = () => {
                     return e1.id.localeCompare(e2.id);
                 }
               })}
-              button_flag={false} />
+              rowSize={3} />
           </Box>
         </Grid>
       </Grid>

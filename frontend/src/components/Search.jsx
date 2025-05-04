@@ -40,7 +40,7 @@ import { useSearchParams } from 'react-router-dom';
  * @param {SearchCardProps} props
  */
 export default function SearchCard(props) {
-    const height = 30;
+    const height = 15;
     const width = 80;
 
     const [anchorLocation, setAnchorLocation] = useState(/** @type {HTMLElement | null} */(null));
@@ -97,11 +97,11 @@ export default function SearchCard(props) {
         <Card
             sx={{
                 boxSizing: "border-box",
-                height: `${height}vh`,
+                height: `${height}rem`,
                 width: `${width}%`,
                 position: "absolute",
                 left: `${(100 - width) / 2}%`,
-                bottom: `${-height / 2}vh`,
+                bottom: `${-height / 2}rem`,
                 zIndex: 1,
                 borderRadius: 8,
                 padding: 4
@@ -123,7 +123,7 @@ export default function SearchCard(props) {
                     border: 1,
                     borderColor: "text.secondary",
                     my: 2,
-                    minHeight: `${height / 3}vh`,
+                    minHeight: `${height / 3}rem`,
                     px: 1
                 }}>
                 <Grid size={12} container={true} width="100%">
@@ -260,6 +260,7 @@ export default function SearchCard(props) {
                             slotProps={{ input: { disableUnderline: true } }}
                             placeholder="Search Event Name"
                             value={keywords}
+                            sx={{ mx: 1 }}
                             onChange={(e) => setKeywords(e.target.value)} />
                     </Grid>
 
@@ -267,7 +268,7 @@ export default function SearchCard(props) {
                     <Grid size={1} sx={{
                             display: "flex",
                             flexDirection: "row",
-                            justifyContent: "center",
+                            justifyContent: "flex-end",
                             alignItems: "center"
                         }}>
 

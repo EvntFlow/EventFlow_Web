@@ -37,6 +37,7 @@ export default function CategoryView({ category }) {
           component="img"
           src={category.imageUri || undefined}
           alt={category.name}
+          onError={(e) => /** @type {HTMLImageElement} */(e.target).src = "/img/TopEvent.png"}
           sx={{
             width: 64,
             height: 64,

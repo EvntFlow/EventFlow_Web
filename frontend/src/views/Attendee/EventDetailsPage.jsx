@@ -16,7 +16,7 @@ const eventsData = [
 
 const EventDetailsPage = () => {
   const query = urlSearchParams();
-  const uuid = query.get("id");
+  const uuid = query.get("event");
   //console.log(uuid);
   const [eventData, setEventData] = useState(true);
   const [isTicketOverlayOpen, setIsTicketOverlayOpen] = useState(false);
@@ -25,7 +25,7 @@ const EventDetailsPage = () => {
 
   useEffect(() => {
     const fetchEventData = async() => {
-      
+
       const res = await fetchApi('Event', { event: uuid });
       const data = await res.json();
       console.log("Fetched event data:", data);
@@ -47,7 +47,7 @@ const EventDetailsPage = () => {
     setOrderData(null);
   };
 
-  const start = new Date(eventData.startDate); 
+  const start = new Date(eventData.startDate);
   const end = new Date(eventData.endDate);
 
   const formatDate = start.toLocaleDateString('en-US', {
@@ -146,7 +146,7 @@ const EventDetailsPage = () => {
                       <Typography paragraph>
                         { eventData.description }
                       </Typography>
-                      
+
                     </Box>
 
                     <Box>
@@ -165,7 +165,7 @@ const EventDetailsPage = () => {
                 </Grid>
               </>
             )}
-            
+
           </Container>
 
           <TicketOverlay

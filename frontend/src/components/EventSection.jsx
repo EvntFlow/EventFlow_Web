@@ -1,63 +1,64 @@
-import React from 'react';
-import { Box, Typography, Button, Grid} from '@mui/material';
-import EventCard from './EventCard';
-import { Link } from 'react-router-dom';
+// @ts-check
 
-const EventSection = ({ headTitle = "", events, button_flag = true, gridItemsPerRow = 3 }) => {
+import { Alert, Box, CircularProgress, Grid, Stack, Typography } from '@mui/material';
+import React from 'react';
+import EventCard from './EventCard';
+
+/** @typedef {import ("../models/Event").default} Event */
+
+/**
+ * @typedef EventSectionProps
+ * @property {Event[]=} events
+ * @property {string=} title
+ * @property {number} rowSize
+ */
+
+/**
+ * @param {EventSectionProps} props
+ * @returns
+ */
+export default function EventSection(props) {
   return (
     <Box>
         {/* Section Title */}
-        <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-          {headTitle}
-        </Typography>
+        {props.title && (
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
+              {props.title}
+          </Typography>
+        )}
 
         {/* Events Grid */}
-        <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
-          {events.map((event, index) => (
-            <Grid
-              item
-              xs={12}  // Full width for each card
-              sm={12 / gridItemsPerRow} // Custom number of items per row
-              key={event.id || index}
-              sx={{
-                display: 'flex',
-                justifyContent: 'center', // Center cards within the grid
-                alignItems: 'stretch', // Ensure cards stretch to the same height
-              }}
-            >
-              <EventCard
-                image={event.image}
-                dateMonth={event.date}
-                dateDay={event.dateDay}
-                title={
-                  <Link
-                    to={`/event-details-page?id=${event.id}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    {event.name}
-                  </Link>
-                }
-                address={event.address}
-                timeStart={event.timeStart}
-                timeEnd={event.timeEnd}
-                price={event.price}
-                interested={event.interested}
-                sx={{ width: '100%', height: '100%' }} // Ensure EventCard fills its container
-              />
+        {props.events ?
+          (props.events.length ? (
+            <Grid container={true} size={12} spacing={3} sx={{ justifyContent: "start" }}>
+              {props.events.map((event, index) => (
+                <Grid
+                  size={12 / props.rowSize}
+                  key={event.id}>
+                  <EventCard event={event} />
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          ) : (
+            <Alert severity="error">
+              No Events Found
+            </Alert>
+        )) : (
+          <Stack alignContent="center" alignItems="center">
+            <CircularProgress />
+          </Stack>
+        )
+
+        }
 
         {/* "See all" Button */}
-        {button_flag && (
+        {/*button_flag && (
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             <Button variant="outlined" sx={{ borderRadius: 2 }}>
               See all
             </Button>
           </Box>
-        )}
+        )*/}
     </Box>
   );
 };
-
-export default EventSection;

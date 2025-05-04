@@ -149,10 +149,9 @@ export default function FilterSidebar({data, onFilter}) {
     <Box
       sx={{
         width: '100%',
-        minHeight: '100vh',
         bgcolor: 'background.paper',
+        boxSizing: 'border-box',
         p: 2,
-        position: 'relative',
         top: 0,
         left: 0,
         boxShadow: 2,
