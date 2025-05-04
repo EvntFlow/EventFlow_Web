@@ -62,6 +62,46 @@ export async function postApi(path, query, body) {
 /**
  * @param {String} path
  * @param {URLSearchParams | Record<string, any>=} query
+ * @param {BodyInit=} body
+ * @returns {Promise<Response>}
+ */
+export async function putApi(path, query, body) {
+    const url = getApiUrlInternal(path, query);
+
+    const headers = new Headers();
+    if (body) {
+        headers.set("Content-Type", "application/json");
+    }
+
+    const response = await fetch(url.toString(), {
+        credentials: env() === "development" ? "include" : "same-origin",
+        method: "put",
+        body: body,
+        headers: headers
+    });
+
+    return response;
+}
+
+/**
+ * @param {String} path
+ * @param {URLSearchParams | Record<string, any>=} query
+ * @returns {Promise<Response>}
+ */
+export async function deleteApi(path, query) {
+    const url = getApiUrlInternal(path, query);
+
+    const response = await fetch(url.toString(), {
+        credentials: env() === "development" ? "include" : "same-origin",
+        method: "delete",
+    });
+
+    return response;
+}
+
+/**
+ * @param {String} path
+ * @param {URLSearchParams | Record<string, any>=} query
  * @returns {URL}
  */
 function getApiUrlInternal(path, query) {

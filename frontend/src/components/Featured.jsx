@@ -113,12 +113,14 @@ const Featured = () => {
           </Button>
         </Box>
 
-        <EventSection
-          query={queryAll}
-          limit={3}
-          rowSize={3}
-          variant="simple"
-          disableSeeAllButton />
+        <Box sx={{ minHeight: "20rem" }}>
+          <EventSection
+            query={queryAll}
+            limit={3}
+            rowSize={3}
+            variant="simple"
+            disableSeeAllButton />
+        </Box>
       </Box>
     </Container>
     </Box>

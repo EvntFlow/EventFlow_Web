@@ -2,6 +2,7 @@
 
 /** @typedef {import("./Category").default} Category */
 /** @typedef {import("./Organizer").default} Organizer */
+/** @typedef {import("./SavedEvent").default} SavedEvent */
 /** @typedef {import("./TicketOption").default} TicketOption */
 
 export default class Event {
@@ -23,8 +24,12 @@ export default class Event {
     location;
     /** @type {number} */
     price;
+    /** @type {number=} */
+    interested;
     /** @type {Category[]=} */
     categories;
     /** @type {TicketOption[]=} */
     ticketOptions;
+    /** @type {SavedEvent=} */
+    savedEvent;
 }

@@ -1,22 +1,22 @@
 // @ts-check
 
-import React, { useEffect, useState } from 'react';
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  IconButton,
-  Box,
-  Stack,
-  CardActionArea
-} from '@mui/material';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import dayjs from 'dayjs';
+import { Star, StarBorder } from '@mui/icons-material';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import { Star } from '@mui/icons-material';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
+import dayjs from 'dayjs';
+import React, { useCallback, useEffect, useState } from 'react';
 import AuthorizedView from './AuthorizedView';
+import { deleteEvent, saveEvent } from '../backend';
 
 /** @typedef {import ("../models/Event").default} Event */
 
@@ -45,6 +45,28 @@ export default function EventCard({ event, variant }) {
     setDescriptionHeight(variant === "simple" ? 5 : 10);
   }, [variant]);
 
+  const [isSaved, setIsSaved] = useState(!!event.savedEvent);
+  useEffect(() => {
+    setIsSaved(!!event.savedEvent);
+  }, [event]);
+
+  const handleSaveEvent = useCallback(async () =>
+  {
+    if (!isSaved) {
+      let savedEvent = await saveEvent(event.id);
+      if (savedEvent) {
+        event.savedEvent = savedEvent;
+        setIsSaved(true);
+      }
+    } else if (event.savedEvent) {
+      let ok = await deleteEvent(event.savedEvent.id);
+      if (ok) {
+        event.savedEvent = undefined;
+        setIsSaved(false);
+      }
+    }
+  }, [isSaved, event]);
+
   return (
     <Card
       component="div"
@@ -72,8 +94,13 @@ export default function EventCard({ event, variant }) {
                   backgroundColor: 'grey.200',
                 },
               }}
-              size="large">
-              <StarBorderIcon />
+              size="large"
+              onClick={() => handleSaveEvent()}>
+              {isSaved ? (
+                <Star />
+              ) : (
+                <StarBorder />
+              )}
             </IconButton>
           </AuthorizedView>
         )}
@@ -164,7 +191,7 @@ export default function EventCard({ event, variant }) {
                   </Typography>
                   <Star fontSize="small" sx={{ color: deepPurple[600], mr: 0.5 }} />
                   <Typography variant="body2" color="text.primary">
-                    {0} interested
+                    {event.interested} interested
                   </Typography>
                 </Stack>
               </Stack>

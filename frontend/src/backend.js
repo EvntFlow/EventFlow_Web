@@ -1,9 +1,10 @@
 // @ts-check
 
-import { fetchApi } from "./api";
+import { deleteApi, fetchApi, putApi } from "./api";
 
 /** @typedef {import("./models/Category").default} Category */
 /** @typedef {import("./models/Event").default} Event */
+/** @typedef {import("./models/SavedEvent").default} SavedEvent */
 
 /**
  * @returns {Promise<Category[]>}
@@ -65,4 +66,26 @@ export async function findEvents(params) {
     } else {
         return await response.json();
     }
+}
+
+/**
+ * @param {string} eventId
+ * @returns {Promise<SavedEvent | null>}
+ */
+export async function saveEvent(eventId) {
+    let response = await putApi("Event/Saved", {}, JSON.stringify(eventId));
+    if (!response.ok) {
+        return null;
+    } else {
+        return await response.json();
+    }
+}
+
+/**
+ * @param {string} savedEventId
+ * @returns {Promise<boolean>}
+ */
+export async function deleteEvent(savedEventId) {
+    let response = await deleteApi("Event/Saved", { savedEvent: savedEventId });
+    return response.ok;
 }
