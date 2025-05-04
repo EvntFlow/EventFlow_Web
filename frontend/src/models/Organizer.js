@@ -5,4 +5,6 @@ export default class Organizer {
     id;
     /** @type {string} */
     name;
+    /** @type {string} */
+    email;
 }

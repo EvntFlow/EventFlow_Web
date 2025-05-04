@@ -28,7 +28,7 @@ import dayjs from 'dayjs';
 import { getCategories } from '../backend';
 import { useSearchParams } from 'react-router-dom';
 
-/** @typedef {import("../models/Category").default} Category */
+/** @import Category from "../models/Category"; */
 
 /**
  * @typedef SearchCardProps

@@ -5,7 +5,7 @@ import { Box, Container } from '@mui/material';
 import CategoryView from './Category';
 import { fetchApi } from '../api';
 
-/** @typedef {import("../models/Category").default} Category */
+/** @import Category from "../models/Category" */
 
 const Categories = () => {
   const [categoryData, setCategoryData] = useState(/** @type {Category[]} */([]));

@@ -1,6 +1,6 @@
 // @ts-check
 
-/** @typedef {import("./Event").default} Event */
+/** @import Event from "./Event"; */
 
 export default class SavedEvent {
     /** @type {string} */

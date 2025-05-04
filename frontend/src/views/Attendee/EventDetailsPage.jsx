@@ -1,41 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Box, Button, Container, Grid, IconButton, Paper, Avatar, Chip} from '@mui/material';
-import { CalendarMonth, AccessTime, AddCircleOutline, LocationOn, ConfirmationNumber, Star, Share, Add } from '@mui/icons-material';
+// @ts-check
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { Typography, Box, Button, Container, Grid, IconButton, Avatar, Chip, Stack, CircularProgress, Alert } from '@mui/material';
+import { CalendarMonth, AccessTime, AddCircleOutline, LocationOn, Share, Add, HourglassTop, LocalActivity } from '@mui/icons-material';
 import TicketOverlay from '../../components/TicketOverlay';
 import PaymentPage from '../../components/PaymentPage';
 import EventSection from '../../components/EventSection';
-import { fetchApi } from '../../api';
+import { useSearchParams } from 'react-router-dom';
+import { getEvent } from '../../backend';
+import SaveEvent from '../../components/SaveEvent';
+import dayjs from 'dayjs';
+import * as ics from "ics";
 
-const urlSearchParams = () => new URLSearchParams(window.location.search);
-
-const eventsData = [
-  { id: 1, image: '/img/TopEvent.png', dateMonth: 'NOV', dateDay: '22', title: 'Event title that can go up to two lines', address: 'Venue 1', timeStart: '10:00 AM', timeEnd: '12:00 PM', price: '$10', interested: 10 },
-  { id: 2, image: '/img/TopEvent.png', dateMonth: 'NOV', dateDay: '23', title: 'Another event title that might be a bit longer', address: 'Venue 2', timeStart: '1:00 PM', timeEnd: '3:00 PM', price: '$10', interested: 5 },
-  { id: 3, image: '/img/TopEvent.png', dateMonth: 'NOV', dateDay: '24', title: 'A third event title goes here', address: 'Venue 3', timeStart: '2:00 PM', timeEnd: '4:00 PM', price: '$10', interested: 8 },
-];
+/** @import Event from "../../models/Event" */
 
 const EventDetailsPage = () => {
-  const query = urlSearchParams();
-  const uuid = query.get("event");
-  //console.log(uuid);
-  const [eventData, setEventData] = useState(true);
+  const [searchParams] = useSearchParams();
+  const [event, setEvent] = useState(/** @type {Event | null} */(null));
+  const [eventError, setEventError] = useState(/** @type {string | null} */(null));
+
   const [isTicketOverlayOpen, setIsTicketOverlayOpen] = useState(false);
   const [showPaymentPage, setShowPaymentPage] = useState(false);
   const [orderData, setOrderData] = useState(null);
 
   useEffect(() => {
-    const fetchEventData = async() => {
-
-      const res = await fetchApi('Event', { event: uuid });
-      const data = await res.json();
-      console.log("Fetched event data:", data);
-      setEventData(data);
-    };
-
-    if(uuid){
-      fetchEventData();
-    }
-  }, [uuid]);
+    (async function() {
+      const eventId = searchParams.get("event");
+      if (!eventId) {
+        setEvent(null);
+      } else {
+        const result = await getEvent(eventId);
+        if (!result) {
+          setEventError("Failed to retrieve event.");
+        }
+        setEvent(await getEvent(eventId));
+      }
+    })();
+  }, [searchParams]);
 
   const handleCheckout = (data) => {
     setOrderData(data);
@@ -47,123 +48,232 @@ const EventDetailsPage = () => {
     setOrderData(null);
   };
 
-  const start = new Date(eventData.startDate);
-  const end = new Date(eventData.endDate);
+  const addToCalendar = useCallback(() => {
+    if (!event) {
+      return;
+    }
+    const result = ics.createEvent({
+      start: Date.parse(event.startDate),
+      end: Date.parse(event.endDate),
+      title: event.name,
+      description: event.description,
+      location: event.location,
+      url: new URL(`/Event?event=${event.id}`, window.location.href).toString(),
+      categories: event.categories?.map(c => c.name),
+      organizer: {
+        name: event.organizer.name,
+        email: event.organizer.email
+      }
+    });
+    if (result.error || !result.value) {
+      return;
+    }
 
-  const formatDate = start.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+    const icsBlob = new Blob([result.value], { type: "text/calendar" });
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(icsBlob);
+    a.download = "event.ics";
+    a.click();
 
-  const formatTime = `${start.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit'
-  })} - ${end.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit'
-  })}`;
+  }, [event]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
+    <Box>
       {!showPaymentPage ? (
         <>
           <Container sx={{ py: 4, flexGrow: 1 }}>
 
-            {!eventData ? (
-              <Typography>Loading event details...</Typography>
+            {!event ? (
+              !eventError ? (
+                <Stack alignContent="center" alignItems="center">
+                  <CircularProgress />
+                </Stack>
+              ) : (
+                <Alert severity="error">{eventError}</Alert>
+              )
             ) : (
-              <>
-                <Paper sx={{ height: 400, mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.300' }}>
-                  <Box component="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" width="80" height="80" fill="white">
-                    <path d="M30,40 L50,20 L70,40 M60,25 A5,5 0 1,1 70,25" />
-                  </Box>
-                </Paper>
+              <Stack spacing={3}>
+                <Box
+                  component="img"
+                  src={event.bannerUri}
+                  onError={(e) =>
+                    /** @type {HTMLImageElement} */(e.target).src = "/img/TopEvent.png"
+                  }
+                  sx={{
+                    width: "100%",
+                    height: "15rem",
+                    objectFit: "scale-down",
+                    borderRadius: 4
+                  }} />
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-                  <Typography variant="h4" fontWeight="bold">{ eventData.name }</Typography>
-                  <Box>
-                    <IconButton><Star /></IconButton>
-                    <IconButton><Share /></IconButton>
-                  </Box>
-                </Box>
+                <Grid container={true} sx={{ display: "flex", justifyItems: "stretch"  }}>
+                  <Grid size={6}>
+                    <Typography variant="h4" textTransform="uppercase">
+                      <b>{event.name}</b>
+                    </Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Stack direction="row-reverse">
+                      <IconButton>
+                        <Share />
+                      </IconButton>
+                      <SaveEvent event={event} />
+                    </Stack>
+                  </Grid>
+                </Grid>
 
-                <Grid container spacing={4}>
-                  <Grid item xs={12} md={8}>
-                    <Box sx={{ mb: 4 }}>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>Date and Time</Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Grid container={true} sx={{ display: "flex", justifyItems: "stretch"  }}>
+                  <Grid size={6}>
+                    <Stack spacing={1}>
+                      <Typography variant="h5" fontWeight="bold" gutterBottom>
+                        Date and Time
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <CalendarMonth sx={{ mr: 1 }} />
-                        <Typography>{ formatDate }</Typography>
+                        <Typography>
+                          {dayjs(event.startDate).format("DD/MM/YYYY")}
+                        </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <AccessTime sx={{ mr: 1 }} />
-                        <Typography>{ formatTime }</Typography>
+                        <Typography>
+                          {dayjs(event.startDate).format("HH:mm")}
+                        </Typography>
                       </Box>
-                      <Button startIcon={<AddCircleOutline />} sx={{ ml: 3, textTransform: 'none' }}>Add to Calendar</Button>
-                    </Box>
-
-                    <Grid item xs={12} md={4}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <HourglassTop sx={{ mr: 1 }} />
+                        <Typography>
+                          {dayjs(event.endDate).diff(dayjs(event.startDate), "hour", true)} hour(s)
+                        </Typography>
+                      </Box>
+                      <Button
+                        startIcon={<AddCircleOutline />}
+                        sx={{
+                          textTransform: "inherit",
+                          display: "inline-flex",
+                          justifyContent: "flex-start",
+                          mr: "auto"
+                        }}
+                        fullWidth={false}
+                        onClick={addToCalendar}>
+                          Add to Calendar
+                      </Button>
+                    </Stack>
+                  </Grid>
+                  <Grid size={6}>
+                    <Stack direction="row-reverse">
                       <Button
                         variant="contained"
                         color="primary"
-                        fullWidth
-                        startIcon={<ConfirmationNumber />}
-                        onClick={() => setIsTicketOverlayOpen(true)}
-                        sx={{ bgcolor: '#4dabf5' }}
-                      >
-                        Buy Tickets
+                        startIcon={<LocalActivity />}
+                        onClick={() => setIsTicketOverlayOpen(true)}>
+                          Buy Tickets
                       </Button>
-                    </Grid>
-
-                    <Box sx={{ my: 4 }}>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>Location</Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <LocationOn sx={{ mr: 1 }} />
-                        <Typography>{ eventData.location }</Typography>
-                      </Box>
-                      <Paper sx={{ height: 160, position: 'relative', bgcolor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <LocationOn sx={{ fontSize: 40, color: 'error.main' }} />
-                      </Paper>
-                    </Box>
-
-                    <Box sx={{ mb: 4 }}>
-                      <Typography variant="h5" fontWeight="bold">Hosted by</Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                        <Avatar sx={{ width: 48, height: 48, mr: 2 }}>AB</Avatar>
-                        <Box>
-                          <Typography>{eventData?.organizer?.name}</Typography>
-                          <Button size="small" variant="outlined" sx={{ textTransform: 'none', mr: 1 }}>Contact</Button>
-                          <Button size="small" variant="contained" startIcon={<Add />} sx={{ textTransform: 'none' }}>Follow</Button>
-                        </Box>
-                      </Box>
-                    </Box>
-
-                    <Box sx={{ mb: 4 }}>
-                      <Typography variant="h5" fontWeight="bold">Event Description</Typography>
-                      <Typography paragraph>
-                        { eventData.description }
-                      </Typography>
-
-                    </Box>
-
-                    <Box>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>Tags</Typography>
-                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                        {['Music', 'Festival', 'Outdoor', 'All Ages'].map((tag, index) => (
-                          <Chip key={index} label={tag} size="small" />
-                        ))}
-                      </Box>
-                    </Box>
-
-                    <Box sx={{ mt: 6 }}>
-                      <EventSection events={eventsData} button_flag={false} headTitle="Other events you might like" />
-                    </Box>
+                    </Stack>
                   </Grid>
                 </Grid>
-              </>
+
+                <Grid container={true} sx={{ display: "flex", justifyItems: "stretch"  }}>
+                  <Grid size={4}>
+                    <Stack spacing={1}>
+                      <Typography variant="h5" fontWeight="bold" gutterBottom>
+                        Location
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <LocationOn sx={{ mr: 1 }} />
+                        <Typography>{event.location}</Typography>
+                      </Box>
+                    </Stack>
+                  </Grid>
+                  <Grid size={4} />
+                  <Grid size={4}>
+                    <Stack spacing={1}>
+                      <Typography variant="h5" fontWeight="bold" gutterBottom>
+                        Hosted By
+                      </Typography>
+                      <Stack direction="row" spacing={2} alignItems="center" justifyItems="center">
+                        <Avatar
+                          sx={{ width: "4rem", height: "4rem" }} />
+                        <Stack spacing={2}>
+                          <Typography>{event.organizer.name}</Typography>
+                          <Stack direction="row" spacing={1}>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              href={`mailto:${encodeURIComponent(
+                                `${event.organizer.name}<${event.organizer.email}>`)
+                              }`}
+                              sx={{ textTransform: 'none', width: "6rem" }}>
+                                Contact
+                            </Button>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              startIcon={<Add />}
+                              sx={{ textTransform: 'none', width: "6rem" }}>
+                                Follow
+                            </Button>
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <Grid>
+                  <Stack spacing={1}>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                      Ticket Information
+                    </Typography>
+                    {event.ticketOptions && event.ticketOptions.length ? (
+                      event.ticketOptions?.map(to =>
+                        <Box key={to.id} sx={{ display: 'flex', alignItems: 'center' }}>
+                          <LocalActivity sx={{ mr: 1 }} />
+                          <Typography>
+                            {to.name}: ${event.price + to.additionalPrice}/ticket
+                          </Typography>
+                        </Box>
+                      )
+                    ) : (
+                      <Alert severity="error">No tickets available!</Alert>
+                    )}
+                  </Stack>
+                </Grid>
+
+                <Grid>
+                  <Stack spacing={1}>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                      Event Description
+                    </Typography>
+                    <Typography color="textSecondary">{event.description}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid>
+                  <Stack spacing={1}>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                      Categories
+                    </Typography>
+                    {event.categories && event.categories.length ? (
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        {event.categories?.map((cat) => (
+                          <Chip key={cat.id} label={cat.name} size="small" />
+                        ))}
+                      </Box>
+                    ) : (
+                      <Typography>None</Typography>
+                    )}
+                  </Stack>
+                </Grid>
+
+                <Grid container spacing={4}>
+                  <EventSection
+                    title="Other events you may like"
+                    query={{}}
+                    rowSize={3}
+                    limit={3} />
+                </Grid>
+              </Stack>
             )}
 
           </Container>

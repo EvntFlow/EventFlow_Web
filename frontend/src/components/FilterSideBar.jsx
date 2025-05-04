@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Typography, FormControlLabel, Checkbox, Divider, Stack } from '@mui/material';
 
-/** @typedef {import("../models/Event").default} Event */
+/** @import Event from "../models/Event" */
 
 /**
  * @param {Date} date

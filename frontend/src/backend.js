@@ -2,9 +2,9 @@
 
 import { deleteApi, fetchApi, putApi } from "./api";
 
-/** @typedef {import("./models/Category").default} Category */
-/** @typedef {import("./models/Event").default} Event */
-/** @typedef {import("./models/SavedEvent").default} SavedEvent */
+/** @import Category from "./models/Category" */
+/** @import Event from "./models/Event" */
+/** @import SavedEvent from "./models/SavedEvent" */
 
 /**
  * @returns {Promise<Category[]>}
@@ -66,6 +66,18 @@ export async function findEvents(params) {
     } else {
         return await response.json();
     }
+}
+
+/**
+ * @param {string} eventId
+ * @returns {Promise<Event | null>}
+ */
+export async function getEvent(eventId) {
+    let response = await fetchApi("Event", { event: eventId });
+    if (!response.ok) {
+        return null;
+    }
+    return await response.json();
 }
 
 /**

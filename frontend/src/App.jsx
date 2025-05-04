@@ -34,7 +34,7 @@ const App= () => {
       <Header />
       {/* <Toolbar /> */}
       <Toolbar />
-      <div className="container">
+      <div className="container" style={{ minHeight: "100vh" }}>
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/account/login" element={<Login />} />

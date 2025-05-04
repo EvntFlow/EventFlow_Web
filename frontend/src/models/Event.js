@@ -1,9 +1,9 @@
 // @ts-check
 
-/** @typedef {import("./Category").default} Category */
-/** @typedef {import("./Organizer").default} Organizer */
-/** @typedef {import("./SavedEvent").default} SavedEvent */
-/** @typedef {import("./TicketOption").default} TicketOption */
+/** @import Category from "./Category"; */
+/** @import Organizer from "./Organizer"; */
+/** @import SavedEvent from "./SavedEvent"; */
+/** @import TicketOption from "./TicketOption"; */
 
 export default class Event {
     /** @type {string} */

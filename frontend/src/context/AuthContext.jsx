@@ -4,7 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { useSearchParams } from 'react-router-dom';
 import { fetchApi, getApiUrl, postApi } from '../api';
 
-/** @typedef {import("../models/Account").default} Account */
+/** @import Account from "../models/Account"; */
 
 /**
  * @typedef {("guest" | "attendee" | "organizer")} AccountRole

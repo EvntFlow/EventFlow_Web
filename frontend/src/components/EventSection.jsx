@@ -6,9 +6,9 @@ import EventCard from './EventCard';
 import { findEvents } from '../backend';
 import { ArrowForward } from '@mui/icons-material';
 
-/** @typedef {import("../models/Event").default} Event */
-/** @typedef {import("../backend").FindEventParams} FindEventParams */
-/** @typedef {import('./EventCard').EventCardVariant} EventCardVariant */
+/** @import Event from "../models/Event" */
+/** @import { FindEventParams } from "../backend" */
+/** @import { EventCardVariant } from "./EventCard" */
 
 /**
  * @typedef EventSectionProps

@@ -9,9 +9,9 @@ import { useSearchParams } from 'react-router-dom';
 import { findEvents } from '../backend';
 import SearchCard from './Search';
 
-/** @typedef {import("../models/Event").default} Event */
-/** @typedef {import("../backend").FindEventParams} FindEventParams */
-/** @typedef {import("../components/SortByBox").SortOption} SortOption */
+/** @import Event from "../models/Event" */
+/** @import { FindEventParams } from "../backend" */
+/** @import { SortOption } from "../components/SortByBox" */
 
 const EventSearchPage = () => {
   const [searchParams] = useSearchParams();

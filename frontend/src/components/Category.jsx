@@ -3,7 +3,7 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 
-/** @typedef {import("../models/Category").default} Category */
+/** @import Category from "../models/Category" */
 
 /**
  * @typedef CategoryViewProps

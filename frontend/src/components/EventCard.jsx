@@ -1,22 +1,19 @@
 // @ts-check
 
-import { Star, StarBorder } from '@mui/icons-material';
+import { Star } from '@mui/icons-material';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import {
   Box,
   Card,
   CardActionArea,
   CardContent,
-  CardMedia,
-  IconButton,
-  Stack,
+  CardMedia, Stack,
   Typography
 } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useState } from 'react';
-import AuthorizedView from './AuthorizedView';
-import { deleteEvent, saveEvent } from '../backend';
+import React, { useEffect, useState } from 'react';
+import SaveEvent from './SaveEvent';
 
 /** @typedef {import ("../models/Event").default} Event */
 
@@ -45,28 +42,6 @@ export default function EventCard({ event, variant }) {
     setDescriptionHeight(variant === "simple" ? 5 : 10);
   }, [variant]);
 
-  const [isSaved, setIsSaved] = useState(!!event.savedEvent);
-  useEffect(() => {
-    setIsSaved(!!event.savedEvent);
-  }, [event]);
-
-  const handleSaveEvent = useCallback(async () =>
-  {
-    if (!isSaved) {
-      let savedEvent = await saveEvent(event.id);
-      if (savedEvent) {
-        event.savedEvent = savedEvent;
-        setIsSaved(true);
-      }
-    } else if (event.savedEvent) {
-      let ok = await deleteEvent(event.savedEvent.id);
-      if (ok) {
-        event.savedEvent = undefined;
-        setIsSaved(false);
-      }
-    }
-  }, [isSaved, event]);
-
   return (
     <Card
       component="div"
@@ -83,9 +58,10 @@ export default function EventCard({ event, variant }) {
         />
 
         {variant !== "simple" && (
-          <AuthorizedView role="attendee">
-            <IconButton
-              sx={{
+          <SaveEvent
+            event={event}
+            iconButtonProps={{
+              sx: {
                 position: 'absolute',
                 top: 8,
                 right: 8,
@@ -93,16 +69,9 @@ export default function EventCard({ event, variant }) {
                 '&:hover': {
                   backgroundColor: 'grey.200',
                 },
-              }}
-              size="large"
-              onClick={() => handleSaveEvent()}>
-              {isSaved ? (
-                <Star />
-              ) : (
-                <StarBorder />
-              )}
-            </IconButton>
-          </AuthorizedView>
+              },
+              size: "large"
+            }} />
         )}
       </Box>
       {/* Card Content: Date, Title, Address, Time, Price, Interested */}
