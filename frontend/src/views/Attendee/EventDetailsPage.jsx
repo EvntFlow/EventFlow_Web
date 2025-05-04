@@ -1,8 +1,8 @@
 // @ts-check
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Typography, Box, Button, Container, Grid, IconButton, Avatar, Chip, Stack, CircularProgress, Alert } from '@mui/material';
-import { CalendarMonth, AccessTime, AddCircleOutline, LocationOn, Share, Add, HourglassTop, LocalActivity } from '@mui/icons-material';
+import { Typography, Box, Button, Container, Grid, IconButton, Avatar, Chip, Stack, CircularProgress, Alert, Popover, Divider, TextField, InputAdornment } from '@mui/material';
+import { CalendarMonth, AccessTime, AddCircleOutline, LocationOn, Add, HourglassTop, LocalActivity, ShareOutlined, FacebookRounded, X, WhatsApp, LinkedIn, ContentCopy } from '@mui/icons-material';
 import TicketOverlay from '../../components/TicketOverlay';
 import PaymentPage from '../../components/PaymentPage';
 import EventSection from '../../components/EventSection';
@@ -18,6 +18,8 @@ const EventDetailsPage = () => {
   const [searchParams] = useSearchParams();
   const [event, setEvent] = useState(/** @type {Event | null} */(null));
   const [eventError, setEventError] = useState(/** @type {string | null} */(null));
+
+  const [anchorShare, setAnchorShare] = useState(/** @type {HTMLElement | null} */(null));
 
   const [isTicketOverlayOpen, setIsTicketOverlayOpen] = useState(false);
   const [showPaymentPage, setShowPaymentPage] = useState(false);
@@ -48,6 +50,13 @@ const EventDetailsPage = () => {
     setOrderData(null);
   };
 
+  const getEventUrl = useCallback(() => {
+    if (!event) {
+      return null;
+    }
+    return new URL(`/Event?event=${event.id}`, window.location.href).toString();
+  }, [event]);
+
   const addToCalendar = useCallback(() => {
     if (!event) {
       return;
@@ -58,7 +67,7 @@ const EventDetailsPage = () => {
       title: event.name,
       description: event.description,
       location: event.location,
-      url: new URL(`/Event?event=${event.id}`, window.location.href).toString(),
+      url: getEventUrl() ?? undefined,
       categories: event.categories?.map(c => c.name),
       organizer: {
         name: event.organizer.name,
@@ -74,8 +83,7 @@ const EventDetailsPage = () => {
     a.href = URL.createObjectURL(icsBlob);
     a.download = "event.ics";
     a.click();
-
-  }, [event]);
+  }, [event, getEventUrl]);
 
   return (
     <Box>
@@ -114,8 +122,8 @@ const EventDetailsPage = () => {
                   </Grid>
                   <Grid size={6}>
                     <Stack direction="row-reverse">
-                      <IconButton>
-                        <Share />
+                      <IconButton onClick={(e) => setAnchorShare(e.currentTarget)}>
+                        <ShareOutlined />
                       </IconButton>
                       <SaveEvent event={event} />
                     </Stack>
@@ -277,6 +285,89 @@ const EventDetailsPage = () => {
             )}
 
           </Container>
+
+          <Popover
+            open={!!anchorShare}
+            anchorEl={anchorShare}
+            onClose={() => setAnchorShare(null)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center"
+            }}>
+              <Stack
+                spacing={1}
+                alignItems="center"
+                sx={{
+                  minWidth: "20rem",
+                  padding: 1
+                }}>
+                  <Typography variant="h6" textAlign="center" sx={{ m: 2 }}>
+                    Share with friends
+                  </Typography>
+                  <Divider sx={{ width: "100%" }} />
+                  <Stack alignItems="center">
+                    <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
+                      <IconButton
+                        color="primary"
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${
+                          encodeURIComponent(getEventUrl() || "")
+                        }`}
+                        target="_blank">
+                          <FacebookRounded />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        href={`https://www.x.com/share?url=${
+                          encodeURIComponent(getEventUrl() || "")
+                        }`}
+                        target="_blank">
+                          <X />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        href={`https://api.whatsapp.com/send?text=${
+                          encodeURIComponent(getEventUrl() || "")
+                        }`}
+                        target="_blank">
+                          <WhatsApp />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        href={`https://www.linkedin.com/shareArticle?mini=true&url=${
+                          encodeURIComponent(getEventUrl() || "")
+                        }`}
+                        target="_blank">
+                          <LinkedIn />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
+                  <Stack minHeight="5rem" alignContent="center" justifyItems="center">
+                    <TextField
+                      label="Event URL"
+                      value={getEventUrl()}
+                      slotProps={{
+                        htmlInput: {
+                          readOnly: true,
+                          disabled: true
+                        },
+                        input: {
+                          endAdornment:
+                            <InputAdornment position="end">
+                              <IconButton onClick={(e) => {
+                                const eventUrl = getEventUrl();
+                                if (eventUrl) {
+                                  navigator.clipboard.writeText(eventUrl);
+                                }
+                              }}>
+                                <ContentCopy />
+                              </IconButton>
+                            </InputAdornment>
+                        }
+                      }}>
+                    </TextField>
+                  </Stack>
+              </Stack>
+          </Popover>
 
           <TicketOverlay
             isOpen={isTicketOverlayOpen}
