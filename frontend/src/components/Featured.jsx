@@ -3,13 +3,19 @@ import {
   Box,
   Container,
   Typography,
-  Button,
-  Card,
-  CardMedia,
-  CardContent
+  Button, useTheme
 } from '@mui/material';
+import { ArrowForward } from '@mui/icons-material';
+import EventSection from './EventSection';
+
+/** @typedef {import('../backend').FindEventParams} FindEventParams */
+
+/** @type {FindEventParams} */
+const queryAll = { };
 
 const Featured = () => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -27,8 +33,16 @@ const Featured = () => {
         sx={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: 'rgba(0,0,0,0.4)',
           backgroundImage: 'url(/img/Homepage_FeatureEventBg.png)',
+          backgroundSize: 'cover'
+        }}
+      />
+
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
           backgroundSize: 'cover'
         }}
       />
@@ -77,101 +91,34 @@ const Featured = () => {
             justifyContent: 'flex-start',
             alignItems: 'center',
           }}
+          variant="h5"
         >
-          Lorem ipsum is simply dummy text of the printing and typesetting industry.
-          Lorem ipsum has been the industry's standard dummy text ever since the 1500s.
+          Check out hundreds of trending events on EventFlow!
         </Typography>
 
         {/* "See all" button */}
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{
-            backgroundColor: '#fff',
-            color: 'primary.main',
-            fontWeight: 'bold',
-            '&:hover': {
-              backgroundColor: '#e0e0e0',
-            },
-          }}
-        >
-          See all
-        </Button>
+          <Button
+            variant="outlined"
+            size="large"
+            href="/Event/Search"
+            color="primary"
+            sx={{
+              borderRadius: 8,
+              backgroundColor: theme.palette.background.paper
+            }}
+            endIcon={
+              <ArrowForward />
+            }>
+              See all
+          </Button>
         </Box>
-        {/* Cards Container */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: 2,
-            justifyContent: { xs: 'center', md: 'flex-end' },
-            mb: 4,
-            alignSelf: 'right'
-          }}
-        >
-          {/* Card 1 */}
-          <Card sx={{ maxWidth: 300 , background:'transparent', boxShadow: 'none', border:'none'}}>
-            <CardMedia
-              component="img"
-              height="200"
-              image="/img/Homepage_FeatureEvent1.png"
-              alt="Perk 1"
-              sx={{
-                borderRadius: 4
-              }}
-            />
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" color='white'>
-                Perk 1
-              </Typography>
-              <Typography variant="body2" color="white">
-                A brief description of Perk 1.
-              </Typography>
-            </CardContent>
-          </Card>
 
-          {/* Card 2 */}
-          <Card sx={{ maxWidth: 300, background:'transparent' , boxShadow: 'none', border:'none'}}>
-            <CardMedia
-              component="img"
-              height="200"
-              image="/img/Homepage_FeatureEvent2.png"
-              alt="Perk 2"
-              sx={{
-                borderRadius: 4
-              }}
-            />
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" color='white'>
-                Perk 2
-              </Typography>
-              <Typography variant="body2" color="white">
-                A brief description of Perk 2.
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Card 3 */}
-          <Card sx={{ maxWidth: 300,  background:'transparent' , boxShadow: 'none', border:'none'}}>
-            <CardMedia
-              component="img"
-              height="200"
-              image="/img/Homepage_FeatureEvent3.png"
-              alt="Perk 3"
-              sx={{
-                borderRadius: 4
-              }}
-            />
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" color='white'>
-                Perk 3
-              </Typography>
-              <Typography variant="body2" color="white">
-                A brief description of Perk 3.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
+        <EventSection
+          query={queryAll}
+          limit={3}
+          rowSize={3}
+          variant="simple"
+          disableSeeAllButton />
       </Box>
     </Container>
     </Box>

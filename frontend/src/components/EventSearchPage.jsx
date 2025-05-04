@@ -15,8 +15,8 @@ import SearchCard from './Search';
 
 const EventSearchPage = () => {
   const [searchParams] = useSearchParams();
-  const [events, setEvents] = useState(/** @type {Event[]} */([]));
-  const [filteredEvents, setFilteredEvents] = useState(/** @type {Event[] | null} */(null));
+  const [events, setEvents] = useState(/** @type {Event[] | null=} */(null));
+  const [filteredEvents, setFilteredEvents] = useState(/** @type {Event[] | null=} */(null));
   const [sortBy, setSortBy] = useState(/** @type {SortOption} */("relevance"));
 
   useEffect(() => {

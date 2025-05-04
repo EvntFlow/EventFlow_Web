@@ -85,8 +85,8 @@ function isEventThisWeekend(event) {
 
 /**
  * @typedef FilterSidebarProps
- * @property {Event[]} data
- * @property {(newData: Event[]) => void} onFilter
+ * @property {Event[] | null=} data
+ * @property {(newData: Event[] | null | undefined) => void} onFilter
  */
 
 /**
@@ -108,7 +108,7 @@ export default function FilterSidebar({data, onFilter}) {
     const shouldFilterPrice = isFree || isPaid;
     const shouldFilterDate = isToday || isTomorrow || isThisWeek || isThisWeekend;
 
-    const filtered = data.filter((event) => {
+    const filtered = data?.filter((event) => {
       let ok = true;
       if (shouldFilterPrice) {
         ok = ok && ((isFree && isEventFree(event)) || (isPaid && isEventPaid(event)));
@@ -185,7 +185,7 @@ export default function FilterSidebar({data, onFilter}) {
 
       <Typography variant="h6" my={1}>Location</Typography>
       <Stack>
-          {[...new Set(data.map(e => e.location))].sort().map((l) => (
+          {[...new Set(data?.map(e => e.location))].sort().map((l) => (
             <FormControlLabel key={l} label={l} control={
               <Checkbox
                 value={l}
