@@ -3,6 +3,8 @@
 import { Toolbar } from '@mui/material';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import EventSearchPage from './components/EventSearchPage';
+import Footer from './components/Footer';
 import Header from './components/Header';
 import { AuthProvider } from './context/AuthContext';
 import AccountPage from './views/Account/AccountPage';
@@ -23,7 +25,6 @@ import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
 import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-import EventSearchPage from './components/EventSearchPage';
 
 
 const App= () => {
@@ -82,6 +83,7 @@ const App= () => {
           {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
         </Routes>
       </div>
+      <Footer />
     </AuthProvider>
   );
 }

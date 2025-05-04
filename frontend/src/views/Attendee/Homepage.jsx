@@ -3,7 +3,6 @@ import Categories from '../../components/Categories';
 import Featured from '../../components/Featured';
 import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
-import Footer from '../../components/Footer';
 import SubscribeSection from '../../components/SucribeCard';
 import { Box } from '@mui/material';
 import SearchCard from '../../components/Search';
@@ -92,7 +91,6 @@ const Homepage = () => {
       </Box>
       <SubscribeSection />
       <TestimonialSection testimonials={testimonialsData} />
-      <Footer />
     </div>
   );
 }

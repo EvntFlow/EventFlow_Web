@@ -10,19 +10,16 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 // Define your nav items per role
 const navConfig = {
     guest: [
-        { label: 'Events', to: '/events' },
-        { label: 'Contact', to: '/contact' },
+        { label: 'Events', to: '/Event/Search' },
         { label: 'Register', to: '/Account/Register' },
     ],
     attendee: [
-        { label: 'Events', to: '/events' },
-        { label: 'Contact us', to: '/contact' },
-        { label: 'Find your ticket', to: '/ticket' },
+        { label: 'Events', to: '/Event/Search' },
+        { label: 'Tickets', to: '/Ticket' },
         { label: 'Account', to: '/Account' },
     ],
     organizer: [
         { label: 'Create Events', to: '/create-event' },
-        { label: 'Contact us', to: '/contact' },
         { label: 'Dashboard', to: '/dashboard' },
         { label: 'Account', to: '/account' },
     ],
