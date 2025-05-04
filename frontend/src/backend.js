@@ -2,15 +2,30 @@
 
 import { deleteApi, fetchApi, putApi } from "./api";
 
-/** @import Category from "./models/Category" */
-/** @import Event from "./models/Event" */
-/** @import SavedEvent from "./models/SavedEvent" */
+/**
+ * @import Category from "./models/Category";
+ * @import Event from "./models/Event";
+ * @import Notification from "./models/Notification";
+ * @import SavedEvent from "./models/SavedEvent";
+ */
 
 /**
  * @returns {Promise<Category[]>}
  */
 export async function getCategories() {
     const response = await fetchApi("Event/Category");
+    if (!response.ok) {
+        return [];
+    } else {
+        return await response.json();
+    }
+}
+
+/**
+ * @returns {Promise<Notification[]>}
+ */
+export async function getNotifications() {
+    const response = await fetchApi("Notification");
     if (!response.ok) {
         return [];
     } else {
