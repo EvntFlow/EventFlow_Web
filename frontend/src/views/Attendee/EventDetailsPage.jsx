@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference types="node" />
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Typography, Box, Button, Container, Grid, IconButton, Avatar, Chip, Stack, CircularProgress, Alert, Popover, Divider, TextField, InputAdornment } from '@mui/material';
@@ -132,96 +133,130 @@ const EventDetailsPage = () => {
 
                 <Grid container={true} sx={{ display: "flex", justifyItems: "stretch"  }}>
                   <Grid size={6}>
-                    <Stack spacing={1}>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>
-                        Date and Time
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <CalendarMonth sx={{ mr: 1 }} />
-                        <Typography>
-                          {dayjs(event.startDate).format("DD/MM/YYYY")}
+                    <Stack spacing={3}>
+                      <Stack spacing={1}>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom>
+                          Date and Time
                         </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <AccessTime sx={{ mr: 1 }} />
-                        <Typography>
-                          {dayjs(event.startDate).format("HH:mm")}
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <CalendarMonth sx={{ mr: 1 }} />
+                          <Typography>
+                            {dayjs(event.startDate).format("DD/MM/YYYY")}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <AccessTime sx={{ mr: 1 }} />
+                          <Typography>
+                            {dayjs(event.startDate).format("HH:mm")}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <HourglassTop sx={{ mr: 1 }} />
+                          <Typography>
+                            {dayjs(event.endDate).diff(dayjs(event.startDate), "hour", true)} hour(s)
+                          </Typography>
+                        </Box>
+                        <Button
+                          startIcon={<AddCircleOutline />}
+                          sx={{
+                            textTransform: "inherit",
+                            display: "inline-flex",
+                            justifyContent: "flex-start",
+                            mr: "auto"
+                          }}
+                          fullWidth={false}
+                          onClick={addToCalendar}>
+                            Add to Calendar
+                        </Button>
+                      </Stack>
+                      <Stack spacing={1}>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom>
+                          Location
                         </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <HourglassTop sx={{ mr: 1 }} />
-                        <Typography>
-                          {dayjs(event.endDate).diff(dayjs(event.startDate), "hour", true)} hour(s)
-                        </Typography>
-                      </Box>
-                      <Button
-                        startIcon={<AddCircleOutline />}
-                        sx={{
-                          textTransform: "inherit",
-                          display: "inline-flex",
-                          justifyContent: "flex-start",
-                          mr: "auto"
-                        }}
-                        fullWidth={false}
-                        onClick={addToCalendar}>
-                          Add to Calendar
-                      </Button>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <LocationOn sx={{ mr: 1 }} />
+                          <Typography>{event.location}</Typography>
+                        </Box>
+                        {event.location.toLowerCase() !== "online" &&
+                          <iframe
+                            title="Embedded Map"
+                            style={{ border: 0, minHeight: "20rem" }}
+                            referrerPolicy="no-referrer-when-downgrade"
+                            src={`https://www.google.com/maps/embed/v1/place?key=${
+                              process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+                              }&q=${encodeURIComponent(event.location)}`
+                            }
+                            allowFullScreen>
+                          </iframe>
+                        }
+                      </Stack>
                     </Stack>
                   </Grid>
-                  <Grid size={6}>
-                    <Stack direction="row-reverse">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<LocalActivity />}
-                        onClick={() => setIsTicketOverlayOpen(true)}>
-                          Buy Tickets
-                      </Button>
-                    </Stack>
-                  </Grid>
-                </Grid>
-
-                <Grid container={true} sx={{ display: "flex", justifyItems: "stretch"  }}>
+                  <Grid size={2} />
                   <Grid size={4}>
-                    <Stack spacing={1}>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>
-                        Location
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <LocationOn sx={{ mr: 1 }} />
-                        <Typography>{event.location}</Typography>
-                      </Box>
-                    </Stack>
-                  </Grid>
-                  <Grid size={4} />
-                  <Grid size={4}>
-                    <Stack spacing={1}>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>
-                        Hosted By
-                      </Typography>
-                      <Stack direction="row" spacing={2} alignItems="center" justifyItems="center">
-                        <Avatar
-                          sx={{ width: "4rem", height: "4rem" }} />
-                        <Stack spacing={2}>
-                          <Typography>{event.organizer.name}</Typography>
-                          <Stack direction="row" spacing={1}>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              href={`mailto:${encodeURIComponent(
-                                `${event.organizer.name}<${event.organizer.email}>`)
-                              }`}
-                              sx={{ textTransform: 'none', width: "6rem" }}>
-                                Contact
-                            </Button>
-                            <Button
-                              size="small"
-                              variant="contained"
-                              startIcon={<Add />}
-                              sx={{ textTransform: 'none', width: "6rem" }}>
-                                Follow
-                            </Button>
+                    <Stack spacing={3}>
+                      <Stack direction="row-reverse">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<LocalActivity />}
+                          onClick={() => setIsTicketOverlayOpen(true)}>
+                            Buy Tickets
+                        </Button>
+                      </Stack>
+                      <Stack>
+                        <Stack spacing={1}>
+                          <Typography variant="h5" fontWeight="bold" gutterBottom>
+                            Hosted By
+                          </Typography>
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                            justifyItems="center">
+                              <Avatar
+                                sx={{ width: "4rem", height: "4rem" }} />
+                              <Stack spacing={2}>
+                                <Typography>{event.organizer.name}</Typography>
+                                <Stack direction="row" spacing={1}>
+                                  <Button
+                                    size="small"
+                                    variant="outlined"
+                                    href={`mailto:${encodeURIComponent(
+                                      `${event.organizer.name}<${event.organizer.email}>`)
+                                    }`}
+                                    sx={{ textTransform: 'none', width: "6rem" }}>
+                                      Contact
+                                  </Button>
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    startIcon={<Add />}
+                                    sx={{ textTransform: 'none', width: "6rem" }}>
+                                      Follow
+                                  </Button>
+                                </Stack>
+                              </Stack>
                           </Stack>
+                        </Stack>
+                      </Stack>
+                      <Stack>
+                        <Stack spacing={1}>
+                          <Typography variant="h5" fontWeight="bold" gutterBottom>
+                            Ticket Information
+                          </Typography>
+                          {event.ticketOptions && event.ticketOptions.length ? (
+                            event.ticketOptions?.map(to =>
+                              <Box key={to.id} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <LocalActivity sx={{ mr: 1 }} />
+                                <Typography>
+                                  {to.name}: ${event.price + to.additionalPrice}/ticket
+                                </Typography>
+                              </Box>
+                            )
+                          ) : (
+                            <Alert severity="error">No tickets available!</Alert>
+                          )}
                         </Stack>
                       </Stack>
                     </Stack>
@@ -229,23 +264,7 @@ const EventDetailsPage = () => {
                 </Grid>
 
                 <Grid>
-                  <Stack spacing={1}>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom>
-                      Ticket Information
-                    </Typography>
-                    {event.ticketOptions && event.ticketOptions.length ? (
-                      event.ticketOptions?.map(to =>
-                        <Box key={to.id} sx={{ display: 'flex', alignItems: 'center' }}>
-                          <LocalActivity sx={{ mr: 1 }} />
-                          <Typography>
-                            {to.name}: ${event.price + to.additionalPrice}/ticket
-                          </Typography>
-                        </Box>
-                      )
-                    ) : (
-                      <Alert severity="error">No tickets available!</Alert>
-                    )}
-                  </Stack>
+
                 </Grid>
 
                 <Grid>
