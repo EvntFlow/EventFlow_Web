@@ -6,6 +6,7 @@ import { PaymentIcon } from 'react-svg-credit-card-payment-icons';
 
 /**
  * @import { PaymentTypeExtended as CardIconTypes } from "react-svg-credit-card-payment-icons";
+ * @import { SVGProps } from "react";
  */
 
 /**
@@ -16,6 +17,7 @@ import { PaymentIcon } from 'react-svg-credit-card-payment-icons';
 /**
  * @typedef CardTypeIconProps
  * @property {string} number
+ * @property {SVGProps<SVGSVGElement>=} iconProps
  */
 
 /**
@@ -51,6 +53,6 @@ export default function CardTypeIcon(props) {
   }, [props.number]);
 
   return (
-    <PaymentIcon type={iconType} style={{ minWidth: "3rem" }} format="logo" />
+    <PaymentIcon {...props.iconProps} type={iconType} format="logo" />
   );
 }

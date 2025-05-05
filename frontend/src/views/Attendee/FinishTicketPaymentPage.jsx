@@ -1,6 +1,6 @@
 // @ts-check
 
-import { AddCircle, ExpandMore } from "@mui/icons-material";
+import { AddCircle, CalendarToday, ExpandMore, Label, Person, Security } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -11,12 +11,17 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
+  InputAdornment,
   Paper,
   Radio,
   RadioGroup,
   Stack,
+  TextField,
   Typography,
   useTheme
 } from "@mui/material";
@@ -24,6 +29,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getPaymentMethods } from "../../backend";
 import CardTypeIcon from "../../components/CardTypeIcon";
+import InputMask from "@mona-health/react-input-mask";
 
 /**
  * @import { PaymentMethod } from "../../models/PaymentMethod";
@@ -168,7 +174,9 @@ export default function FinishTicketPayment() {
                                   height="100%"
                                   sx={{ ml: 2 }}
                                 >
-                                  <CardTypeIcon number={p.number} />
+                                  <CardTypeIcon
+                                    number={p.number}
+                                    iconProps={{ style: { minWidth: "3rem" }}} />
                                   <Typography noWrap={true} textOverflow="ellipsis">
                                     {p.displayName}
                                   </Typography>
@@ -230,6 +238,10 @@ export default function FinishTicketPayment() {
               display: "inline-flex",
               justifyContent: "flex-start",
               mr: "auto",
+            }}
+            onClick={() => {
+              searchParams.set("isAddingCard", "true");
+              setSearchParams(searchParams);
             }}
           >
             Add New Card
@@ -407,6 +419,220 @@ export default function FinishTicketPayment() {
           </Stack>
         </Paper>
       </Grid>
+
+      <Dialog
+        open={!!searchParams.get("isAddingCard")}
+        onClose={() => {
+          searchParams.delete("isAddingCard");
+          setSearchParams(searchParams);
+        }}
+        sx={{ minWidth: "50vw" }}
+      >
+        <DialogTitle>
+            Add New Card
+        </DialogTitle>
+        <DialogContent sx={{ minWidth: "40vw", boxSizing: "border-box" }}>
+          <PaymentDialog />
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
+}
+
+function PaymentDialog() {
+  const [displayName, setDisplayName] = useState("");
+  const [number, setNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [name, setName] = useState("");
+
+  const [returnUrl, setReturnUrl] = useState("");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    /** @typedef {"displayName" | "number" | "expiry" | "cvv" | "name"} AddCardFormParams */
+    /** @type {Record<AddCardFormParams, (s: string) => any>} */
+    const setters = {
+      "displayName": setDisplayName,
+      "number": setNumber,
+      "expiry": setExpiry,
+      "cvv": setCvv,
+      "name": setName
+    };
+    /** @type {AddCardFormParams[]} */
+    const propertyList = ["displayName", "number", "expiry", "cvv", "name"];
+    for (let property of propertyList) {
+      if (searchParams.has(property)) {
+        setters[property](searchParams.get(property) || "");
+        searchParams.delete(property);
+      }
+    }
+    setSearchParams(searchParams);
+
+    const cleanSearchParams = new URLSearchParams(searchParams);
+    cleanSearchParams.delete("isAddingCard");
+
+    const url = new URL(window.location.href);
+    url.search = cleanSearchParams.toString();
+    setReturnUrl(url.toString());
+
+  }, [searchParams, setSearchParams]);
+
+  return (
+      <Box
+        component="form"
+        method="post"
+        action={getApiUrl("Payment/Card", { returnUrl: returnUrl })}
+        sx={{ p: 2 }}
+      >
+        <Stack
+          spacing={2}
+          alignItems="center"
+        >
+          {/* Card Nickname */}
+          <TextField
+            label="Card Nickname (for your reference)"
+            fullWidth={true}
+            variant="outlined"
+            name="displayName"
+            placeholder="Enter your card's display name"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Label />
+                  </InputAdornment>
+                ),
+              }
+            }}
+            sx={{
+              maxWidth: "100%",
+              boxSizing: "border-box"
+            }}
+          />
+
+          {/* Card Number */}
+          <InputMask
+            mask="9999 9999 9999 9999"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+          >
+            <TextField
+              label="Card Number"
+              fullWidth={true}
+              required={true}
+              variant="outlined"
+              name="number"
+              placeholder="Enter your card number"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CardTypeIcon number={number} iconProps={{ style: { width: "24px" }}} />
+                    </InputAdornment>
+                  ),
+                  }
+              }}
+            />
+          </InputMask>
+
+          {/* Expiry Date and CVV */}
+          <Grid size={12} container={true} spacing={2}>
+            <Grid size={7}>
+              <InputMask
+                mask="99/99"
+                value={expiry}
+                onChange={(e) => setExpiry(e.target.value)}
+              >
+                <TextField
+                  label="Expiry Date"
+                  fullWidth={true}
+                  required={true}
+                  variant="outlined"
+                  name="expiry"
+                  placeholder="MM/YY"
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <CalendarToday />
+                        </InputAdornment>
+                      ),
+                    },
+                    htmlInput: {
+                      pattern: "(0[1-9]|1[0-2])/\\d{2}"
+                    }
+                  }}
+                />
+              </InputMask>
+            </Grid>
+            <Grid size={5}>
+              <InputMask
+                mask="999"
+                value={cvv}
+                onChange={(e) => setCvv(e.target.value)}
+              >
+                <TextField
+                  label="CVV/CVC"
+                  fullWidth={true}
+                  required={true}
+                  type="password"
+                  variant="outlined"
+                  name="cvv"
+                  placeholder="CVV"
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Security />
+                        </InputAdornment>
+                      ),
+                    }
+                  }}
+                />
+              </InputMask>
+            </Grid>
+          </Grid>
+
+          {/* Cardholder Name */}
+          <TextField
+            label="Cardholder Name"
+            fullWidth={true}
+            required={true}
+            variant="outlined"
+            name="name"
+            placeholder="Enter your card's holder's name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Person />
+                  </InputAdornment>
+                ),
+              }
+            }}
+          />
+
+          {searchParams.has("error") &&
+            <Alert severity="error">
+              {searchParams.get("error")}
+            </Alert>
+          }
+
+          <Button
+            fullWidth={true}
+            variant="contained"
+            type="submit"
+            color="primary"
+          >
+            Add Card
+          </Button>
+        </Stack>
+      </Box>
+  )
 }
