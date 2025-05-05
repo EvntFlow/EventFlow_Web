@@ -17,13 +17,13 @@ const navConfig = {
     { label: 'Register', to: '/Account/Register' },
   ],
   attendee: [
-    { label: '', to: '/attendee-homepage' },
+    { label: '', to: '/Home/Attendee' },
     { label: 'Events', to: '/Event/Search' },
     { label: 'Tickets', to: '/Ticket' },
     { label: 'Account', to: '/Account' },
   ],
   organizer: [
-    { label: '', to: '/organizer-homepage' },
+    { label: '', to: '/Home/Organizer' },
     { label: 'Create Events', to: '/create-event' },
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Account', to: '/account' },
