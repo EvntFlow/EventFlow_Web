@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from './components/Header';
-import Homepage from './views/Attendee/Homepage';
 import Login from './views/Account/Login';
 import Register from './views/Account/Register';
 import ExternalLogin from './views/Account/ExternalLogin';
@@ -9,11 +8,17 @@ import ForgotPassword from './views/Account/ForgotPassword';
 import ForgotPasswordConfirmation from './views/Account/ForgotPasswordConfirmation';
 import ResetPassword from './views/Account/ResetPassword';
 import ResetPasswordConfirmation from './views/Account/ResetPasswordConfirmation';
+
+// import attendee's pages
+import Homepage from './views/Attendee/Homepage';
 import AccountPage from './views/Attendee/AccountPage';
 import EventDetailsPage from './views/Attendee/EventDetailsPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
-// import EventSearchPage from './EventSearchPage';
+import FindTicket from './views/Attendee/FindTicket';
 
+// import organizer's pages
+
+// import EventSearchPage from './EventSearchPage';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 
 // import Dashboard from './views/Organizer/Dashboard/Dashboard';
@@ -36,6 +41,8 @@ const App= () => {
         <div className="container">
             <Routes>
             <Route path="/" element={<Homepage />} />
+            
+            {/* Login routes */}
             <Route path="/account/login" element={<Login />} />
             <Route path="/account/register" element={<Register />} />
             <Route path="/account/externallogin" element={<ExternalLogin />} />
@@ -46,9 +53,12 @@ const App= () => {
             <Route path="/account/resetpassword" element={<ResetPassword />} />
             <Route path="/account/resetpasswordconfirmation"
                     element={<ResetPasswordConfirmation />} />
+            
+            {/* Attendee routes */}
             <Route path="/account" element={<AccountPage />} />
             <Route path="/event-details-page" element={<EventDetailsPage />} />
             <Route path="/event-details" element={<EventDetail />} />
+            <Route path="/find-ticket" element={<FindTicket />} />
             {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
             <Route path="/organizer-homepage" element={<OrganizerHomepage />} />

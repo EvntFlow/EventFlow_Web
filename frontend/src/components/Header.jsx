@@ -10,13 +10,13 @@ const navConfig = {
     guest: [
     { label: 'Events', to: '/events' },
     { label: 'Contact', to: '/contact' },
-    { label: 'Find your ticket', to: '/ticket' },
+    { label: 'Find your ticket', to: '/account/login' },
     { label: 'Account', to: '/account' },
     ],
     attendee: [
     { label: 'Events', to: '/events' },
     { label: 'Contact us', to: '/contact' },
-    { label: 'Find your ticket', to: '/ticket' },
+    { label: 'Find your ticket', to: '/find-ticket' },
     ],
     organizer: [
     { label: 'Create Events', to: '/create' },
