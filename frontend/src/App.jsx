@@ -3,8 +3,8 @@
 import { Toolbar } from '@mui/material';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import EventSearchPage from './components/EventSearchPage';
-import Footer from './components/Footer';
+// import EventSearchPage from './components/EventSearchPage';
+// import Footer from './components/Footer';
 import Header from './components/Header';
 import { AuthProvider } from './context/AuthContext';
 import AccountPage from './views/Account/AccountPage';
@@ -25,67 +25,86 @@ import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
 import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+import Dashboard from './views/Organizer/Dashboard/Dashboard';
 
 
 const App= () => {
-  return (
-    <AuthProvider>
-      {/* Fixed header */}
-      <Header />
-      {/* <Toolbar /> */}
-      <Toolbar />
-      <div className="container" style={{ minHeight: "100vh" }}>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/account/login" element={<Login />} />
-          <Route path="/account/register" element={<Register />} />
-          <Route path="/account/externallogin" element={<ExternalLogin />} />
-          <Route path="/account/confirmemail" element={<ConfirmEmail />} />
-          <Route path="/account/forgotpassword" element={<ForgotPassword />} />
-          <Route path="/account/forgotpasswordconfirmation"
-                 element={<ForgotPasswordConfirmation />} />
-          <Route path="/account/resetpassword" element={<ResetPassword />} />
-          <Route path="/account/resetpasswordconfirmation"
-                 element={<ResetPasswordConfirmation />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/event/search" element={<EventSearchPage />} />
-          <Route path="/event/details" element={<EventDetailsPage />} />
-          <Route path="/event-details" element={<EventDetail />} />
+    return (
+        <AuthProvider>
+        {/* Fixed header */}
+        <Header />
+        {/* <Toolbar /> */}
+        <Toolbar />
+        <div className="container">
+            <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/attendee-homepage" element={<Homepage />} />
+            <Route path="/account/login" element={<Login />} />
+            <Route path="/account/register" element={<Register />} />
+            <Route path="/account/externallogin" element={<ExternalLogin />} />
+            <Route path="/account/confirmemail" element={<ConfirmEmail />} />
+            <Route path="/account/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/account/forgotpasswordconfirmation"
+                    element={<ForgotPasswordConfirmation />} />
+            <Route path="/account/resetpassword" element={<ResetPassword />} />
+            <Route path="/account/resetpasswordconfirmation"
+                    element={<ResetPasswordConfirmation />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/event-details-page" element={<EventDetailsPage />} />
+            <Route path="/event-details" element={<EventDetail eventData={null}/>} />
+            {/* <Route path="/event-search" element={<EventSearchResult />} /> */}
 
-          {/* Event Creation Routes with Context Provider */}
-          <Route path="/create-event" element={
-            <EventContextProvider>
-              <EditDetailsPage />
-            </EventContextProvider>
-          } />
-          <Route path="/banner" element={
-            <EventContextProvider>
-              <BannerPage />
-            </EventContextProvider>
-          } />
-          <Route path="/ticketing" element={
-            <EventContextProvider>
-              <TicketingPage />
-            </EventContextProvider>
-          } />
-          <Route path="/review" element={
-            <EventContextProvider>
-              <ReviewPage />
-            </EventContextProvider>
-          } />
-
-
-          <Route path="/organizer" element={<OrganizerHomepage />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          {/* <Route path="/event-list" element={<EventList />} /> */}
-          {/* <Route path="/event-detail" element={<EventDetail />} /> */}
-          {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
-          {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
-        </Routes>
-      </div>
-      <Footer />
-    </AuthProvider>
-  );
+            <Route 
+                path="/organizer-homepage"
+                element={
+                    <EventContextProvider>
+                        <OrganizerHomepage />
+                    </EventContextProvider>
+                } 
+            />
+            <Route 
+                path="/create-event"
+                element={
+                    <EventContextProvider>
+                        <EditDetailsPage />
+                    </EventContextProvider>
+                } 
+            />
+            <Route 
+                path="/banner"
+                element={
+                    <EventContextProvider>
+                        <BannerPage />
+                    </EventContextProvider>
+                } 
+            />
+            <Route 
+                path="/ticketing"
+                element={
+                    <EventContextProvider>
+                        <TicketingPage />
+                    </EventContextProvider>
+                } 
+            />
+            <Route 
+                path="/review"
+                element={
+                    <EventContextProvider>
+                        <ReviewPage />
+                    </EventContextProvider>
+                }
+            />
+            <Route path="/dashboard" element={<Dashboard />} />
+            {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
+            <Route path="/create-event" element={<TicketingPage />} /> */}
+            {/* <Route path="/event-list" element={<EventList />} /> */}
+            {/* <Route path="/event-detail" element={<EventDetail />} /> */}
+            {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
+            {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
+            </Routes>
+        </div>
+        </AuthProvider>
+    );
 }
 
 export default App;

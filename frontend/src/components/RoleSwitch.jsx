@@ -3,10 +3,12 @@
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function RoleSwitch() {
     const { role, switchRole } = useAuth();
     const theme = useTheme();
+    const navigate = useNavigate();
     const [ foreground, setForeground ] = useState("");
     const [ background, setBackground ] = useState("");
 
@@ -27,7 +29,6 @@ export default function RoleSwitch() {
                     return /** @type {T} */(null);
             }
     }, [ role ]);
-
 
     useEffect(() => {
         setForeground(ifRole(theme.palette.background.default, theme.palette.text.primary));
@@ -59,7 +60,15 @@ export default function RoleSwitch() {
             <Button
                 disableRipple
                 onClick={
-                    (e) => switchRole(ifRole("organizer", "attendee"))
+                    (e) => {
+                        const newRole = ifRole("organizer", "attendee");
+                        switchRole(ifRole("organizer", "attendee"))
+                        if (newRole === "organizer") {
+                            navigate("/organizer-homepage");
+                        } else if (newRole === "attendee") {
+                            navigate("/attendee-homepage");
+                        }
+                    }
                 }
                 sx={{
                     borderRadius: 10,

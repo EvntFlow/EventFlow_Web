@@ -158,7 +158,7 @@ export function AuthProvider({ children }) {
                 <form
                     ref={toAttendeeForm}
                     method="get"
-                    action="/"
+                    action="/attendee-homepage"
                     hidden={true}
                     style={{ display: "none" }}>
                         <input name="role" value="attendee" readOnly={true} />
@@ -166,7 +166,7 @@ export function AuthProvider({ children }) {
                 <form
                     ref={toOrganizerForm}
                     method="get"
-                    action="/organizer"
+                    action="/organizer-homepage"
                     hidden={true}
                     style={{ display: "none" }}>
                         <input name="role" value="organizer" readOnly={true} />

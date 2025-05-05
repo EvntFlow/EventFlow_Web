@@ -57,7 +57,7 @@ const BannerPage = () => {
   };
 
   const handleBack = () => {
-    navigate('/');
+    navigate('/create-event');
   };
 
   return (

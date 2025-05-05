@@ -263,7 +263,7 @@ const EditDetailsPage = () => {
             backgroundColor: '#4285f4'
           }}
         >
-          Save
+          Next
         </Button>
       </Box>
     </Box>

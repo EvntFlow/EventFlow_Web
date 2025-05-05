@@ -17,11 +17,13 @@ const navConfig = {
     { label: 'Register', to: '/Account/Register' },
   ],
   attendee: [
+    { label: '', to: '/attendee-homepage' },
     { label: 'Events', to: '/Event/Search' },
     { label: 'Tickets', to: '/Ticket' },
     { label: 'Account', to: '/Account' },
   ],
   organizer: [
+    { label: '', to: '/organizer-homepage' },
     { label: 'Create Events', to: '/create-event' },
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Account', to: '/account' },
@@ -51,7 +53,7 @@ const Header = () => {
         <Typography
           variant="h6"
           component={Link}
-          to="/"
+          to={links[0].to}
           sx={{
             flexGrow: 1,
             fontWeight: 'bold',
