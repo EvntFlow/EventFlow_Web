@@ -1,6 +1,6 @@
 // @ts-check
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Typography, CircularProgress, Box, Dialog, DialogContent, Stack, Button } from '@mui/material';
 import EventTicketList from '../../components/EventTicketList';
 import Authorized from '../../components/Authorized';
@@ -10,9 +10,9 @@ import { CheckCircle } from '@mui/icons-material';
 export default function TicketPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [rows, /* setRows */] = useState([]);
+  const [loading, /* setLoading */] = useState(true);
+  const [error, /* setError */] = useState(null);
 
   const clearOrderedDialog = useCallback(() => {
     searchParams.delete("isOrdered");
