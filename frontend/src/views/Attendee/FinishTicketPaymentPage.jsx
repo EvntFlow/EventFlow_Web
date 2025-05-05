@@ -38,6 +38,7 @@ import InputMask from "@mona-health/react-input-mask";
 import { blue } from "@mui/material/colors";
 import FORCE_IMPORT_POLYFILL from "core-js/modules/es.map.group-by";
 import { getApiUrl } from "../../api";
+import Authorized from "../../components/Authorized";
 // eslint-disable-next-line no-unused-expressions
 FORCE_IMPORT_POLYFILL;
 /**
@@ -123,6 +124,7 @@ export default function FinishTicketPayment() {
 
   return (
     <Grid container={true} size={12} sx={{ p: 6, py: 8 }} spacing={8}>
+      <Authorized role="attendee" />
       <Grid size={7}>
         <Stack spacing={5}>
           <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
@@ -374,7 +376,7 @@ export default function FinishTicketPayment() {
               component="form"
               method="post"
               action={getApiUrl("Ticket/FinishTicketPayment",
-                { returnUrl: searchParams.get("returnUrl") ?? "/Ticket" }
+                { returnUrl: searchParams.get("returnUrl") ?? "/Ticket?isOrdered=1" }
               )}
             >
               <Box sx={{ display: "none" }}>

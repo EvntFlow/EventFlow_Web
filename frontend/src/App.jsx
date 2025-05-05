@@ -17,7 +17,9 @@ import Register from './views/Account/Register';
 import ResetPassword from './views/Account/ResetPassword';
 import ResetPasswordConfirmation from './views/Account/ResetPasswordConfirmation';
 import EventDetailsPage from './views/Attendee/EventDetailsPage';
+import FinishTicketPaymentPage from './views/Attendee/FinishTicketPaymentPage';
 import Homepage from './views/Attendee/Homepage';
+import TicketPage from './views/Attendee/TicketPage';
 import BannerPage from './views/Organizer/CreateEvent/BannerPage';
 import EditDetailsPage from './views/Organizer/CreateEvent/EditDetailsPage';
 import { EventContextProvider } from './views/Organizer/CreateEvent/EventContext';
@@ -26,7 +28,6 @@ import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import Dashboard from './views/Organizer/Dashboard/Dashboard';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
-import FinishTicketPaymentPage from './views/Attendee/FinishTicketPaymentPage';
 
 const App = () => {
   return (
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/event/search" element={<EventSearchPage />} />
 
           <Route path="/ticket/finishticketpayment" element={<FinishTicketPaymentPage />} />
+          <Route path="/ticket" element={<TicketPage />} />
 
           <Route path="/event-details" element={<EventDetail eventData={null} />} />
 

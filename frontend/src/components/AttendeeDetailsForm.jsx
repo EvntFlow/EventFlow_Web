@@ -86,7 +86,7 @@ export default function AttendeeDetailsForm(props) {
         <Box
           component="form"
           method="post"
-          action={getApiUrl("Ticket", { returnUrl: "/Ticket" })}
+          action={getApiUrl("Ticket", { returnUrl: "/Ticket?isOrdered=1" })}
         >
           <Box sx={{ p: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
