@@ -102,7 +102,7 @@ const EventDetailsPage = () => {
       if (!price) {
         return "Free"
       } else {
-        return `$${price}/ticket`;
+        return `$${price.toFixed(2)}/ticket`;
       }
     }
   , [event])
@@ -160,7 +160,7 @@ const EventDetailsPage = () => {
                   sx={{
                     width: "100%",
                     height: "15rem",
-                    objectFit: "scale-down",
+                    objectFit: "cover",
                     borderRadius: 4
                   }} />
 

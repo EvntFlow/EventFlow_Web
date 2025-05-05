@@ -179,7 +179,7 @@ export default function TicketOverlay(props) {
             <Typography>
               Total:{' '}
                 <Box component="span" color="primary.main">
-                  {totalPrice ? `$${totalPrice.toFixed(0)}` : "Free"}
+                  {totalPrice ? `$${totalPrice.toFixed(2)}` : "Free"}
                 </Box>
             </Typography>
           </Box>
@@ -205,6 +205,7 @@ export default function TicketOverlay(props) {
           .map(([id, count]) =>
             /** @type {[TicketOption, number]} */([availableOptions.get(id), count]))
           .filter(([to, _]) => !!to)
+          .sort(([to1, _1], [to2, _2]) => to1.additionalPrice - to2.additionalPrice)
         }
         totalQuantity={totalQuantity}
         totalPrice={totalPrice}

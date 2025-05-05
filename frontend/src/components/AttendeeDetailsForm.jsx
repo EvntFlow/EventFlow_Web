@@ -202,7 +202,7 @@ export default function AttendeeDetailsForm(props) {
               <Typography>
                 Total:{' '}
                 <Box component="span" color="primary.main">
-                  {props.totalPrice ? `$${props.totalPrice.toFixed(0)}` : "Free"}
+                  {props.totalPrice ? `$${props.totalPrice.toFixed(2)}` : "Free"}
                 </Box>
               </Typography>
             </Box>
