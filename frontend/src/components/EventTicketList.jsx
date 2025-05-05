@@ -1,5 +1,6 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
+// @ts-check
+
+import React, { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
@@ -11,8 +12,21 @@ import {
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
 
-const EventTicketList = ({ initialRows = [] }) => {
-  const [rows, setRows] = React.useState(initialRows);
+/**
+ * @import Ticket from "../models/Ticket";
+ */
+
+/**
+ * @typedef EventTicketListProps
+ * @property {Ticket[]} tickets
+ */
+
+/**
+ * @param {EventTicketListProps} props
+ */
+
+const EventTicketList = (props) => {
+  const [rows, setRows] = useState(props.tickets);
   const [rowModesModel, setRowModesModel] = React.useState({});
 
   const handleRowEditStop = (params, event) => {
@@ -84,15 +98,15 @@ const EventTicketList = ({ initialRows = [] }) => {
       editable: true,
     },
     {
-      field: 'status', 
-      headerName: 'Status', 
+      field: 'status',
+      headerName: 'Status',
       flex: 0.3,
       editable: false,
       renderCell: (params) => {
         const status = params.value;
         let backgroundColor = '';
         let color = '';
-        
+
         if (status === 'Upcoming') {
           backgroundColor = '#e6f7e6';  // light green background
           color = '#2e8b57';           // green text
@@ -103,12 +117,12 @@ const EventTicketList = ({ initialRows = [] }) => {
           backgroundColor = '#f2e6ff';  // light purple background
           color = '#6a0dad';           // purple text
         }
-        
+
         return (
-          <div style={{ 
-            backgroundColor, 
-            textAlign: 'center', 
-            color, 
+          <div style={{
+            backgroundColor,
+            textAlign: 'center',
+            color,
             fontWeight: 'bold',
             padding: '4px 8px',
             width: '90%',
@@ -116,7 +130,7 @@ const EventTicketList = ({ initialRows = [] }) => {
             {status}
           </div>
         );
-      }, 
+      },
     },
     {
       field: 'actions',
@@ -167,7 +181,6 @@ const EventTicketList = ({ initialRows = [] }) => {
   ];
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -179,14 +192,12 @@ const EventTicketList = ({ initialRows = [] }) => {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 4,
+              pageSize: 5,
             },
           },
         }}
-        pageSizeOptions={[4]}
         rowHeight={70}
       />
-    </Box>
   );
 };
 

@@ -8,7 +8,8 @@ import { deleteApi, fetchApi, putApi } from "./api";
  * @import Notification from "./models/Notification";
  * @import SavedEvent from "./models/SavedEvent";
  * @import { PaymentMethod } from "./models/PaymentMethod";
- */
+ * @import Ticket from "./models/Ticket";
+*/
 
 /**
  * @returns {Promise<Category[]>}
@@ -116,6 +117,18 @@ export async function saveEvent(eventId) {
 export async function unsaveEvent(savedEventId) {
     let response = await deleteApi("Event/Saved", { savedEvent: savedEventId });
     return response.ok;
+}
+
+/**
+ * @returns {Promise<Ticket[]>}
+ */
+export async function getTickets() {
+    let response = await fetchApi("Ticket");
+    if (!response.ok) {
+        return [];
+    } else {
+        return await response.json();
+    }
 }
 
 /**
