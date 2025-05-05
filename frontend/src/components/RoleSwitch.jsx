@@ -37,9 +37,7 @@ export default function RoleSwitch() {
 
     switch (role) {
         case "attendee":
-            // navigate("/attendee-homepage");
         case "organizer":
-            // navigate("/organizer-homepage");
             break;
         default:
             return null;
