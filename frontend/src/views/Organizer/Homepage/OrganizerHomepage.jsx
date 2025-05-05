@@ -6,7 +6,7 @@ import OrganizerOfferCard from '../../../components/organizer/OrganizerOfferCard
 import OrganizerFeature from '../../../components/organizer/OrganizerFeature';
 import OrganizerFeatureNews from '../../../components/organizer/OrganizerFeatureNews';
 import TestimonialSection from '../../../components/TestimonialSection';
-import SubscribeSection from '../../../components/SucribeCard';
+import SubscribeSection from '../../../components/SubscribeCard';
 import Footer from '../../../components/Footer';
 
 import { Toolbar } from '@mui/material';
@@ -40,7 +40,7 @@ const testimonialsData = [
 const OrganizerHomepage = () => {
   return (
     <div>
-        
+
         {/* Fixed header */}
         <Header />
         {/* <Toolbar /> */}

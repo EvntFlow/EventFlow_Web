@@ -1,190 +1,74 @@
-import React from 'react';
-import Header from './Header';
-import Search from './Search';
-import EventSection from './EventSection';
-import Footer from './Footer';
+// @ts-check
 
-import { Toolbar,Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import EventSection from './EventSection';
+import { Box, Grid } from '@mui/material';
 import SortByDropdown from './SortByBox';
 import FilterSidebar from './FilterSideBar';
+import { useSearchParams } from 'react-router-dom';
+import { findEvents } from '../backend';
+import SearchCard from './Search';
 
-// Top events array with event details
-const eventsData = [
-  {
-    id: 1,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '22',
-    title: 'Event title that can go up to two lines',
-    address: 'Venue 1',
-    timeStart: '10:00 AM',
-    timeEnd: '12:00 PM',
-    price: '$10',
-    interested: 10,
-  },
-  {
-    id: 2,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '23',
-    title: 'Another event title that might be a bit longer',
-    address: 'Venue 2',
-    timeStart: '1:00 PM',
-    timeEnd: '3:00 PM',
-    price: '$10',
-    interested: 5,
-  },
-  {
-    id: 3,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '24',
-    title: 'A third event title goes here',
-    address: 'Venue 3',
-    timeStart: '2:00 PM',
-    timeEnd: '4:00 PM',
-    price: '$10',
-    interested: 8,
-  },
-  {
-    id: 1,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '22',
-    title: 'Event title that can go up to two lines',
-    address: 'Venue 1',
-    timeStart: '10:00 AM',
-    timeEnd: '12:00 PM',
-    price: '$10',
-    interested: 10,
-  },
-  {
-    id: 2,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '23',
-    title: 'Another event title that might be a bit longer',
-    address: 'Venue 2',
-    timeStart: '1:00 PM',
-    timeEnd: '3:00 PM',
-    price: '$10',
-    interested: 5,
-  },
-  {
-    id: 3,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '24',
-    title: 'A third event title goes here',
-    address: 'Venue 3',
-    timeStart: '2:00 PM',
-    timeEnd: '4:00 PM',
-    price: '$10',
-    interested: 8,
-  },
-  {
-    id: 1,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '22',
-    title: 'Event title that can go up to two lines',
-    address: 'Venue 1',
-    timeStart: '10:00 AM',
-    timeEnd: '12:00 PM',
-    price: '$10',
-    interested: 10,
-  },
-  {
-    id: 2,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '23',
-    title: 'Another event title that might be a bit longer',
-    address: 'Venue 2',
-    timeStart: '1:00 PM',
-    timeEnd: '3:00 PM',
-    price: '$10',
-    interested: 5,
-  },
-  {
-    id: 3,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '24',
-    title: 'A third event title goes here',
-    address: 'Venue 3',
-    timeStart: '2:00 PM',
-    timeEnd: '4:00 PM',
-    price: '$10',
-    interested: 8,
-  },
-  {
-    id: 1,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '22',
-    title: 'Event title that can go up to two lines',
-    address: 'Venue 1',
-    timeStart: '10:00 AM',
-    timeEnd: '12:00 PM',
-    price: '$10',
-    interested: 10,
-  },
-  {
-    id: 2,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '23',
-    title: 'Another event title that might be a bit longer',
-    address: 'Venue 2',
-    timeStart: '1:00 PM',
-    timeEnd: '3:00 PM',
-    price: '$10',
-    interested: 5,
-  },
-  {
-    id: 3,
-    image: '../../img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '24',
-    title: 'A third event title goes here',
-    address: 'Venue 3',
-    timeStart: '2:00 PM',
-    timeEnd: '4:00 PM',
-    price: '$10',
-    interested: 8,
-  },
-];
-
-const event_filters = {
-    Price: ['Free', 'Paid'],
-    Date: ['Today', 'This Week', 'This Month', 'Pick a Date'],
-    Category: ['Adventure', 'Art Performance', 'Auction', 'Festival', 'Music Show', 'Sports', 'Theater', 'Food & Drink', 'Workshop', 'Networking'],
-    Location: ['Wollongong', 'Sydney CBD', 'Dapto', 'Canberra', 'Pick a Location',],
-  };
+/** @import Event from "../models/Event" */
+/** @import { FindEventParams } from "../backend" */
+/** @import { SortOption } from "../components/SortByBox" */
 
 const EventSearchPage = () => {
+  const [searchParams] = useSearchParams();
+  const [events, setEvents] = useState(/** @type {Event[] | null=} */(null));
+  const [filteredEvents, setFilteredEvents] = useState(/** @type {Event[] | null=} */(null));
+  const [sortBy, setSortBy] = useState(/** @type {SortOption} */("relevance"));
+
+  useEffect(() => {
+    (async function() {
+      /** @type {FindEventParams} */
+      let params = {}
+
+      params.category = searchParams.getAll("category");
+      params.minDate = searchParams.get("minDate") ?? undefined;
+      params.maxDate = searchParams.get("maxDate") ?? undefined;
+      params.minPrice = searchParams.get("minPrice") ?? undefined;
+      params.maxPrice = searchParams.get("maxPrice") ?? undefined;
+      params.location = searchParams.getAll("location");
+      params.keywords = searchParams.get("keywords") ?? undefined;
+
+      setEvents(await findEvents(params));
+    })();
+  }, [searchParams]);
+
   return (
     <div>
-        {/* Fixed header */}
-        <Header />
-        {/* <Toolbar /> */}
-        <Toolbar />
-        <div style={{ marginBottom: '40px' }}>
-            <Search />  
-        </div>
-        <Box sx={{ display: 'flex' }}>
-            <FilterSidebar filters={event_filters} />
-            
-            {/* Main content area */}
-            <Box sx={{ flexGrow: 1, ml: '10%', p: 1 }}>
-                {/* Main Content */}
-                <SortByDropdown/>
-                <EventSection events={eventsData} button_flag={false} />
-            </Box>
-        </Box>
-        <Footer />
-        
+      <Box sx={{ position: "relative", height: "7.5rem", mb: "7.5rem" }}>
+        <SearchCard title="Let's get started!" syncSearchParams={true} />
+      </Box>
+      <Box sx={{ height: "1rem" }} />
+      <Grid size={12} container={true}>
+        <Grid size={2}>
+          <FilterSidebar data={events} onFilter={setFilteredEvents} />
+        </Grid>
+        <Grid size={10}>
+          {/* Main content area */}
+          <Box sx={{ flexGrow: 1, width: "100%", p: 4, boxSizing: "border-box" }}>
+            {/* Main Content */}
+            <SortByDropdown onChange={setSortBy} />
+            <EventSection
+              events={filteredEvents?.sort((e1, e2) => {
+                switch (sortBy) {
+                  case "date":
+                    const startDiff
+                      = new Date(e1.startDate).getTime() - new Date(e2.startDate).getTime();
+                    return startDiff !== 0 ? startDiff :
+                      new Date(e1.endDate).getTime() - new Date(e2.endDate).getTime();
+                  case "price":
+                    return e1.price - e2.price;
+                  default:
+                    return e1.id.localeCompare(e2.id);
+                }
+              })}
+              rowSize={3} />
+          </Box>
+        </Grid>
+      </Grid>
     </div>
   );
 }

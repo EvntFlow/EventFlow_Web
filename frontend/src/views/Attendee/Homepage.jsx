@@ -1,54 +1,15 @@
 import React from 'react';
-import Search from '../../components/Search';
 import Categories from '../../components/Categories';
-import Feature from '../../components/Feature';
+import Featured from '../../components/Featured';
 import EventSection from '../../components/EventSection';
 import TestimonialSection from '../../components/TestimonialSection';
-import Footer from '../../components/Footer';
-import SubscribeSection from '../../components/SucribeCard';
-import { Box } from '@mui/material';
+import SubscribeSection from '../../components/SubscribeCard';
+import { Box, Stack } from '@mui/material';
+import SearchCard from '../../components/Search';
+import dayjs from 'dayjs';
 // import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
 
-// Top events array with event details
-const eventsData = [
-  {
-    id: 1,
-    image: '/img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '22',
-    title: 'Event title that can go up to two lines',
-    address: 'Venue 1',
-    timeStart: '10:00 AM',
-    timeEnd: '12:00 PM',
-    price: '$10',
-    interested: 10,
-  },
-  {
-    id: 2,
-    image: '/img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '23',
-    title: 'Another event title that might be a bit longer',
-    address: 'Venue 2',
-    timeStart: '1:00 PM',
-    timeEnd: '3:00 PM',
-    price: '$10',
-    interested: 5,
-  },
-  {
-    id: 3,
-    image: '/img/TopEvent.png',
-    dateMonth: 'NOV',
-    dateDay: '24',
-    title: 'A third event title goes here',
-    address: 'Venue 3',
-    timeStart: '2:00 PM',
-    timeEnd: '4:00 PM',
-    price: '$10',
-    interested: 8,
-  },
-  // Add more event objects as needed
-];
+/** @typedef {import('../../backend').FindEventParams} FindEventParams */
 
 const testimonialsData = [
   {
@@ -75,35 +36,37 @@ const testimonialsData = [
   // Add more testimonials as needed
 ];
 
-const Homepage = () => {
+/** @type {FindEventParams} */
+const query10AndUnder = {
+  maxPrice: 10.0
+};
+/** @type {FindEventParams} */
+const queryOnline = {
+  location: ["Online"]
+};
+/** @type {FindEventParams} */
+const queryWeekend = {
+  minDate: dayjs(Date.now()).startOf("week").day(6).toISOString(),
+  maxDate: dayjs(Date.now()).startOf("week").day(6).add(2, "day").toISOString()
+};
+
+export default function Homepage() {
   return (
     <div>
-        <Box sx={{ position: 'relative', height: '500px',  }}>
+      <Box sx={{ position: "relative", mb: "15vh" }}>
         {/* Background Image Layer */}
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            backgroundImage: 'url(/img/header.jpeg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <Search />
-        </Box>
-        <Categories />
-        <Feature />
-        <Box sx={{ ml: 10 }}>
-          <EventSection headTitle="TOP EVENTS $10 AND UNDER" events={eventsData} />
-          <EventSection headTitle="POPULAR ONLINE EVENTS" events={eventsData} />
-          <EventSection headTitle="THIS WEEKEND" events={eventsData} />
-        </Box>
-        <SubscribeSection/>
-        <TestimonialSection testimonials={testimonialsData} />
-        <Footer />
+        <img alt="" src="/img/header.jpeg" width="100%" />
+        <SearchCard title="Welcome Back!" />
+      </Box>
+      <Categories />
+      <Featured />
+      <Stack sx={{ mx: 10, my: 5 }} spacing={5}>
+        <EventSection title="TOP EVENTS $10 AND UNDER" query={query10AndUnder} limit={6} />
+        <EventSection title="POPULAR ONLINE EVENTS" query={queryOnline} limit={6} />
+        <EventSection title="THIS WEEKEND" query={queryWeekend} limit={6} />
+      </Stack>
+      <TestimonialSection testimonials={testimonialsData} />
+      <SubscribeSection />
     </div>
   );
 }
-
-export default Homepage;

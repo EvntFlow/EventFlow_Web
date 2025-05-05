@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Toolbar, Typography, CircularProgress, Box } from '@mui/material';
+import { Typography, CircularProgress, Box } from '@mui/material';
 import EventTicketList from '../../components/EventTicketList';
-
-// import { Link as RouterLink } from 'react-router-dom';
-// import { getApiUrl } from '../../api';
-
 
 const rows = [
     { 
@@ -141,9 +137,9 @@ const FindTicket = () => {
                 <EventTicketList initialRows={rows} />
                 )}
             </Box>
-            {/* <div style={{ margin: '40px' }}>
+            <div style={{ margin: '40px' }}>
                 <EventTicketList initialRows={rows}/>
-            </div> */}
+            </div>
         </>
     )}
 

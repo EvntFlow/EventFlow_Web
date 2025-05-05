@@ -1,17 +1,15 @@
-import React from 'react';
 import {
   Box,
   Container,
   Grid,
-  Typography,
-  IconButton,
-  Stack
+  Link,
+  Stack,
+  Typography
 } from '@mui/material';
+import React from 'react';
 
 // Example social icons from MUI Icons
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import YouTubeIcon from '@mui/icons-material/YouTube';
+import { FacebookRounded, X, YouTube } from '@mui/icons-material';
 
 // Placeholder payment icons (use your own images or icon set)
 const paymentIcons = [
@@ -33,73 +31,83 @@ const Footer = () => {
     >
       <Container maxWidth="lg">
         {/* Top Section: 4 Columns */}
-        <Grid container spacing={4} sx={{ mb: 4 }}>
+        <Grid size={12} container spacing={4} sx={{ mb: 4 }}>
           {/* Column 1: Support */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={3}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Support
+                Support
             </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Help Center
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Safety information
-            </Typography>
-            <Typography variant="body2">
-              Cancellation options
-            </Typography>
+            <Stack spacing={1}>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                Help Center
+              </Link>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                Safety Information
+              </Link>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                Cancellation Options
+              </Link>
+            </Stack>
           </Grid>
 
           {/* Column 2: Company */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={3}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Company
             </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              About us
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Privacy policy
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Community Blog
-            </Typography>
-            <Typography variant="body2">
-              Terms of service
-            </Typography>
+            <Stack spacing={1}>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                About Us
+              </Link>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                Privacy Policy
+              </Link>
+              <Link
+                typography={"body2"}
+                sx={{ color: "inherit" }}
+                href="https://reality.trungnt2910.com">
+                  Company Blog
+              </Link>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                Terms of Service
+              </Link>
+            </Stack>
           </Grid>
 
           {/* Column 3: Contact */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={3}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Contact
             </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              FAQ
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Get in touch
-            </Typography>
-            <Typography variant="body2">
-              Partnerships
-            </Typography>
+            <Stack spacing={1}>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                FAQ
+              </Link>
+              <Link
+                typography={"body2"}
+                sx={{ color: "inherit" }}
+                href="mailto:admin@ef.trungnt2910.com">
+                  Get In Touch
+              </Link>
+              <Link typography={"body2"} sx={{ color: "inherit" }} href="#">
+                Partnerships
+              </Link>
+            </Stack>
           </Grid>
 
           {/* Column 4: Social */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={3}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Social
             </Typography>
-            <Stack direction="row" spacing={1}>
-              <IconButton aria-label="Facebook" sx={{ color: '#fff' }} size="large">
-                <FacebookIcon />
-              </IconButton>
-              <IconButton aria-label="Twitter" sx={{ color: '#fff' }} size="large">
-                <TwitterIcon />
-              </IconButton>
-              <IconButton aria-label="YouTube" sx={{ color: '#fff' }} size="large">
-                <YouTubeIcon />
-              </IconButton>
+            <Stack direction="row" spacing={2}>
+              <FacebookRounded fontSize="medium" />
+              <X fontSize="medium" />
+              <Link
+                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                sx={{ color: "inherit" }}>
+                <YouTube fontSize="medium" />
+              </Link>
             </Stack>
           </Grid>
         </Grid>

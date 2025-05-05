@@ -1,0 +1,102 @@
+// @ts-check
+
+import { Box, Button, Typography, useTheme } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+export default function RoleSwitch() {
+    const { role, switchRole } = useAuth();
+    const theme = useTheme();
+    const navigate = useNavigate();
+    const [ foreground, setForeground ] = useState("");
+    const [ background, setBackground ] = useState("");
+
+    const ifRole = useCallback(
+        /**
+         * @template {any} T
+         * @param {T} attendeeValue
+         * @param {T} organizerValue
+         * @returns {T}
+         */
+        function (attendeeValue, organizerValue) {
+            switch (role) {
+                case "attendee":
+                    return attendeeValue;
+                case "organizer":
+                    return organizerValue;
+                default:
+                    return /** @type {T} */(null);
+            }
+    }, [ role ]);
+
+    useEffect(() => {
+        setForeground(ifRole(theme.palette.background.default, theme.palette.text.primary));
+        setBackground(ifRole(theme.palette.text.primary, theme.palette.background.default));
+    }, [ role, theme, ifRole ])
+
+    switch (role) {
+        case "attendee":
+            // navigate("/attendee-homepage");
+        case "organizer":
+            // navigate("/organizer-homepage");
+            break;
+        default:
+            return null;
+    }
+
+    function CircleIcon() {
+        return (
+            <Box
+                sx={{
+                    bgcolor: foreground,
+                    minHeight: 24,
+                    minWidth: 24,
+                    borderRadius: 10
+                }}/>
+        )
+    }
+
+    return (
+        <Box>
+            <Button
+                disableRipple
+                onClick={
+                    (e) => {
+                        const newRole = ifRole("organizer", "attendee");
+                        switchRole(ifRole("organizer", "attendee"))
+                        if (newRole === "organizer") {
+                            navigate("/organizer-homepage");
+                        } else if (newRole === "attendee") {
+                            navigate("/attendee-homepage");
+                        }
+                    }
+                }
+                sx={{
+                    borderRadius: 10,
+                    bgcolor: background,
+                    color: foreground,
+                    textTransform: "initial",
+                    minWidth: 128,
+                    paddingLeft: ifRole(0, undefined),
+                    paddingRight: ifRole(undefined, 0)
+                }}
+                endIcon={
+                    ifRole(<CircleIcon />, null)
+                }
+                startIcon={
+                    ifRole(null, <CircleIcon />)
+                }>
+                    <Typography
+                        sx={{
+                            width: "100%",
+                            color: foreground,
+                            fontWeight: theme.typography.fontWeightBold,
+                            margin: 0
+                        }}>
+                        {ifRole("Attendee", "Organizer")}
+                    </Typography>
+            </Button>
+        </Box>
+    )
+}

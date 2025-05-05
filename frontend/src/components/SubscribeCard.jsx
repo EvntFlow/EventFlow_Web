@@ -6,6 +6,7 @@ import {
   Typography,
   TextField,
   Button,
+  Stack,
 } from '@mui/material';
 
 const SubscribeSection = () => {
@@ -28,7 +29,7 @@ const SubscribeSection = () => {
           }}
         >
           {/* Left Image */}
-          <Grid item xs={12} md={6}>
+          <Grid size={3}>
             <Box
               component="img"
               src="/img/SubcriptionImage.png"
@@ -43,59 +44,58 @@ const SubscribeSection = () => {
           </Grid>
 
           {/* Right Subscription Form */}
-          <Grid
-            item
-            xs={12}
-            md={6}
+          <Grid size={9}
             sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               p: { xs: 3, md: 5 },
+              backgroundColor: "#F3F3F3",
             }}
           >
-            <Box width="100%">
+            <Stack width="100%" alignItems="center">
               <Typography
                 variant="h5"
                 sx={{
                   fontWeight: 'bold',
                   mb: 2,
-                  marginLeft: "200px",
                   textAlign: 'center',
                 }}
               >
-                Get notified of upcoming events, 
-                <br /> 
+                Get notified of upcoming events,
+                <br />
                 and more from EventFlow
               </Typography>
 
               {/* Subscription Input and Button */}
               <Box
+                component="form"
+                method="get"
+                action={window.location.href}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   backgroundColor: 'white',
                   borderRadius: '50px',
                   boxShadow: 2,
-                  p: '5px',
-                  maxWidth: 600,
-                  //mx: 'auto',
-                  marginLeft: "160px"
-                  
+                  width: "60%",
+                  minWidth: "20rem"
                 }}
               >
                 <TextField
                   variant="standard"
                   placeholder="Enter your email"
+                  type="email"
+                  required
                   fullWidth
-                  //sx={{ marginLeft: "200px"}}
-                  InputProps={{
-                    disableUnderline: true,
-                    sx: {
-                      pl: 2,
-                      //flex: 1,
-                      fontSize: '16px',
-                    },
+                  slotProps={{
+                    input: {
+                      disableUnderline: true,
+                      sx: {
+                        pl: 2,
+                        fontSize: '16px',
+                      },
+                    }
                   }}
                   sx={{
                     borderTopLeftRadius: '50px',
@@ -105,6 +105,7 @@ const SubscribeSection = () => {
                 />
                 <Button
                   variant="contained"
+                  type="submit"
                   sx={{
                     borderRadius: '50px',
                     px: 4,
@@ -120,7 +121,7 @@ const SubscribeSection = () => {
                   Subscribe
                 </Button>
               </Box>
-            </Box>
+            </Stack>
           </Grid>
         </Grid>
       </Container>

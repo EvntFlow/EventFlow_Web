@@ -1,41 +1,28 @@
-import React from 'react';
-import { Box, Container } from '@mui/material';
-import Category from './Category';
+// @ts-check
 
-const categoryData = [
-  {
-    image: '/img/TopEvent.png',
-    title: 'Music',
-  },
-  {
-    image: '/img/TopEvent.png',
-    title: 'Nightlife',
-  },
-  {
-    image: '/img/TopEvent.png',
-    title: 'Performing',
-  },
-  {
-    image: '/img/TopEvent.png',
-    title: 'Dating',
-  },
-  {
-    image: '/img/TopEvent.png',
-    title: 'Marketing',
-  },
-  {
-    image: '/img/TopEvent.png',
-    title: 'Business',
-  },
-  {
-    image: '/img/TopEvent.png',
-    title: 'Food and Drinks',
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { Box, Container } from '@mui/material';
+import CategoryView from './Category';
+import { fetchApi } from '../api';
+
+/** @import Category from "../models/Category" */
 
 const Categories = () => {
+  const [categoryData, setCategoryData] = useState(/** @type {Category[]} */([]));
+
+  useEffect(() => {
+    (async function () {
+      const response = await fetchApi("Event/Category");
+      if (!response.ok) {
+        setCategoryData([]);
+      } else {
+        setCategoryData(await response.json());
+      }
+    })();
+  }, []);
+
   return (
-    <Box sx={{ py: 4, backgroundColor: '#f9f9f9' }}>
+    <Box sx={{ py: 4 }}>
       <Container
         sx={{
           display: 'flex',
@@ -44,8 +31,8 @@ const Categories = () => {
           gap: 4,
         }}
       >
-        {categoryData.map((cat) => (
-          <Category key={cat.title} image={cat.image} title={cat.title} />
+        {categoryData.map((c) => (
+          <CategoryView category={c} />
         ))}
       </Container>
     </Box>
