@@ -152,14 +152,14 @@ export default function EventCard({ event, variant }) {
                 {/* Price & Interested */}
                 <Stack direction="row">
                   <LocalActivityIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.primary" noWrap={true}>
                     {event.price === 0 ? "Free" : `$${event.price}`}
                   </Typography>
                   <Typography variant="body2" sx={{ mx: 1 }}>
                     •
                   </Typography>
                   <Star fontSize="small" sx={{ color: deepPurple[600], mr: 0.5 }} />
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.primary" noWrap={true}>
                     {event.interested} interested
                   </Typography>
                 </Stack>

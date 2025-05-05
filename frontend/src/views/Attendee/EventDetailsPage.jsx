@@ -12,11 +12,15 @@ import { getEvent } from '../../backend';
 import SaveEvent from '../../components/SaveEvent';
 import dayjs from 'dayjs';
 import * as ics from "ics";
+import AuthorizedView from '../../components/AuthorizedView';
 
-/** @import Event from "../../models/Event" */
+/**
+ * @import Event from "../../models/Event";
+ * @import TicketOption from "../../models/TicketOption";
+ */
 
 const EventDetailsPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [event, setEvent] = useState(/** @type {Event | null} */(null));
   const [eventError, setEventError] = useState(/** @type {string | null} */(null));
 
@@ -41,6 +45,12 @@ const EventDetailsPage = () => {
     })();
   }, [searchParams]);
 
+  useEffect(() => {
+    if (searchParams.has("ticketOption") && !isTicketOverlayOpen) {
+      setIsTicketOverlayOpen(true);
+    }
+  }, [isTicketOverlayOpen, searchParams, setSearchParams])
+
   const handleCheckout = (data) => {
     setOrderData(data);
     setShowPaymentPage(true);
@@ -57,6 +67,45 @@ const EventDetailsPage = () => {
     }
     return new URL(`/Event?event=${event.id}`, window.location.href).toString();
   }, [event]);
+
+  const formatDuration = useCallback(() => {
+    if (!event) {
+      return null;
+    }
+    const startDate = dayjs(event.startDate);
+    const endDate = dayjs(event.endDate);
+    let numeric;
+    let unit;
+    const hourDiff = endDate.diff(startDate, "hour", true);
+    if (hourDiff < 1) {
+      numeric = endDate.diff(startDate, "minute");
+      unit = "minute";
+    } else {
+      numeric = Math.round(hourDiff * 10) / 10;
+      unit = "hour";
+    }
+    if (numeric > 1) {
+      unit += "s";
+    }
+    return `${numeric} ${unit}`;
+  }, [event]);
+
+  const formatPrice = useCallback(
+    /**
+     * @param {TicketOption} to
+     */
+    function(to) {
+      if (!event) {
+        return null;
+      }
+      const price = event.price + to.additionalPrice;
+      if (!price) {
+        return "Free"
+      } else {
+        return `$${price}/ticket`;
+      }
+    }
+  , [event])
 
   const addToCalendar = useCallback(() => {
     if (!event) {
@@ -152,9 +201,7 @@ const EventDetailsPage = () => {
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <HourglassTop sx={{ mr: 1 }} />
-                          <Typography>
-                            {dayjs(event.endDate).diff(dayjs(event.startDate), "hour", true)} hour(s)
-                          </Typography>
+                          <Typography>{formatDuration()}</Typography>
                         </Box>
                         <Button
                           startIcon={<AddCircleOutline />}
@@ -195,15 +242,18 @@ const EventDetailsPage = () => {
                   <Grid size={2} />
                   <Grid size={4}>
                     <Stack spacing={3}>
-                      <Stack direction="row-reverse">
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          startIcon={<LocalActivity />}
-                          onClick={() => setIsTicketOverlayOpen(true)}>
-                            Buy Tickets
-                        </Button>
-                      </Stack>
+                      <AuthorizedView role="attendee">
+                        <Stack direction="row-reverse">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<LocalActivity />}
+                            onClick={() => setIsTicketOverlayOpen(true)}
+                            disabled={(!event.ticketOptions || !event.ticketOptions.length)}>
+                              Buy Tickets
+                          </Button>
+                        </Stack>
+                      </AuthorizedView>
                       <Stack>
                         <Stack spacing={1}>
                           <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -250,7 +300,7 @@ const EventDetailsPage = () => {
                               <Box key={to.id} sx={{ display: 'flex', alignItems: 'center' }}>
                                 <LocalActivity sx={{ mr: 1 }} />
                                 <Typography>
-                                  {to.name}: ${event.price + to.additionalPrice}/ticket
+                                  {to.name}: {formatPrice(to)}
                                 </Typography>
                               </Box>
                             )
@@ -261,10 +311,6 @@ const EventDetailsPage = () => {
                       </Stack>
                     </Stack>
                   </Grid>
-                </Grid>
-
-                <Grid>
-
                 </Grid>
 
                 <Grid>
@@ -388,11 +434,18 @@ const EventDetailsPage = () => {
               </Stack>
           </Popover>
 
-          <TicketOverlay
-            isOpen={isTicketOverlayOpen}
-            onClose={() => setIsTicketOverlayOpen(false)}
-            onCheckout={handleCheckout}
-          />
+          {event && (
+            <TicketOverlay
+              event={event}
+              isOpen={isTicketOverlayOpen}
+              onClose={() => {
+                searchParams.delete("ticketOption");
+                setSearchParams(searchParams);
+                setIsTicketOverlayOpen(false);
+              }}
+              onCheckout={handleCheckout}
+            />
+          )}
         </>
       ) : (
         <PaymentPage orderData={orderData} onBackToOverlay={handleBackToEvent} />

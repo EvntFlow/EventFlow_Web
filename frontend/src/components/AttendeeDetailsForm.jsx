@@ -1,209 +1,224 @@
-import React, { useState } from 'react';
-import { 
-  Dialog, DialogContent, DialogTitle, TextField, Box, Typography, 
-  Button, IconButton, Checkbox, FormControlLabel, Divider, Link
+// @ts-check
+
+import { ArrowBack, CalendarToday, KeyboardArrowRight } from '@mui/icons-material';
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  Dialog, DialogContent, DialogTitle,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  Link,
+  Stack,
+  TextField,
+  Typography
 } from '@mui/material';
-import { ArrowBack, KeyboardArrowRight } from '@mui/icons-material';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { getApiUrl } from '../api';
+import { useAuth } from '../context/AuthContext';
 
-const AttendeeDetailsForm = ({ open, onClose, onContinue, ticketDetails, totalQuantity, totalPrice }) => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    acceptTerms: false
-  });
-  
-  const [errors, setErrors] = useState({});
+/**
+ * @import Event from "../models/Event";
+ * @import TicketOption from "../models/TicketOption";
+ */
 
-  const handleChange = (e) => {
-    const { name, value, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === 'acceptTerms' ? checked : value
-    });
-    
-    // Clear error when field is being edited
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null
-      });
-    }
-  };
+/**
+ * @typedef AttendeeDetailsFormProps
+ * @property {boolean} isOpen
+ * @property {() => any} onClose
+ * @property {() => any} onContinue
+ * @property {Event} event
+ * @property {[TicketOption, number][]} ticketDetails
+ * @property {number} totalQuantity
+ * @property {number} totalPrice
+ */
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = 'Phone number is required';
-    }
-    
-    if (!formData.acceptTerms) {
-      newErrors.acceptTerms = 'You must accept the terms of service';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+/**
+ * @param {AttendeeDetailsFormProps} props
+ */
+export default function AttendeeDetailsForm(props) {
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [error, setError] = useState(/** @type {string | null} */(null));
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      onContinue(formData);
+  // Consume the error to avoid polluting callbacks.
+  useEffect(() => {
+    if (searchParams.has("error")) {
+      setError(searchParams.get("error"));
+      searchParams.delete("error");
+      setSearchParams(searchParams);
     }
-  };
+  }, [searchParams, setSearchParams]);
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose}
+    <Dialog
+      open={props.isOpen}
+      onClose={props.onClose}
       fullWidth
       maxWidth="sm"
-      PaperProps={{ 
-        sx: { 
-          borderRadius: 1,
-          maxHeight: '90vh'
-        } 
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 1,
+            maxHeight: '90vh'
+          }
+        }
       }}
     >
-      <DialogTitle sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <DialogTitle sx={{
+        display: 'flex',
+        alignItems: 'center',
         p: 2,
         bgcolor: 'background.paper',
         borderBottom: '1px solid',
         borderColor: 'divider'
       }}>
-        <IconButton edge="start" onClick={onClose} sx={{ mr: 1 }} size="large">
+        <IconButton edge="start" onClick={props.onClose} sx={{ mr: 1 }} size="large">
           <ArrowBack />
         </IconButton>
         <Typography variant="h6">Attendee Details</Typography>
       </DialogTitle>
       <DialogContent sx={{ p: 0, bgcolor: 'grey.50' }}>
-        <Box sx={{ p: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="body2">Event Name</Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box component="span" sx={{ mr: 0.5 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M16 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M8 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Box>
-              <Typography variant="body2">Saturday, 2 December 2023</Typography>
-            </Box>
-          </Box>
-          
-          <Typography 
-            variant="subtitle2" 
-            sx={{ 
-              p: 1.5, 
-              borderBottom: '2px solid', 
-              borderColor: 'primary.main', 
-              bgcolor: 'white',
-              mb: 2
-            }}
-          >
-            {ticketDetails.map(t => `${t.type}: ${t.quantity}`).join(', ')}
-          </Typography>
-          
-          <Box sx={{ bgcolor: 'white', p: 2, borderRadius: 1, mb: 2 }}>
-            <Typography variant="subtitle1" gutterBottom>Full Name</Typography>
-            <TextField
-              fullWidth
-              placeholder="Enter Attendee's full name"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              error={!!errors.fullName}
-              helperText={errors.fullName}
-              variant="outlined"
-              size="small"
-              sx={{ mb: 2 }}
-            />
-            
-            <Typography variant="subtitle1" gutterBottom>Email</Typography>
-            <TextField
-              fullWidth
-              placeholder="Enter your email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              error={!!errors.email}
-              helperText={errors.email}
-              variant="outlined"
-              size="small"
-              sx={{ mb: 2 }}
-            />
-            
-            <Typography variant="subtitle1" gutterBottom>Phone number</Typography>
-            <TextField
-              fullWidth
-              placeholder="Enter your phone number"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              error={!!errors.phoneNumber}
-              helperText={errors.phoneNumber}
-              variant="outlined"
-              size="small"
-            />
-          </Box>
-          
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-            <FormControlLabel
-              control={
-                <Checkbox 
-                  name="acceptTerms" 
-                  checked={formData.acceptTerms}
-                  onChange={handleChange}
-                  size="small"
-                />
-              }
-              label={
-                <Typography variant="body2" sx={{ color: errors.acceptTerms ? 'error.main' : 'inherit' }}>
-                  I accept the <Link href="#" color="primary">Terms of Service</Link> and have read the <Link href="#" color="primary">Privacy Policy</Link>
+        <Box
+          component="form"
+          method="post"
+          action={getApiUrl("Ticket", { returnUrl: "/Ticket" })}
+        >
+          <Box sx={{ p: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="body2"><b>{props.event.name}</b></Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <CalendarToday />
+                <Typography variant="body2">
+                  {dayjs(props.event.startDate).format("dddd, D MMMM YYYY")}
                 </Typography>
+              </Stack>
+            </Box>
+
+            <Typography
+              variant="subtitle2"
+              sx={{
+                p: 1.5,
+                borderBottom: '2px solid',
+                borderColor: 'primary.main',
+                bgcolor: 'white',
+                mb: 2
+              }}
+            >
+              {props.ticketDetails.map(([to, count]) =>
+                `${to.name}: ${count}x`).join(', ')
               }
-            />
+            </Typography>
+
+            <Box display="none">
+              {props.ticketDetails
+                .flatMap(([to, count]) => Array(count).fill(null).map(() => to.id))
+                .map((id, index) => (
+                  <input key={index} hidden readOnly name="ticketOption" value={id} />
+                ))}
+            </Box>
+
+            <Box sx={{ bgcolor: 'white', p: 2, borderRadius: 1, mb: 2 }}>
+              <Typography variant="subtitle1" gutterBottom>Full Name</Typography>
+              <TextField
+                fullWidth={true}
+                required={true}
+                placeholder="Enter your full name"
+                defaultValue={
+                  searchParams.get("fullName") || `${user?.firstName} ${user?.lastName}`
+                }
+                name="fullName"
+                variant="outlined"
+                size="small"
+                sx={{ mb: 2 }}
+              />
+
+              <Typography variant="subtitle1" gutterBottom>Email</Typography>
+              <TextField
+                fullWidth
+                required={true}
+                placeholder="Enter your email"
+                defaultValue={searchParams.get("email") || `${user?.email}`}
+                name="email"
+                type="email"
+                variant="outlined"
+                size="small"
+                sx={{ mb: 2 }}
+              />
+
+              <Typography variant="subtitle1" gutterBottom>Phone Number</Typography>
+              <TextField
+                fullWidth
+                required={true}
+                defaultValue={searchParams.get("phoneNumber") || `${user?.phoneNumber}`}
+                placeholder="Enter your phone number"
+                name="phoneNumber"
+                type="tel"
+                variant="outlined"
+                size="small"
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    required={true}
+                  />
+                }
+                label={
+                  <>
+                    I accept the{' '}
+                    <Link href="#" color="primary">Terms of Service</Link>{' '}
+                    and have read the{' '}
+                    <Link href="#" color="primary">Privacy Policy</Link>
+                  </>
+                }
+                slotProps={{
+                  typography: {
+                    variant: "body2"
+                  }
+                }}
+              />
+            </Box>
+
+            {error &&
+              <Alert severity="error">
+                {error}
+              </Alert>
+            }
           </Box>
-        </Box>
-        
-        <Divider />
-        
-        <Box sx={{ p: 2, bgcolor: 'white' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-              <Typography>Qty: {totalQuantity}</Typography>
+
+          <Divider />
+
+          <Box sx={{ p: 2, bgcolor: 'white' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+              <Typography>Qty: {props.totalQuantity}</Typography>
               <Typography>
-                Total: <Box component="span" color="primary.main">${totalPrice.toFixed(0)}</Box>
+                Total:{' '}
+                <Box component="span" color="primary.main">
+                  {props.totalPrice ? `$${props.totalPrice.toFixed(0)}` : "Free"}
+                </Box>
               </Typography>
+            </Box>
+
+            <Button
+              variant="contained"
+              type="submit"
+              fullWidth
+              endIcon={<KeyboardArrowRight />}
+              sx={{ py: 1.5 }}
+            >
+              Submit Order
+            </Button>
           </Box>
-          
-          <Button
-            variant="contained"
-            fullWidth
-            endIcon={<KeyboardArrowRight />}
-            onClick={handleSubmit}
-            sx={{ py: 1.5 }}
-          >
-            Continue to Checkout
-          </Button>
         </Box>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default AttendeeDetailsForm;
