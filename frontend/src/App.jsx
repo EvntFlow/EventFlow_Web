@@ -26,6 +26,7 @@ import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import Dashboard from './views/Organizer/Dashboard/Dashboard';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+import FinishTicketPaymentPage from './views/Attendee/FinishTicketPaymentPage';
 
 const App = () => {
   return (
@@ -52,6 +53,8 @@ const App = () => {
 
           <Route path="/event/details" element={<EventDetailsPage />} />
           <Route path="/event/search" element={<EventSearchPage />} />
+
+          <Route path="/ticket/finishticketpayment" element={<FinishTicketPaymentPage />} />
 
           <Route path="/event-details" element={<EventDetail eventData={null} />} />
 

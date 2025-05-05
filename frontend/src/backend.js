@@ -7,6 +7,7 @@ import { deleteApi, fetchApi, putApi } from "./api";
  * @import Event from "./models/Event";
  * @import Notification from "./models/Notification";
  * @import SavedEvent from "./models/SavedEvent";
+ * @import { PaymentMethod } from "./models/PaymentMethod";
  */
 
 /**
@@ -112,7 +113,19 @@ export async function saveEvent(eventId) {
  * @param {string} savedEventId
  * @returns {Promise<boolean>}
  */
-export async function deleteEvent(savedEventId) {
+export async function unsaveEvent(savedEventId) {
     let response = await deleteApi("Event/Saved", { savedEvent: savedEventId });
     return response.ok;
+}
+
+/**
+ * @returns {Promise<PaymentMethod[]>}
+ */
+export async function getPaymentMethods() {
+    let response = await fetchApi("Payment");
+    if (!response.ok) {
+        return [];
+    } else {
+        return await response.json();
+    }
 }

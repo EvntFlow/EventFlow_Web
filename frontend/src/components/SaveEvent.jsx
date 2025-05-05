@@ -3,7 +3,7 @@
 import { Star, StarBorder } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { deleteEvent, saveEvent } from "../backend";
+import { unsaveEvent, saveEvent } from "../backend";
 import AuthorizedView from "./AuthorizedView";
 
 /** @import Event from "../models/Event"; */
@@ -31,7 +31,7 @@ export default function SaveEvent({ event, iconButtonProps }) {
         setIsSaved(true);
       }
     } else if (event.savedEvent) {
-      let ok = await deleteEvent(event.savedEvent.id);
+      let ok = await unsaveEvent(event.savedEvent.id);
       if (ok) {
         event.savedEvent = undefined;
         setIsSaved(false);
