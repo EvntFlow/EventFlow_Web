@@ -89,6 +89,7 @@ export default function FinishTicketPayment() {
     = useState(/** @type {Map<PaymentMethod["$type"], PaymentMethod[]> | null} */(null));
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [isAddingCardUserRequested, setIsAddingCardUserRequested] = useState(false);
 
   useEffect(() => {
     (async function() {
@@ -242,7 +243,8 @@ export default function FinishTicketPayment() {
               mr: "auto",
             }}
             onClick={() => {
-              searchParams.set("isAddingCard", "true");
+              setIsAddingCardUserRequested(true);
+              searchParams.set("isAddingCard", "1");
               setSearchParams(searchParams);
             }}
           >
@@ -425,23 +427,25 @@ export default function FinishTicketPayment() {
       <Dialog
         open={!!searchParams.get("isAddingCard")}
         onClose={() => {
-          searchParams.delete("isAddingCard");
-          setSearchParams(searchParams);
+          if (isAddingCardUserRequested) {
+            setIsAddingCardUserRequested(false);
+            searchParams.delete("isAddingCard");
+            setSearchParams(searchParams);
+          }
         }}
-        sx={{ minWidth: "50vw" }}
       >
         <DialogTitle>
             Add New Card
         </DialogTitle>
-        <DialogContent sx={{ minWidth: "40vw", boxSizing: "border-box" }}>
-          <PaymentDialog />
+        <DialogContent>
+          <AddCardForm />
         </DialogContent>
       </Dialog>
     </Grid>
   );
 }
 
-function PaymentDialog() {
+function AddCardForm() {
   const [displayName, setDisplayName] = useState("");
   const [number, setNumber] = useState("");
   const [expiry, setExpiry] = useState("");
