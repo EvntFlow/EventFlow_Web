@@ -1,5 +1,13 @@
 // @ts-check
 
+import FORCE_IMPORT_POLYFILL from "core-js/modules/es.map.group-by";
+/**
+ * @typedef { globalThis.MapConstructor & {
+ *  groupBy<K, T>(items: Iterable<T>, keySelector: (item: T, index: number) => K, ): Map<K, T[]>;
+ * }} MapConstructor
+ */
+
+import InputMask from "@mona-health/react-input-mask";
 import { AddCircle, CalendarToday, ExpandMore, Label, Person, Security } from "@mui/icons-material";
 import {
   Accordion,
@@ -25,27 +33,20 @@ import {
   Typography,
   useTheme
 } from "@mui/material";
+import { blue } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { getApiUrl } from "../../api";
 import { getPaymentMethods } from "../../backend";
+import Authorized from "../../components/Authorized";
 import CardTypeIcon from "../../components/CardTypeIcon";
-import InputMask from "@mona-health/react-input-mask";
 
 /**
  * @import { PaymentMethod } from "../../models/PaymentMethod";
  */
 
-import { blue } from "@mui/material/colors";
-import FORCE_IMPORT_POLYFILL from "core-js/modules/es.map.group-by";
-import { getApiUrl } from "../../api";
-import Authorized from "../../components/Authorized";
 // eslint-disable-next-line no-unused-expressions
 FORCE_IMPORT_POLYFILL;
-/**
- * @typedef { globalThis.MapConstructor & {
- *  groupBy<K, T>(items: Iterable<T>, keySelector: (item: T, index: number) => K, ): Map<K, T[]>;
- * }} MapConstructor
- */
 const Map = /** @type {MapConstructor} */(window.Map);
 
 /**

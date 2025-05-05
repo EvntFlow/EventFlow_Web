@@ -20,8 +20,4 @@
  * @typedef {BasePaymentMethod | CardPaymentMethod} PaymentMethod
  */
 
-/**
- * @typedef {CardPaymentMethod["$type"]} T
- */
-
 export default {};
