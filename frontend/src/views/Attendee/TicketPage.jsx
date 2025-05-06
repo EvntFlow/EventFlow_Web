@@ -187,7 +187,7 @@ export default function TicketPage() {
                 Your ticket has been canceled
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                We are sorry to see you go. A refund has bene processed,
+                We are sorry to see you go. A refund has been processed,
                 which might take a few days to come through. Hope to see
                 you in other events soon!
               </Typography>
