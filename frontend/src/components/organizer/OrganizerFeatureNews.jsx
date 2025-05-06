@@ -55,7 +55,7 @@ const OrganizerFeatureNews = () => {
         variant="h4"
         sx={{ fontWeight: 'bold', mb: { xs: 3, md: 4 } }}
       >
-        Feature News
+        Featured News
       </Typography>
 
       {/* Cards */}

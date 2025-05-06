@@ -24,7 +24,7 @@ const navConfig = {
   ],
   organizer: [
     { label: '', to: '/Home/Organizer' },
-    { label: 'Create Events', to: '/create-event' },
+    { label: 'Create Event', to: '/Event/Create' },
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Account', to: '/account' },
   ],

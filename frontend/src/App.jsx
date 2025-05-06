@@ -69,7 +69,7 @@ const App = () => {
             }
           />
           <Route
-            path="/create-event"
+            path="/Event/Create"
             element={
               <EventContextProvider>
                 <EditDetailsPage />

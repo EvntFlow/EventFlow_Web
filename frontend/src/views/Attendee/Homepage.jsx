@@ -55,7 +55,7 @@ export default function Homepage() {
     <div>
       <Box sx={{ position: "relative", mb: "15vh" }}>
         {/* Background Image Layer */}
-        <img alt="" src="/img/header.jpeg" width="100%" />
+        <img alt="" src="/img/header.jpeg" width="100%" style={{ height: "30rem" }} />
         <SearchCard title="Welcome Back!" />
       </Box>
       <Categories />

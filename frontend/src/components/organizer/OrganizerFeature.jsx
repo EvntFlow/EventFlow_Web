@@ -1,3 +1,5 @@
+// @ts-check
+
 import React from 'react';
 import {
   Box,
@@ -6,10 +8,15 @@ import {
   Button,
   Card,
   CardMedia,
-  CardContent
+  CardContent,
+  Stack,
+  useTheme
 } from '@mui/material';
+import { ArrowForward } from '@mui/icons-material';
 
 const OrganizerFeature = () => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -44,7 +51,7 @@ const OrganizerFeature = () => {
           sx={{ mb: 2 }}
           style={{ marginBottom: "50px", textDecorationLine: 'underline', textUnderlineOffset: "35px", textDecorationThickness: "1px" }}
         >
-          FEATURE ORGANIZERS
+          FEATURED ORGANIZERS
         </Typography>
 
         {/* Cards Container */}
@@ -59,10 +66,10 @@ const OrganizerFeature = () => {
             marginLeft: "26px",
             marginTop: "10px",
           }}
-          //style={{marginTop: "20px"}}
+        //style={{marginTop: "20px"}}
         >
           {/* Card 1 */}
-          <Card sx={{ maxWidth: 300, background:'transparent', boxShadow: 'none', border:'none', marginRight: "20px" }}>
+          <Card sx={{ maxWidth: 300, background: 'transparent', boxShadow: 'none', border: 'none', marginRight: "20px" }}>
             <CardMedia
               component="img"
               height="180"
@@ -80,7 +87,7 @@ const OrganizerFeature = () => {
           </Card>
 
           {/* Card 2 */}
-          <Card sx={{ maxWidth: 300, background:'transparent', boxShadow: 'none', border:'none', marginRight: "20px"  }}>
+          <Card sx={{ maxWidth: 300, background: 'transparent', boxShadow: 'none', border: 'none', marginRight: "20px" }}>
             <CardMedia
               component="img"
               height="180"
@@ -92,14 +99,14 @@ const OrganizerFeature = () => {
             />
             <CardContent>
               <Typography variant="h6" fontWeight="bold" color='white'>
-              Organizer 2
+                Organizer 2
               </Typography>
 
             </CardContent>
           </Card>
 
           {/* Card 3 */}
-          <Card sx={{ maxWidth: 300, background:'transparent', boxShadow: 'none', border:'none', marginRight: "20px" }}>
+          <Card sx={{ maxWidth: 300, background: 'transparent', boxShadow: 'none', border: 'none', marginRight: "20px" }}>
             <CardMedia
               component="img"
               height="180"
@@ -117,7 +124,7 @@ const OrganizerFeature = () => {
             </CardContent>
           </Card>
           {/* Card 4 */}
-          <Card sx={{ maxWidth: 300, background:'transparent', boxShadow: 'none', border:'none', marginRight: "20px" }}>
+          <Card sx={{ maxWidth: 300, background: 'transparent', boxShadow: 'none', border: 'none', marginRight: "20px" }}>
             <CardMedia
               component="img"
               height="180"
@@ -135,7 +142,7 @@ const OrganizerFeature = () => {
             </CardContent>
           </Card>
           {/* Card 5 */}
-          <Card sx={{ maxWidth: 300, background:'transparent', boxShadow: 'none', border:'none', marginRight: "20px" }}>
+          <Card sx={{ maxWidth: 300, background: 'transparent', boxShadow: 'none', border: 'none', marginRight: "20px" }}>
             <CardMedia
               component="img"
               height="180"
@@ -155,21 +162,20 @@ const OrganizerFeature = () => {
         </Box>
 
         {/* "See all" button */}
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{ 
-            backgroundColor: '#fff',
-            color: 'primary.main',
-            fontWeight: 'bold',
-            '&:hover': {
-              backgroundColor: '#e0e0e0',
-            }
-          }}
-          style={{ borderRadius: "25px", paddingLeft: "30px", paddingRight: "25px"}}
+        <Stack
+          alignItems="center"
         >
-          See all &#8594;
-        </Button>
+          <Button
+            href="#"
+            variant="outlined"
+            style={{ borderRadius: 25 }}
+            endIcon={<ArrowForward />}
+            size="large"
+            sx={{ backgroundColor: theme.palette.background.paper }}
+          >
+            See all
+          </Button>
+        </Stack>
       </Container>
     </Box>
   );

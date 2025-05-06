@@ -1,5 +1,6 @@
+// @ts-check
+
 import React from 'react';
-import Header from '../../../components/Header';
 import OrganizerStartCard from '../../../components/organizer/OrganizerStartCard';
 import OrganizerSolutionsCard from '../../../components/organizer/OrganizerSolutionsCard';
 import OrganizerOfferCard from '../../../components/organizer/OrganizerOfferCard';
@@ -7,9 +8,7 @@ import OrganizerFeature from '../../../components/organizer/OrganizerFeature';
 import OrganizerFeatureNews from '../../../components/organizer/OrganizerFeatureNews';
 import TestimonialSection from '../../../components/TestimonialSection';
 import SubscribeSection from '../../../components/SubscribeCard';
-
-import { Toolbar } from '@mui/material';
-// import { AppBar, Toolbar, Button, Container, Box, TextField, MenuItem } from '@mui/material';
+import Authorized from '../../../components/Authorized';
 
 const testimonialsData = [
   {
@@ -39,19 +38,16 @@ const testimonialsData = [
 const OrganizerHomepage = () => {
   return (
     <div>
+      <Authorized role="organizer" />
 
-        {/* Fixed header */}
-        <Header />
-        {/* <Toolbar /> */}
-        <Toolbar />
-        {/* Main Content */}
-        <OrganizerStartCard />
-        <OrganizerSolutionsCard/>
-        <OrganizerOfferCard/>
-        <OrganizerFeature />
-        <OrganizerFeatureNews />
-        <SubscribeSection/>
-        <TestimonialSection testimonials={testimonialsData} />
+      {/* Main Content */}
+      <OrganizerStartCard />
+      <OrganizerSolutionsCard />
+      <OrganizerOfferCard />
+      <OrganizerFeature />
+      <OrganizerFeatureNews />
+      <TestimonialSection testimonials={testimonialsData} />
+      <SubscribeSection />
     </div>
   );
 }
