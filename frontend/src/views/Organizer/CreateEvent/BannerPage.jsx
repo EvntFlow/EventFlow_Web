@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Typography, 
@@ -6,10 +6,12 @@ import {
   Box, 
   Button,
   FormLabel,
-  Stack
+  Stack,
+  IconButton,
+  CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { ImageOutlined } from '@mui/icons-material';
+import { CloudUpload, Delete } from '@mui/icons-material';
 import { EventContext } from './EventContext';
 
 // Custom Stepper component with MUI
@@ -30,7 +32,10 @@ const ImagePlaceholder = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   marginBottom: theme.spacing(2),
-  borderRadius: theme.shape.borderRadius
+  borderRadius: theme.shape.borderRadius,
+  cursor: 'pointer',
+  position: 'relative',
+  overflow: 'hidden'
 }));
 
 const PlaceholderContent = styled(Box)(({ theme }) => ({
@@ -40,9 +45,32 @@ const PlaceholderContent = styled(Box)(({ theme }) => ({
   color: theme.palette.grey[400]
 }));
 
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
+const ImageActions = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: 8,
+  right: 8,
+  display: 'flex',
+  gap: theme.spacing(1)
+}));
+
 const BannerPage = () => {
   const navigate = useNavigate();
   const { eventData, setEventData } = useContext(EventContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,6 +86,65 @@ const BannerPage = () => {
 
   const handleBack = () => {
     navigate('/create-event');
+  };
+
+  const handleImageClick = () => {
+    if (!eventData.bannerUri) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Convert image to base64 URI
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64String = e.target.result;
+        setEventData({
+          ...eventData,
+          bannerUri: base64String
+        });
+        setIsLoading(false);
+      };
+      reader.onerror = () => {
+        setError('Failed to read the image file');
+        setIsLoading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setError('Failed to upload image');
+      setIsLoading(false);
+      console.error('Image upload error:', err);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setEventData({
+      ...eventData,
+      bannerUri: ''
+    });
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -76,29 +163,58 @@ const BannerPage = () => {
         </FormSectionTitle>
         
         <Box sx={{ mb: 4 }}>
-          <ImagePlaceholder>
-            {eventData.bannerUri ? (
-              <Box
-                component="img"
-                src={eventData.bannerUri}
-                alt="Banner Preview"
-                sx={{
-                  height: '100%',
-                  width: '100%',
-                  objectFit: 'cover',
-                  borderRadius: 1
-                }}
-              />
+          <ImagePlaceholder onClick={handleImageClick}>
+            {isLoading ? (
+              <CircularProgress />
+            ) : eventData.bannerUri ? (
+              <>
+                <Box
+                  component="img"
+                  src={eventData.bannerUri}
+                  alt="Banner Preview"
+                  sx={{
+                    height: '100%',
+                    width: '100%',
+                    objectFit: 'cover',
+                    borderRadius: 1
+                  }}
+                />
+                <ImageActions>
+                  <IconButton 
+                    size="small" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage();
+                    }}
+                    sx={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </ImageActions>
+              </>
             ) : (
               <PlaceholderContent>
-                <ImageOutlined sx={{ fontSize: 48 }} />
-                <Typography sx={{ mt: 1 }}>Upload Banner Image</Typography>
+                <CloudUpload sx={{ fontSize: 48 }} />
+                <Typography sx={{ mt: 1 }}>Click to upload banner image</Typography>
               </PlaceholderContent>
             )}
           </ImagePlaceholder>
           
-          <FormLabel component="label" sx={{ display: 'block', mb: 1 }}>
-            Banner Image URL
+          <VisuallyHiddenInput
+            ref={fileInputRef}
+            accept="image/*"
+            type="file"
+            onChange={handleImageUpload}
+          />
+          
+          {error && (
+            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
+          
+          <FormLabel component="label" sx={{ display: 'block', mb: 1, mt: 3 }}>
+            Or enter banner image URL
           </FormLabel>
           <TextField
             fullWidth
@@ -110,7 +226,7 @@ const BannerPage = () => {
             size="medium"
           />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Enter a URL for your event banner image
+            Upload an image or enter a URL for your event banner
           </Typography>
         </Box>
       </Box>
