@@ -7,6 +7,8 @@
 export default class Ticket {
     /** @type {string} */
     id;
+    /** @type {string} */
+    timestamp;
     /** @type {Attendee} */
     attendee;
     /** @type {Event | null=} */
