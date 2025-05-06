@@ -31,7 +31,11 @@ export default function CardTypeIcon(props) {
   useEffect(() => {
     const normalizedNumber = props.number.replaceAll(/\D/g, "");
 
-    const type = /** @type {CardTypes=} */(creditCardType(normalizedNumber)[0]?.type);
+    /** @type {CardTypes=} */
+    let type;
+    if (normalizedNumber) {
+      type = /** @type {typeof type} */(creditCardType(normalizedNumber)[0]?.type);
+    }
 
     /** @type {Record<CardTypes, CardIconTypes>} */
     let map = {

@@ -112,8 +112,10 @@ export default function FinishTicketPayment() {
     }
     const p = searchParams.get("paymentMethod");
     if (p && allMethods.has(p)) {
-      searchParams.delete("paymentMethod");
-      setSearchParams(searchParams);
+      setSearchParams((params) => {
+        params.delete("paymentMethod");
+        return params;
+      });
       setSelectedPaymentMethod(p);
     } else {
       const firstKey = Array.from(paymentMethods.keys()).sort(comparePaymentMethodType)[0];
@@ -245,8 +247,10 @@ export default function FinishTicketPayment() {
             }}
             onClick={() => {
               setIsAddingCardUserRequested(true);
-              searchParams.set("isAddingCard", "1");
-              setSearchParams(searchParams);
+              setSearchParams((params) => {
+                params.set("isAddingCard", "1");
+                return params;
+              });
             }}
           >
             Add New Card
@@ -369,7 +373,7 @@ export default function FinishTicketPayment() {
               </CardContent>
             </Card>
 
-            {searchParams.has("error") &&
+            {searchParams.has("error") && !searchParams.has("isAddingCard") &&
               <Alert severity="error">
                 {searchParams.get("error")}
               </Alert>
@@ -428,10 +432,21 @@ export default function FinishTicketPayment() {
       <Dialog
         open={!!searchParams.get("isAddingCard")}
         onClose={() => {
+          setSearchParams((params) => {
+            params.delete("isAddingCard");
+            params.delete("error");
+            return params;
+          });
           if (isAddingCardUserRequested) {
             setIsAddingCardUserRequested(false);
-            searchParams.delete("isAddingCard");
-            setSearchParams(searchParams);
+          } else {
+            // We're meant to continue adding our card,
+            // but we aborted the process.
+            // Return to the previous target ourselves.
+            const realUrl = searchParams.get("returnUrl");
+            if (realUrl) {
+              window.location.href = realUrl;
+            }
           }
         }}
       >
@@ -467,15 +482,23 @@ function AddCardForm() {
       "cvv": setCvv,
       "name": setName
     };
-    /** @type {AddCardFormParams[]} */
-    const propertyList = ["displayName", "number", "expiry", "cvv", "name"];
-    for (let property of propertyList) {
-      if (searchParams.has(property)) {
-        setters[property](searchParams.get(property) || "");
-        searchParams.delete(property);
+
+    setSearchParams((params) => {
+      // Hack: sometimes params may be outdated!
+      if (params.toString() !== window.location.search) {
+        params = new URL(window.location.href).searchParams;
       }
-    }
-    setSearchParams(searchParams);
+
+      /** @type {AddCardFormParams[]} */
+      const propertyList = ["displayName", "number", "expiry", "cvv", "name"];
+      for (let property of propertyList) {
+        if (params.has(property)) {
+          setters[property](params.get(property) || "");
+          params.delete(property);
+        }
+      }
+      return params;
+    });
 
     const cleanSearchParams = new URLSearchParams(searchParams);
     cleanSearchParams.delete("isAddingCard");
@@ -495,7 +518,7 @@ function AddCardForm() {
       >
         <Stack
           spacing={2}
-          alignItems="center"
+          alignItems="stretch"
         >
           {/* Card Nickname */}
           <TextField
