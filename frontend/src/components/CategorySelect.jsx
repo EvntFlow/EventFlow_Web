@@ -54,7 +54,7 @@ export default function CategorySelect(props) {
         shadow.target = { ...e.target };
         shadow.target.value = realValue;
 
-        onChange?.apply(this, [e]);
+        onChange?.apply(this, [shadow]);
       }}
       renderValue={(value) => {
         if (!value || !value.length || (value.length === 1 && value[0] === "invalid")) {
