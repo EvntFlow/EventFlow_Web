@@ -9,7 +9,6 @@ import {
   useTheme,
   Stack
 } from '@mui/material';
-import { Check } from '@mui/icons-material';
 
 /**
  * @import { CreateEventStep } from "../views/Organizer/CreateEventPage";
@@ -115,45 +114,5 @@ function CreateEventStepLabel({ index, activeIndex, step }) {
     >
       {step.name}
     </StyledStepLabel>
-  );
-}
-
-/**
- * @typedef CreateEventStepIconProps
- * @property {boolean} active
- * @property {boolean} completed
- */
-
-/**
- * @param {CreateEventStepIconProps} props
- */
-
-function CreateEventStepIcon(props) {
-  const { active, completed } = props;
-
-  // Custom step icon styling
-  const CustomStepIcon = styled('div')(({ theme }) => ({
-    backgroundColor: '#ffffff',
-    border: `2px solid ${completed || active ? '#1e293b' : '#d1d5db'}`,
-    color: completed || active ? '#ffffff' : '#d1d5db',
-    width: 24,
-    height: 24,
-    display: 'flex',
-    borderRadius: '50%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...(active && {
-      backgroundColor: '#1e293b',
-      boxShadow: '0 4px 10px 0 rgba(0,0,0,.15)',
-    }),
-    ...(completed && {
-      backgroundColor: '#1e293b',
-    }),
-  }));
-
-  return (
-    <CustomStepIcon>
-      {completed ? <Check style={{ fontSize: 12 }} /> : null}
-    </CustomStepIcon>
   );
 }
