@@ -33,6 +33,7 @@ export default function CreateEventBanner({ context, step }) {
   const fileInput = useRef(/** @type {HTMLInputElement | null} */(null));
   const [blobUrl, setBlobUrl] = useState(/** @type {string | null} */(null));
   const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const [isFileDraggedOver, setIsFileDraggedOver] = useState(false);
 
   useEffect(() => {
     if (fileInput.current && context.get.bannerFile) {
@@ -88,7 +89,7 @@ export default function CreateEventBanner({ context, step }) {
                 right: "1rem",
                 bottom: "1rem",
               }}
-              startIcon={ <Delete /> }
+              startIcon={<Delete />}
               onClick={() => {
                 context.set.bannerFile(null);
                 context.set.bannerUri("");
@@ -135,13 +136,61 @@ export default function CreateEventBanner({ context, step }) {
                 elem.click();
               }
             }}
+            onDragEnter={(e) => {
+              if (!e.dataTransfer.types.includes("Files")) {
+                return;
+              }
+              e.dataTransfer.dropEffect = "copy";
+              setIsFileDraggedOver(true);
+            }}
+            onDragOver={(e) => {
+              if (!e.dataTransfer.types.includes("Files")) {
+                return;
+              }
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "copy";
+              setIsFileDraggedOver(true);
+            }}
+            onDragLeave={() => {
+              setIsFileDraggedOver(false);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsFileDraggedOver(false);
+
+              const imageFiles
+                = [...e.dataTransfer.files].filter(f => f.type.startsWith("image/"));
+
+              if (imageFiles.length > 0) {
+                const dt = new DataTransfer();
+                for (const file of imageFiles) {
+                  dt.items.add(file);
+                }
+                context.set.bannerFile(dt);
+
+                if (dt.items.length) {
+                  context.set.bannerUri("");
+                }
+              }
+            }}
           >
             <Stack direction="row" alignItems="center" height="100%">
               <Stack alignItems="center" width="100%">
-                <CloudUpload color="action" sx={{ fontSize: 64 }} />
-                <Typography color="textSecondary">
-                  Click to upload banner image
-                </Typography>
+                {isFileDraggedOver ? (
+                  <>
+                    <CloudUpload color="primary" sx={{ fontSize: 64 }} />
+                    <Typography color="primary">
+                      Drop image here
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <CloudUpload color="action" sx={{ fontSize: 64 }} />
+                    <Typography color="textSecondary">
+                      Click to upload banner image
+                    </Typography>
+                  </>
+                )}
               </Stack>
             </Stack>
           </Button>
