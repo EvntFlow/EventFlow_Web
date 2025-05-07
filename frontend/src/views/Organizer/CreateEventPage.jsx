@@ -179,6 +179,7 @@ export default function CreateEventPage() {
       <form
         ref={formRef}
         method="post"
+        encType="multipart/form-data"
         action={getApiUrl("Event", {
           returnUrl: searchParams.has("returnUrl") ? searchParams.get("returnUrl") : "/Dashboard"
         })}

@@ -144,21 +144,20 @@ export default function CreateEventBanner({ context, step }) {
                 </Typography>
               </Stack>
             </Stack>
-
-            <Box display="none">
-              <Box
-                component="input"
-                ref={fileInput}
-                type="file"
-                name="bannerFile"
-                accept="image/*"
-                hidden={true}
-              />
-            </Box>
           </Button>
         )}
       </Box>
 
+      <Box display="none">
+        <Box
+          component="input"
+          ref={fileInput}
+          type="file"
+          name="bannerFile"
+          accept="image/*"
+          hidden={true}
+        />
+      </Box>
 
       <Stack spacing={2}>
         <FormLabel component="label">
