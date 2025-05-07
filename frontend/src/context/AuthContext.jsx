@@ -20,7 +20,7 @@ export class AuthContextProvider {
     isComplete;
     /** @type {() => Promise<void>} */
     logout;
-    /** @type {(r: AccountRole) => Promise<void>} */
+    /** @type {(r: AccountRole, i?: boolean) => Promise<void>} */
     switchRole;
 }
 
@@ -43,8 +43,11 @@ export function AuthProvider({ children }) {
     }, [logoutForm]);
 
     const switchRole = useCallback(
-        /** @param {AccountRole} desiredRole */
-        async (desiredRole) => {
+        /**
+         * @param {AccountRole} desiredRole
+         * @param {boolean=} inline
+         */
+        async (desiredRole, inline) => {
             let initialRole = role;
 
             if (desiredRole === role) {
@@ -68,7 +71,7 @@ export function AuthProvider({ children }) {
 
             setRole(desiredRole);
 
-            if (initialRole !== "guest") {
+            if (initialRole !== "guest" && !inline) {
                 if (desiredRole === "attendee") {
                     toAttendeeForm.current.submit();
                 } else if (desiredRole === "organizer") {

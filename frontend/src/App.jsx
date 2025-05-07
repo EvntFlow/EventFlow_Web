@@ -20,14 +20,10 @@ import EventDetailsPage from './views/Attendee/EventDetailsPage';
 import FinishTicketPaymentPage from './views/Attendee/FinishTicketPaymentPage';
 import Homepage from './views/Attendee/Homepage';
 import TicketPage from './views/Attendee/TicketPage';
-import BannerPage from './views/Organizer/CreateEvent/BannerPage';
-import EditDetailsPage from './views/Organizer/CreateEvent/EditDetailsPage';
-import { EventContextProvider } from './views/Organizer/CreateEvent/EventContext';
-import ReviewPage from './views/Organizer/CreateEvent/ReviewPage';
-import TicketingPage from './views/Organizer/CreateEvent/TicketingPage';
 import Dashboard from './views/Organizer/Dashboard/Dashboard';
 import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+import CreateEventPage from './views/Organizer/CreateEventPage';
 
 const App = () => {
   return (
@@ -60,46 +56,10 @@ const App = () => {
 
           <Route path="/event-details" element={<EventDetail eventData={null} />} />
 
-          <Route
-            path="/Home/Organizer"
-            element={
-              <EventContextProvider>
-                <OrganizerHomepage />
-              </EventContextProvider>
-            }
-          />
-          <Route
-            path="/Event/Create"
-            element={
-              <EventContextProvider>
-                <EditDetailsPage />
-              </EventContextProvider>
-            }
-          />
-          <Route
-            path="/banner"
-            element={
-              <EventContextProvider>
-                <BannerPage />
-              </EventContextProvider>
-            }
-          />
-          <Route
-            path="/ticketing"
-            element={
-              <EventContextProvider>
-                <TicketingPage />
-              </EventContextProvider>
-            }
-          />
-          <Route
-            path="/review"
-            element={
-              <EventContextProvider>
-                <ReviewPage />
-              </EventContextProvider>
-            }
-          />
+          <Route path="/Home/Organizer" element={ <OrganizerHomepage /> } />
+
+          <Route path="/Event/Create" element={ <CreateEventPage /> } />
+
           <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
             <Route path="/create-event" element={<TicketingPage />} /> */}

@@ -37,7 +37,7 @@ export default function Authorized({role}) {
 
             window.location.href = target.toString();
         } else if (role && auth.role !== role) {
-            auth.switchRole(role);
+            auth.switchRole(role, /*inline*/ true);
         }
     }, [auth, role]);
 
