@@ -15,7 +15,6 @@ import {
     Grid,
     MenuItem,
     Popover,
-    Select,
     Stack,
     TextField,
     Typography
@@ -27,6 +26,7 @@ import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { getCategories } from '../backend';
 import { useSearchParams } from 'react-router-dom';
+import CategorySelect from './CategorySelect';
 
 /** @import Category from "../models/Category"; */
 
@@ -418,8 +418,9 @@ export default function SearchCard(props) {
                 anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
                 onClose={() => setAnchorCategories(null)}>
                 <Box sx={{ p: 2 }}>
-                    <Select
-                        multiple
+                    <CategorySelect
+                        categories={availableCategories}
+                        placeholder="Add categories"
                         sx={{ minWidth: "20vw" }}
                         value={category}
                         onChange={(e) => setCategory(
@@ -432,7 +433,7 @@ export default function SearchCard(props) {
                                         {c.name}
                                 </MenuItem>
                             ))}
-                    </Select>
+                    </CategorySelect>
                 </Box>
             </Popover>
         </Card>
