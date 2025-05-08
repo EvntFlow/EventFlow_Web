@@ -33,7 +33,7 @@ const sampleAttendees = [
   { id: 6, name: 'Alfred Murray', email: 'abc@gmail.com', date: '15 Aug 2019', event: 'Event name', status: 'Approved' },
 ];
 
-function AttendanceList() {
+export default function AttendanceList() {
   const [filterBy, setFilterBy] = useState('');
   const [eventFilter, setEventFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
@@ -215,5 +215,3 @@ function AttendanceList() {
     </Box>
   );
 }
-
-export default AttendanceList;

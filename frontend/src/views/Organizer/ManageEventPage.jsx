@@ -1,6 +1,6 @@
 // @ts-check
 
-import { CheckCircle, Info, Search } from '@mui/icons-material';
+import { CheckCircle, Info, People, Search } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -10,7 +10,7 @@ import {
   Chip,
   CircularProgress,
   Dialog,
-  DialogContent, DialogTitle, Grid, Stack, TextField, Typography
+  DialogContent, DialogTitle, Grid, Stack, TextField, Tooltip, Typography
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -265,26 +265,36 @@ export default function ManageEventPage() {
             {
               field: 'actions',
               type: 'actions',
-              flex: 0.5,
+              flex: 0.75,
               headerName: 'Actions',
               cellClassName: 'actions',
               getActions: ({ row }) => {
                 return [
                   <ButtonGroup variant="outlined" color="inherit">
-                    <GroupableIconButton
-                      startIcon={<EditIcon />}
-                      href={`/Event/Edit?event=${row.id}`}
-                    />,
-                    <GroupableIconButton
-                      color="error"
-                      startIcon={<DeleteIcon />}
-                      onClick={() =>
-                        setSearchParams(params => {
-                          params.set("delete", row.id);
-                          return params;
-                        })
-                      }
-                    />,
+                    <Tooltip title="Edit">
+                      <GroupableIconButton
+                        startIcon={<EditIcon />}
+                        href={`/Event/Edit?event=${row.id}`}
+                      />
+                    </Tooltip>
+                    <Tooltip title="View Attendance">
+                      <GroupableIconButton
+                        startIcon={<People />}
+                        href={`/Ticket/Attendance?event=${row.id}`}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Edit">
+                      <GroupableIconButton
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                        onClick={() =>
+                          setSearchParams(params => {
+                            params.set("delete", row.id);
+                            return params;
+                          })
+                        }
+                      />
+                    </Tooltip>
                   </ButtonGroup>
                 ];
               },

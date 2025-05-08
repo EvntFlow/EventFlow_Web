@@ -24,6 +24,7 @@ import CreateEventPage from './views/Organizer/CreateEventPage';
 import Dashboard from './views/Organizer/Dashboard/Dashboard';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 import ManageEventPage from './views/Organizer/ManageEventPage';
+import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 
 const App = () => {
   return (
@@ -59,6 +60,8 @@ const App = () => {
           <Route path="/Event/Create" element={ <CreateEventPage /> } />
           <Route path="/Event/Manage" element={ <ManageEventPage /> } />
           <Route path="/Event/Edit" element={ <EventDetailsPage isEdit={true} /> } />
+
+          <Route path="/Ticket/Attendance" element={ <AttendanceList /> } />
 
           <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} />

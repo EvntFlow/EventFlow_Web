@@ -115,14 +115,26 @@ export default function EventDetailsView(props) {
           </Typography>
         </Grid>
         <Grid size={6}>
-          {props.onShareEvent &&
-            <Stack direction="row-reverse">
+          <Stack direction="row-reverse" spacing={1}>
+            {props.onShareEvent &&
               <IconButton onClick={props.onShareEvent}>
                 <ShareOutlined />
               </IconButton>
-              <SaveEvent event={event} />
-            </Stack>
-          }
+            }
+            <SaveEvent event={event} />
+            <AuthorizedView role="organizer">
+              <Stack direction="row-reverse">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<LocalActivity />}
+                  href={`/Ticket/Attendance?event=${event.id}`}
+                >
+                  View Attendance
+                </Button>
+              </Stack>
+            </AuthorizedView>
+          </Stack>
         </Grid>
       </Grid>
 
