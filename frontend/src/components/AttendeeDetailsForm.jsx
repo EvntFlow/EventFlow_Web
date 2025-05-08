@@ -47,12 +47,14 @@ export default function AttendeeDetailsForm(props) {
 
   // Consume the error to avoid polluting callbacks.
   useEffect(() => {
-    if (searchParams.has("error")) {
+    if (props.isOpen && searchParams.has("error")) {
       setError(searchParams.get("error"));
-      searchParams.delete("error");
-      setSearchParams(searchParams);
+      setSearchParams(params => {
+        params.delete("error");
+        return params;
+      });
     }
-  }, [searchParams, setSearchParams]);
+  }, [props.isOpen, searchParams, setSearchParams]);
 
   return (
     <Dialog

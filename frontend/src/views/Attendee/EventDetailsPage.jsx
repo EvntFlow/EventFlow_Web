@@ -67,12 +67,17 @@ const fields = {
     title: "Edit Date and Time",
     input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */
       ({ event }) => {
-        const [startDate, setStartDate] = useState(event.startDate);
-        const [endDate, setEndDate] = useState(event.endDate);
+        const [searchParams] = useSearchParams();
+        const [startDate, setStartDate] = useState(
+          searchParams.get("startDate") || event.startDate
+        );
+        const [endDate, setEndDate] = useState(
+          searchParams.get("endDate") || event.endDate
+        );
         const [startError, setStartError] = useState(false);
         const [endError, setEndError] = useState(false);
-        const [startDateChanged, setStartDateChanged] = useState(false);
-        const [endDateChanged, setEndDateChanged] = useState(false);
+        const [startDateChanged, setStartDateChanged] = useState(searchParams.has("startDate"));
+        const [endDateChanged, setEndDateChanged] = useState(searchParams.has("endDate"));
         const [isValid, setIsValid] = useState(true);
 
         useEffect(() => {
@@ -89,7 +94,7 @@ const fields = {
               <DateTimePicker
                 disablePast
                 label="Start Date"
-                defaultValue={dayjs(event.startDate)}
+                value={dayjs(startDate)}
                 onChange={(value, context) => {
                   setStartDate(value?.toISOString() ?? event.startDate);
                   setStartError(!!context.validationError);
@@ -106,7 +111,7 @@ const fields = {
               <DateTimePicker
                 disablePast
                 label="End Date"
-                defaultValue={dayjs(event.endDate)}
+                value={dayjs(endDate)}
                 minDateTime={dayjs(startDate)}
                 onChange={(value, context) => {
                   setEndDate(value?.toISOString() ?? event.endDate);
@@ -149,9 +154,10 @@ const fields = {
   "location": {
     title: "Edit Location",
     input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      const [searchParams] = useSearchParams();
       const [isOnlineEvent, setIsOnlineEvent]
-        = useState(ctx.event.location.toLowerCase() === "online");
-      const [location, setLocation] = useState(ctx.event.location);
+        = useState((searchParams.get("location") || ctx.event.location).toLowerCase() === "online");
+      const [location, setLocation] = useState(searchParams.get("location") || ctx.event.location);
 
       return (
         <Stack spacing={2}>
@@ -218,6 +224,10 @@ const fields = {
   "description": {
     title: "Edit Description",
     input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      const [searchParams] = useSearchParams();
+      const [description, setDescription]
+        = useState(searchParams.get("description") || ctx.event.description);
+
       return (
         <TextField
           fullWidth={true}
@@ -225,7 +235,8 @@ const fields = {
           multiline={true}
           minRows={8}
           name="description"
-          defaultValue={ctx.event.description}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe what's special about your event & other important details."
           variant="outlined"
           size="medium"
@@ -249,7 +260,11 @@ const fields = {
       const [availableCategories, setAvailableCategories]
         = useState(/** @type {Category[] | null} */(null));
 
-      const [categories, setCategories] = useState(ctx.event.categories?.map(c => c.id));
+      const [searchParams] = useSearchParams();
+      const [categories, setCategories] = useState(
+        searchParams.has("category") ?
+          [...new Set(searchParams.getAll("category"))] : ctx.event.categories?.map(c => c.id)
+      );
 
       useEffect(() => {
         (async function () {
@@ -495,29 +510,33 @@ export default function EventDetailsPage(props) {
                   <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
                     <IconButton
                       color="primary"
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <FacebookRounded />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.x.com/share?url=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://www.x.com/share?url=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <X />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://api.whatsapp.com/send?text=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <WhatsApp />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <LinkedIn />
                     </IconButton>
@@ -569,7 +588,20 @@ export default function EventDetailsPage(props) {
             <Dialog
               open={true}
               onClose={() => {
-                setSearchParams((params) => { params.delete("edit"); return params });
+                setSearchParams((params) => {
+                  params.delete("edit");
+                  params.delete("error");
+                  params.delete("startDate");
+                  params.delete("endDate");
+                  params.delete("location");
+                  params.delete("description");
+                  params.delete("category");
+                  params.delete("ticketId");
+                  params.delete("ticketName");
+                  params.delete("ticketPrice");
+                  params.delete("ticketCount");
+                  return params
+                });
               }}
               maxWidth="md"
               fullWidth={true}
@@ -589,6 +621,11 @@ export default function EventDetailsPage(props) {
                     {fields[editType].input(
                       { event: event }
                     )}
+                    {searchParams.has("error") &&
+                      <Alert severity="error">
+                        {searchParams.get("error")}
+                      </Alert>
+                    }
                     <Button
                       fullWidth={true}
                       variant="contained"
