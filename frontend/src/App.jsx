@@ -55,7 +55,7 @@ const App = () => {
           <Route path="/Ticket/FinishTicketPayment" element={<FinishTicketPaymentPage />} />
           <Route path="/Ticket" element={<TicketPage />} />
 
-          <Route path="/event-details" element={<EventDetail eventData={null} />} />
+          <Route path="/event-details" element={<EventDetail eventData={{}} />} />
 
           <Route path="/Home/Organizer" element={ <OrganizerHomepage /> } />
 
