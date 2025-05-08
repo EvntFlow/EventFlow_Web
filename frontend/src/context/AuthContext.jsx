@@ -176,14 +176,14 @@ export function AuthProvider({ children }) {
     }, [user, role, searchParams, setSearchParams, switchRole]);
 
     return (
-        <AuthContext.Provider value={{
+        <AuthContext.Provider value={/** @type {AuthContextProvider} */({
             user: user,
             role: role,
             organizer: organizer,
             isComplete: isAuthComplete,
             logout: logout,
             switchRole: switchRole
-        }}>
+        })}>
             <div style={{ display: "none" }}>
                 <form
                     ref={logoutForm}

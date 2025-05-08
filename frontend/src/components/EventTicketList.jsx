@@ -484,7 +484,7 @@ function DeleteTicketForm({ tickets, id }) {
     </Stack>
   ) : (
     <Alert severity="error">
-      Invalid Event.
+      Invalid Ticket.
     </Alert>
   );
 }

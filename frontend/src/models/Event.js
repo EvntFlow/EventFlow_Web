@@ -26,6 +26,8 @@ export default class Event {
     price;
     /** @type {number=} */
     interested;
+    /** @type {number=} */
+    sold;
     /** @type {Category[]=} */
     categories;
     /** @type {TicketOption[]=} */

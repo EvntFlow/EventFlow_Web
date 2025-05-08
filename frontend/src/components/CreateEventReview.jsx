@@ -61,6 +61,7 @@ export default function CreateEventReview({ context, step }) {
               location: context.get.location,
               price: context.get.price,
               interested: 0,
+              sold: 0,
               categories: context.get.category
                 .map(id => context.availableCategories?.find(c => c.id === id))
                 .filter(c => !!c),

@@ -185,7 +185,7 @@ export default function ManageEventPage() {
               flex: 0.5,
               type: "string",
               display: "flex",
-              valueGetter: (_, e) => 0
+              valueGetter: (_, e) => e.sold
             }),
             /** @type {GridColDef<Event, Date, string>} */
             ({
