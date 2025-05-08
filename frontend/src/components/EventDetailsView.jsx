@@ -14,6 +14,8 @@ import {
   Add,
   AddCircleOutline,
   CalendarMonth,
+  Edit,
+  EditOutlined,
   HourglassTop,
   LocalActivity,
   LocationOn,
@@ -23,6 +25,7 @@ import SaveEvent from "./SaveEvent";
 import dayjs from "dayjs";
 import AuthorizedView from "./AuthorizedView";
 import GoogleMapsFrame from "./GoogleMapsFrame";
+import GroupableIconButton from "./GroupableIconButton";
 
 /**
  * @import Event from "../models/Event";
@@ -32,10 +35,16 @@ import GoogleMapsFrame from "./GoogleMapsFrame";
 /**
  * @typedef EventDetailsViewProps
  * @property { Event } event
+ * @property { boolean= } isEdit
  * @property { boolean= } isPreview
  * @property { React.MouseEventHandler<HTMLButtonElement>= } onShareEvent
  * @property { React.MouseEventHandler<HTMLButtonElement>= } onBuyTickets
  * @property { React.MouseEventHandler<HTMLButtonElement>= } onAddCalendar
+ * @property { React.MouseEventHandler<HTMLButtonElement>= } onEditDate
+ * @property { React.MouseEventHandler<HTMLButtonElement>= } onEditLocation
+ * @property { React.MouseEventHandler<HTMLButtonElement>= } onEditDescription
+ * @property { React.MouseEventHandler<HTMLButtonElement>= } onEditTickets
+ * @property { React.MouseEventHandler<HTMLButtonElement>= } onEditCategories
  */
 
 /**
@@ -121,9 +130,16 @@ export default function EventDetailsView(props) {
         <Grid size={6}>
           <Stack spacing={3}>
             <Stack spacing={1}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Date and Time
-              </Typography>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  Date and Time
+                </Typography>
+                {props.onEditDate &&
+                  <IconButton color="primary" onClick={props.onEditDate}>
+                    <EditOutlined />
+                  </IconButton>
+                }
+              </Stack>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <CalendarMonth sx={{ mr: 1 }} />
                 <Typography>
@@ -156,9 +172,16 @@ export default function EventDetailsView(props) {
               }
             </Stack>
             <Stack spacing={1}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Location
-              </Typography>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  Location
+                </Typography>
+                {props.onEditLocation &&
+                  <IconButton color="primary" onClick={props.onEditLocation}>
+                    <EditOutlined />
+                  </IconButton>
+                }
+              </Stack>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <LocationOn sx={{ mr: 1 }} />
                 <Typography>{event.location}</Typography>
@@ -225,9 +248,16 @@ export default function EventDetailsView(props) {
             </Stack>
             <Stack>
               <Stack spacing={1}>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                  Ticket Information
-                </Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="h5" fontWeight="bold" gutterBottom>
+                    Ticket Information
+                  </Typography>
+                  {props.onEditTickets &&
+                    <IconButton color="primary" onClick={props.onEditTickets}>
+                      <EditOutlined />
+                    </IconButton>
+                  }
+                </Stack>
                 {event.ticketOptions && event.ticketOptions.length ? (
                   event.ticketOptions?.map(to =>
                     <Box key={to.id} sx={{ display: 'flex', alignItems: 'center' }}>
@@ -248,18 +278,32 @@ export default function EventDetailsView(props) {
 
       <Grid>
         <Stack spacing={1}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Event Description
-          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              Event Description
+            </Typography>
+            {props.onEditDescription &&
+              <IconButton color="primary" onClick={props.onEditDescription}>
+                <EditOutlined />
+              </IconButton>
+            }
+          </Stack>
           <Typography color="textSecondary">{event.description}</Typography>
         </Stack>
       </Grid>
 
       <Grid>
         <Stack spacing={1}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Categories
-          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              Categories
+            </Typography>
+            {props.onEditCategories &&
+              <IconButton color="primary" onClick={props.onEditCategories}>
+                <EditOutlined />
+              </IconButton>
+            }
+          </Stack>
           {event.categories && event.categories.length ? (
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               {event.categories?.map((cat) => (

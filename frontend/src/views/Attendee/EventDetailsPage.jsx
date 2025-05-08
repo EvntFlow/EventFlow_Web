@@ -138,6 +138,11 @@ export default function EventDetailsPage(props) {
                   onShareEvent={props.isEdit ? undefined : (e) => setAnchorShare(e.currentTarget)}
                   onBuyTickets={props.isEdit ? undefined : () => setIsTicketOverlayOpen(true)}
                   onAddCalendar={props.isEdit ? undefined : addToCalendar}
+                  onEditDate={props.isEdit ? () => {console.log("date")} : undefined}
+                  onEditLocation={props.isEdit ? () => {console.log("location")} : undefined}
+                  onEditDescription={props.isEdit ? () => {console.log("description")} : undefined}
+                  onEditTickets={props.isEdit ? () => {console.log("tickets")} : undefined}
+                  onEditCategories={props.isEdit ? () => {console.log("categories")} : undefined}
                 />
 
                 {!props.isEdit &&
