@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+// @ts-check
 
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
+  Avatar,
   Box,
-  Toolbar,
-  Typography,
-  TextField,
-  InputAdornment,
-  IconButton,
+  Grid,
+  IconButton, Paper,
+  Stack,
   Table,
+  TableBody,
+  TableCell,
   TableHead,
   TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-  Avatar,
+  TextField, Typography
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useState } from 'react';
+import Authorized from '../../components/Authorized';
+import { Search } from '@mui/icons-material';
 
 // Dummy data for demonstration
 const sampleEvents = [
@@ -59,34 +59,39 @@ const sampleEvents = [
   },
 ];
 
-function EventList() {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    // Implement your search logic
-  };
+export default function ManageEventPage() {
+  const [keywords, setKeywords] = useState("");
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        EVENT LIST
-      </Typography>
+    <Stack spacing={3} sx={{ m: 4 }}>
+      <Authorized role="organizer" />
 
-      <Toolbar sx={{ justifyContent: 'flex-end', mb: 2 }}>
-        <TextField
-          size="small"
-          label="Search event name"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          onChange={handleSearchChange}
-        />
-      </Toolbar>
+      <Grid container={true} size={12}>
+        <Grid size={6}>
+          <Stack direction="row" sx={{ width: "100%" }}>
+            <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
+              Events
+            </Typography>
+          </Stack>
+        </Grid>
+        <Grid size={6}>
+          <Stack direction="row-reverse">
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search Events"
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: <Search sx={{ mr: 1 }} />,
+                  sx: { borderRadius: "8rem" }
+                }
+              }}
+            />
+          </Stack>
+        </Grid>
+      </Grid>
 
       <Paper elevation={2}>
         <Table>
@@ -140,8 +145,6 @@ function EventList() {
           </TableBody>
         </Table>
       </Paper>
-    </Box>
+    </Stack>
   );
 }
-
-export default EventList;

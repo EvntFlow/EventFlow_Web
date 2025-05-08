@@ -105,8 +105,8 @@ export default function TicketPage() {
                 onChange={(e) => setKeywords(e.target.value)}
                 slotProps={{
                   input: {
-                    startAdornment:
-                      <Search sx={{ mr: 1 }} />
+                    startAdornment: <Search sx={{ mr: 1 }} />,
+                    sx: { borderRadius: "8rem" }
                   }
                 }}
               />
