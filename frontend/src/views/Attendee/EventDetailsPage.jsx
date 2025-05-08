@@ -1,16 +1,28 @@
 // @ts-check
-/// <reference types="node" />
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Typography, Box, Container, Grid, IconButton, Stack, CircularProgress, Alert, Popover, Divider, TextField, InputAdornment } from '@mui/material';
-import { FacebookRounded, X, WhatsApp, LinkedIn, ContentCopy } from '@mui/icons-material';
-import TicketOverlay from '../../components/TicketOverlay';
-import PaymentPage from '../../components/PaymentPage';
-import EventSection from '../../components/EventSection';
+import { ContentCopy, FacebookRounded, LinkedIn, WhatsApp, X } from '@mui/icons-material';
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Popover,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material';
+import * as ics from "ics";
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getEvent } from '../../backend';
-import * as ics from "ics";
 import EventDetailsView from '../../components/EventDetailsView';
+import EventSection from '../../components/EventSection';
+import PaymentPage from '../../components/PaymentPage';
+import TicketOverlay from '../../components/TicketOverlay';
 
 /**
  * @import Event from "../../models/Event";
@@ -150,29 +162,33 @@ const EventDetailsPage = () => {
                 <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
                   <IconButton
                     color="primary"
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventUrl() || "")
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${
+                      encodeURIComponent(getEventUrl() || "")
                       }`}
                     target="_blank">
                     <FacebookRounded />
                   </IconButton>
                   <IconButton
                     color="primary"
-                    href={`https://www.x.com/share?url=${encodeURIComponent(getEventUrl() || "")
-                      }`}
+                    href={`https://www.x.com/share?url=${
+                      encodeURIComponent(getEventUrl() || "")
+                    }`}
                     target="_blank">
                     <X />
                   </IconButton>
                   <IconButton
                     color="primary"
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventUrl() || "")
-                      }`}
+                    href={`https://api.whatsapp.com/send?text=${
+                      encodeURIComponent(getEventUrl() || "")
+                    }`}
                     target="_blank">
                     <WhatsApp />
                   </IconButton>
                   <IconButton
                     color="primary"
-                    href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(getEventUrl() || "")
-                      }`}
+                    href={`https://www.linkedin.com/shareArticle?mini=true&url=${
+                      encodeURIComponent(getEventUrl() || "")
+                    }`}
                     target="_blank">
                     <LinkedIn />
                   </IconButton>
