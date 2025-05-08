@@ -7,28 +7,298 @@ import {
   Button,
   CircularProgress,
   Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
+  FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
   Popover,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
   Typography
 } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
 import * as ics from "ics";
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { createElement, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getEvent } from '../../backend';
+import { getApiUrl } from '../../api';
+import { getCategories, getEvent } from '../../backend';
+import Authorized from '../../components/Authorized';
+import CategorySelect from '../../components/CategorySelect';
 import EventDetailsView from '../../components/EventDetailsView';
 import EventSection from '../../components/EventSection';
+import GoogleMapsFrame from '../../components/GoogleMapsFrame';
 import PaymentPage from '../../components/PaymentPage';
 import TicketOverlay from '../../components/TicketOverlay';
-import Authorized from '../../components/Authorized';
 
 /**
+ * @import Category from "../../models/Category";
  * @import Event from "../../models/Event";
  */
+
+
+/**
+ * @typedef EventDetailsInputContext
+ * @property {Event} event
+ */
+
+/**
+ * @typedef EventDetailsFieldInfo
+ * @property {string} title
+ * @property {(e: EventDetailsInputContext) => React.JSX.Element} input
+ */
+
+/**
+ * @typedef {"date" | "location" | "description" | "tickets" | "categories"} EventDetailsFields
+ */
+
+/** @type {Record<EventDetailsFields, EventDetailsFieldInfo>} */
+const fields = {
+  "date": {
+    title: "Edit Date and Time",
+    input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */
+      ({ event }) => {
+        const [startDate, setStartDate] = useState(event.startDate);
+        const [endDate, setEndDate] = useState(event.endDate);
+        const [startError, setStartError] = useState(false);
+        const [endError, setEndError] = useState(false);
+        const [startDateChanged, setStartDateChanged] = useState(false);
+        const [endDateChanged, setEndDateChanged] = useState(false);
+        const [isValid, setIsValid] = useState(true);
+
+        useEffect(() => {
+          setIsValid(
+            !startError && !endError &&
+            dayjs(startDate).isBefore(dayjs(endDate)) &&
+            (!startDateChanged || dayjs(startDate).isAfter(dayjs()))
+          );
+        }, [startDateChanged, startError, endError, startDate, endDate]);
+
+        return (
+          <Stack spacing={2} py={2}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker
+                disablePast
+                label="Start Date"
+                defaultValue={dayjs(event.startDate)}
+                onChange={(value, context) => {
+                  setStartDate(value?.toISOString() ?? event.startDate);
+                  setStartError(!!context.validationError);
+                  setStartDateChanged(true);
+                }}
+                format="DD/MM/YYYY HH:mm"
+                ampm={false}
+                slotProps={{
+                  field: { openPickerButtonPosition: "start" },
+                  textField: { required: true }
+                }}
+              />
+
+              <DateTimePicker
+                disablePast
+                label="End Date"
+                defaultValue={dayjs(event.endDate)}
+                minDateTime={dayjs(startDate)}
+                onChange={(value, context) => {
+                  setEndDate(value?.toISOString() ?? event.endDate);
+                  setEndError(!!context.validationError);
+                  setEndDateChanged(true);
+                }}
+                format="DD/MM/YYYY HH:mm"
+                ampm={false}
+                slotProps={{
+                  field: { openPickerButtonPosition: "start" },
+                  textField: { required: true }
+                }}
+              />
+            </LocalizationProvider>
+
+            <Box display="none">
+              {startDateChanged &&
+                <input
+                  name="startDate"
+                  value={isValid ? startDate : ''}
+                  required={true}
+                  hidden={true}
+                  onChange={() => { }}
+                />
+              }
+              {endDateChanged &&
+                <input
+                  name="endDate"
+                  value={isValid ? endDate : ''}
+                  required={true}
+                  hidden={true}
+                  onChange={() => { }}
+                />
+              }
+            </Box>
+          </Stack>
+        )
+      }, ctx)
+  },
+  "location": {
+    title: "Edit Location",
+    input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      const [isOnlineEvent, setIsOnlineEvent]
+        = useState(ctx.event.location.toLowerCase() === "online");
+      const [location, setLocation] = useState(ctx.event.location);
+
+      return (
+        <Stack spacing={2}>
+          <Stack spacing={1}>
+            <Typography variant="h6">
+              Is your event online?
+            </Typography>
+            <RadioGroup
+              value={`${isOnlineEvent}`}
+              defaultChecked={true}
+              onChange={(e) => {
+                if (e.target.value === "false") {
+                  setLocation("");
+                  setIsOnlineEvent(false);
+                } else {
+                  setLocation("Online");
+                  setIsOnlineEvent(true);
+                }
+              }}
+            >
+              <Stack direction="row" spacing={4}>
+                <FormControlLabel
+                  value="false"
+                  control={<Radio />}
+                  label="No"
+                />
+                <FormControlLabel
+                  value="true"
+                  control={<Radio />}
+                  label="Yes"
+                />
+              </Stack>
+            </RadioGroup>
+          </Stack>
+
+          <Box display={isOnlineEvent ? "none" : "block"}>
+            <Stack spacing={1}>
+              <Typography variant="h6">
+                Event Location?
+              </Typography>
+              <TextField
+                fullWidth={true}
+                required={true}
+                name="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Enter a location"
+                variant="outlined"
+                size="medium"
+              />
+            </Stack>
+          </Box>
+
+          {!isOnlineEvent && location &&
+            <GoogleMapsFrame
+              query={location}
+              sx={{ width: "100%" }}
+            />
+          }
+        </Stack>
+      )
+    }, ctx)
+  },
+  "description": {
+    title: "Edit Description",
+    input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      return (
+        <TextField
+          fullWidth={true}
+          required={true}
+          multiline={true}
+          minRows={8}
+          name="description"
+          defaultValue={ctx.event.description}
+          placeholder="Describe what's special about your event & other important details."
+          variant="outlined"
+          size="medium"
+        />
+      )
+    }, ctx)
+  },
+  "tickets": {
+    title: "Edit Ticket Information",
+    input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      return (
+        <Box>
+
+        </Box>
+      )
+    }, ctx)
+  },
+  "categories": {
+    title: "Edit Categories",
+    input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      const [availableCategories, setAvailableCategories]
+        = useState(/** @type {Category[] | null} */(null));
+
+      const [categories, setCategories] = useState(ctx.event.categories?.map(c => c.id));
+
+      useEffect(() => {
+        (async function () {
+          setAvailableCategories(await getCategories());
+        })();
+      }, []);
+
+      return (
+        <Box>
+          <CategorySelect
+            categories={availableCategories}
+            required={true}
+            value={categories}
+            onChange={(e) => setCategories(
+              Array.isArray(e.target.value) ? e.target.value : [e.target.value]
+            )}
+            placeholder="Please select one or more"
+            sx={{ width: "100%" }}
+          >
+            {availableCategories ? (
+              availableCategories.map((c) => (
+                <MenuItem key={c.name} value={c.id}>
+                  {c.name}
+                </MenuItem>
+              ))
+            ) : (
+              <Stack alignItems="center" sx={{ width: "100%" }}>
+                <CircularProgress />
+              </Stack>
+            )}
+          </CategorySelect>
+
+          <Box display="none">
+            {categories?.map(c =>
+              <input
+                key={c}
+                name="category"
+                value={c}
+                hidden={true}
+                readOnly={true}
+                required={true}
+              />
+            )}
+          </Box>
+        </Box>
+      )
+    }, ctx)
+  }
+};
 
 /**
  * @typedef EventDetailsPageProps
@@ -115,6 +385,28 @@ export default function EventDetailsPage(props) {
     a.click();
   }, [event, getEventUrl]);
 
+  const openEditDialog = useCallback(
+    /**
+     * @param {EventDetailsFields} field
+     */
+    (field) => {
+      setSearchParams(params => {
+        params.set("edit", field);
+        return params;
+      })
+    },
+    [setSearchParams]);
+
+  const [editType, setEditType] = useState(/** @type {EventDetailsFields | null} */(null));
+  useEffect(() => {
+    const edit = searchParams.get("edit");
+    if (edit && edit in fields) {
+      setEditType(/** @type {EventDetailsFields} */(edit));
+    } else {
+      setEditType(null);
+    }
+  }, [searchParams]);
+
   return (
     <Box>
       {props.isEdit && <Authorized role="organizer" />}
@@ -138,11 +430,19 @@ export default function EventDetailsPage(props) {
                   onShareEvent={props.isEdit ? undefined : (e) => setAnchorShare(e.currentTarget)}
                   onBuyTickets={props.isEdit ? undefined : () => setIsTicketOverlayOpen(true)}
                   onAddCalendar={props.isEdit ? undefined : addToCalendar}
-                  onEditDate={props.isEdit ? () => {console.log("date")} : undefined}
-                  onEditLocation={props.isEdit ? () => {console.log("location")} : undefined}
-                  onEditDescription={props.isEdit ? () => {console.log("description")} : undefined}
-                  onEditTickets={props.isEdit ? () => {console.log("tickets")} : undefined}
-                  onEditCategories={props.isEdit ? () => {console.log("categories")} : undefined}
+                  onEditDate={props.isEdit ? () => { openEditDialog("date") } : undefined}
+                  onEditLocation={props.isEdit ?
+                    () => { openEditDialog("location") } : undefined
+                  }
+                  onEditDescription={props.isEdit ?
+                    () => { openEditDialog("description") } : undefined
+                  }
+                  onEditTickets={props.isEdit ?
+                    () => { openEditDialog("tickets") } : undefined
+                  }
+                  onEditCategories={props.isEdit ?
+                    () => { openEditDialog("categories") } : undefined
+                  }
                 />
 
                 {!props.isEdit &&
@@ -195,33 +495,29 @@ export default function EventDetailsPage(props) {
                   <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
                     <IconButton
                       color="primary"
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <FacebookRounded />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.x.com/share?url=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://www.x.com/share?url=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <X />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://api.whatsapp.com/send?text=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <WhatsApp />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <LinkedIn />
                     </IconButton>
@@ -268,6 +564,45 @@ export default function EventDetailsPage(props) {
               onCheckout={handleCheckout}
             />
           )}
+
+          {event && editType &&
+            <Dialog
+              open={true}
+              onClose={() => {
+                setSearchParams((params) => { params.delete("edit"); return params });
+              }}
+              maxWidth="md"
+              fullWidth={true}
+            >
+              <DialogTitle>
+                {fields[editType].title}
+              </DialogTitle>
+              <DialogContent>
+                <Box
+                  component="form"
+                  method="post"
+                  action={getApiUrl("Event/UpdateEvent",
+                    { returnUrl: `/Event/Edit?event=${event.id}` }
+                  )}
+                >
+                  <Stack spacing={2}>
+                    {fields[editType].input(
+                      { event: event }
+                    )}
+                    <Button
+                      fullWidth={true}
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      type="submit"
+                    >
+                      Save
+                    </Button>
+                  </Stack>
+                </Box>
+              </DialogContent>
+            </Dialog>
+          }
         </>
       ) : (
         <PaymentPage orderData={orderData} onBackToOverlay={handleBackToEvent} />
