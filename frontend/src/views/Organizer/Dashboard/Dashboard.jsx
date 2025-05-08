@@ -64,7 +64,7 @@ function Dashboard() {
                     </Avatar>
                 </Box>
                 <Typography variant="h5">679</Typography>
-                <Button size="small" endIcon={<VisibilityIcon />}>
+                <Button href="/Event/Manage" size="small" endIcon={<VisibilityIcon />}>
                     View event list
                 </Button>
                 </CardContent>
