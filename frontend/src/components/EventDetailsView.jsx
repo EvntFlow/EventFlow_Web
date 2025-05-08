@@ -13,9 +13,7 @@ import {
   AccessTime,
   Add,
   AddCircleOutline,
-  CalendarMonth,
-  Edit,
-  EditOutlined,
+  CalendarMonth, EditOutlined,
   HourglassTop,
   LocalActivity,
   LocationOn,
@@ -25,7 +23,6 @@ import SaveEvent from "./SaveEvent";
 import dayjs from "dayjs";
 import AuthorizedView from "./AuthorizedView";
 import GoogleMapsFrame from "./GoogleMapsFrame";
-import GroupableIconButton from "./GroupableIconButton";
 
 /**
  * @import Event from "../models/Event";
