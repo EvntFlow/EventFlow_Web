@@ -1,5 +1,7 @@
 // @ts-check
 
+/// <reference types="node" />
+
 import React from "react";
 import { Box } from "@mui/material";
 

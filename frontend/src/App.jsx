@@ -49,7 +49,7 @@ const App = () => {
             element={<ResetPasswordConfirmation />} />
           <Route path="/Account" element={<AccountPage />} />
 
-          <Route path="/Event/Details" element={<EventDetailsPage />} />
+          <Route path="/Event/Details" element={<EventDetailsPage isEdit={false} />} />
           <Route path="/Event/Search" element={<EventSearchPage />} />
 
           <Route path="/Ticket/FinishTicketPayment" element={<FinishTicketPaymentPage />} />
@@ -61,6 +61,7 @@ const App = () => {
 
           <Route path="/Event/Create" element={ <CreateEventPage /> } />
           <Route path="/Event/Manage" element={ <ManageEventPage /> } />
+          <Route path="/Event/Edit" element={ <EventDetailsPage isEdit={true} /> } />
 
           <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} />

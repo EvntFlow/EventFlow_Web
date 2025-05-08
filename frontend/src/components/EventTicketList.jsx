@@ -1,5 +1,6 @@
 // @ts-check
 
+import { Email, Person, Phone } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -20,7 +21,6 @@ import {
   MenuItem,
   Select,
   Stack,
-  styled,
   TextField,
   Typography,
   useTheme
@@ -31,11 +31,11 @@ import {
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { getApiUrl } from '../api';
+import GroupableIconButton from './GroupableIconButton';
 
 // See: https://github.com/facebook/create-react-app/issues/8779#issuecomment-1214839590
 import FORCE_IMPORT_POLYFILL from 'core-js/modules/es.regexp.escape';
-import { getApiUrl } from '../api';
-import { Email, Person, Phone } from '@mui/icons-material';
 // eslint-disable-next-line no-unused-expressions
 FORCE_IMPORT_POLYFILL;
 
@@ -411,15 +411,6 @@ function CategoriesInput(props) {
   )
 };
 
-const GroupableIconButton = styled(Button)({
-  p: 0,
-  minWidth: 0,
-  maxWidth: 0,
-  '& > span': {
-    margin: 0,
-  }
-});
-
 /**
  * @typedef DeleteTicketFormProps
  * @property {Ticket[]} tickets
@@ -574,7 +565,7 @@ function EditTicketForm({ tickets, id }) {
             required={true}
             label="Full Name"
             placeholder="Enter your full name"
-            defaultValue={ searchParams.get("fullName") || ticket.holderFullName }
+            defaultValue={searchParams.get("fullName") || ticket.holderFullName}
             name="fullName"
             variant="outlined"
             size="medium"
@@ -590,7 +581,7 @@ function EditTicketForm({ tickets, id }) {
             required={true}
             label="Email"
             placeholder="Enter your email"
-            defaultValue={ searchParams.get("email") || ticket.holderEmail }
+            defaultValue={searchParams.get("email") || ticket.holderEmail}
             name="email"
             type="email"
             variant="outlined"
@@ -606,7 +597,7 @@ function EditTicketForm({ tickets, id }) {
             fullWidth
             required={true}
             label="Phone Number"
-            defaultValue={ searchParams.get("phoneNumber") || ticket.holderPhoneNumber }
+            defaultValue={searchParams.get("phoneNumber") || ticket.holderPhoneNumber}
             placeholder="Enter your phone number"
             name="phoneNumber"
             type="tel"
@@ -626,7 +617,7 @@ function EditTicketForm({ tickets, id }) {
           }
 
           <Box display="none">
-            <input name="ticket" value={ticket?.id} required={true} readOnly={true} hidden={true}  />
+            <input name="ticket" value={ticket?.id} required={true} readOnly={true} hidden={true} />
           </Box>
 
           <Button

@@ -4,6 +4,7 @@ import { ContentCopy, FacebookRounded, LinkedIn, WhatsApp, X } from '@mui/icons-
 import {
   Alert,
   Box,
+  Button,
   CircularProgress,
   Container,
   Divider,
@@ -23,12 +24,21 @@ import EventDetailsView from '../../components/EventDetailsView';
 import EventSection from '../../components/EventSection';
 import PaymentPage from '../../components/PaymentPage';
 import TicketOverlay from '../../components/TicketOverlay';
+import Authorized from '../../components/Authorized';
 
 /**
  * @import Event from "../../models/Event";
  */
 
-const EventDetailsPage = () => {
+/**
+ * @typedef EventDetailsPageProps
+ * @property {boolean} isEdit
+ */
+
+/**
+ * @param {EventDetailsPageProps} props
+ */
+export default function EventDetailsPage(props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [event, setEvent] = useState(/** @type {Event | null} */(null));
   const [eventError, setEventError] = useState(/** @type {string | null} */(null));
@@ -107,6 +117,8 @@ const EventDetailsPage = () => {
 
   return (
     <Box>
+      {props.isEdit && <Authorized role="organizer" />}
+
       {!showPaymentPage ? (
         <>
           <Container sx={{ py: 4, flexGrow: 1 }}>
@@ -123,104 +135,121 @@ const EventDetailsPage = () => {
 
                 <EventDetailsView
                   event={event}
-                  onShareEvent={(e) => setAnchorShare(e.currentTarget)}
-                  onBuyTickets={() => setIsTicketOverlayOpen(true)}
-                  onAddCalendar={addToCalendar}
+                  onShareEvent={props.isEdit ? undefined : (e) => setAnchorShare(e.currentTarget)}
+                  onBuyTickets={props.isEdit ? undefined : () => setIsTicketOverlayOpen(true)}
+                  onAddCalendar={props.isEdit ? undefined : addToCalendar}
                 />
 
-                <Grid container spacing={4}>
-                  <EventSection
-                    title="Other events you may like"
-                    query={{}}
-                    rowSize={3}
-                    limit={3} />
-                </Grid>
+                {!props.isEdit &&
+                  <Grid container spacing={4}>
+                    <EventSection
+                      title="Other events you may like"
+                      query={{}}
+                      rowSize={3}
+                      limit={3} />
+                  </Grid>
+                }
+
+                {props.isEdit &&
+                  <Stack direction="row-reverse" spacing={2}>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      sx={{ minWidth: "10rem" }}
+                      href="/Event/Manage"
+                    >
+                      Back to Events
+                    </Button>
+                  </Stack>
+                }
               </Stack>
             )}
           </Container>
 
-          <Popover
-            open={!!anchorShare}
-            anchorEl={anchorShare}
-            onClose={() => setAnchorShare(null)}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center"
-            }}>
-            <Stack
-              spacing={1}
-              alignItems="center"
-              sx={{
-                minWidth: "20rem",
-                padding: 1
+          {!props.isEdit &&
+            <Popover
+              open={!!anchorShare}
+              anchorEl={anchorShare}
+              onClose={() => setAnchorShare(null)}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center"
               }}>
-              <Typography variant="h6" textAlign="center" sx={{ m: 2 }}>
-                Share with friends
-              </Typography>
-              <Divider sx={{ width: "100%" }} />
-              <Stack alignItems="center">
-                <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
-                  <IconButton
-                    color="primary"
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${
-                      encodeURIComponent(getEventUrl() || "")
+              <Stack
+                spacing={1}
+                alignItems="center"
+                sx={{
+                  minWidth: "20rem",
+                  padding: 1
+                }}>
+                <Typography variant="h6" textAlign="center" sx={{ m: 2 }}>
+                  Share with friends
+                </Typography>
+                <Divider sx={{ width: "100%" }} />
+                <Stack alignItems="center">
+                  <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
+                    <IconButton
+                      color="primary"
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${
+                        encodeURIComponent(getEventUrl() || "")
                       }`}
-                    target="_blank">
-                    <FacebookRounded />
-                  </IconButton>
-                  <IconButton
-                    color="primary"
-                    href={`https://www.x.com/share?url=${
-                      encodeURIComponent(getEventUrl() || "")
-                    }`}
-                    target="_blank">
-                    <X />
-                  </IconButton>
-                  <IconButton
-                    color="primary"
-                    href={`https://api.whatsapp.com/send?text=${
-                      encodeURIComponent(getEventUrl() || "")
-                    }`}
-                    target="_blank">
-                    <WhatsApp />
-                  </IconButton>
-                  <IconButton
-                    color="primary"
-                    href={`https://www.linkedin.com/shareArticle?mini=true&url=${
-                      encodeURIComponent(getEventUrl() || "")
-                    }`}
-                    target="_blank">
-                    <LinkedIn />
-                  </IconButton>
+                      target="_blank">
+                      <FacebookRounded />
+                    </IconButton>
+                    <IconButton
+                      color="primary"
+                      href={`https://www.x.com/share?url=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
+                      target="_blank">
+                      <X />
+                    </IconButton>
+                    <IconButton
+                      color="primary"
+                      href={`https://api.whatsapp.com/send?text=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
+                      target="_blank">
+                      <WhatsApp />
+                    </IconButton>
+                    <IconButton
+                      color="primary"
+                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
+                      target="_blank">
+                      <LinkedIn />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+                <Stack minHeight="5rem" alignContent="center" justifyItems="center">
+                  <TextField
+                    label="Event URL"
+                    value={getEventUrl()}
+                    slotProps={{
+                      htmlInput: {
+                        readOnly: true,
+                        disabled: true
+                      },
+                      input: {
+                        endAdornment:
+                          <InputAdornment position="end">
+                            <IconButton onClick={(e) => {
+                              const eventUrl = getEventUrl();
+                              if (eventUrl) {
+                                navigator.clipboard.writeText(eventUrl);
+                              }
+                            }}>
+                              <ContentCopy />
+                            </IconButton>
+                          </InputAdornment>
+                      }
+                    }}>
+                  </TextField>
                 </Stack>
               </Stack>
-              <Stack minHeight="5rem" alignContent="center" justifyItems="center">
-                <TextField
-                  label="Event URL"
-                  value={getEventUrl()}
-                  slotProps={{
-                    htmlInput: {
-                      readOnly: true,
-                      disabled: true
-                    },
-                    input: {
-                      endAdornment:
-                        <InputAdornment position="end">
-                          <IconButton onClick={(e) => {
-                            const eventUrl = getEventUrl();
-                            if (eventUrl) {
-                              navigator.clipboard.writeText(eventUrl);
-                            }
-                          }}>
-                            <ContentCopy />
-                          </IconButton>
-                        </InputAdornment>
-                    }
-                  }}>
-                </TextField>
-              </Stack>
-            </Stack>
-          </Popover>
+            </Popover>
+          }
 
           {event && (
             <TicketOverlay
@@ -241,5 +270,3 @@ const EventDetailsPage = () => {
     </Box>
   );
 };
-
-export default EventDetailsPage;
