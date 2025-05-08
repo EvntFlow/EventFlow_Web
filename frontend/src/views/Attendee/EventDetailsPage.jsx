@@ -1,6 +1,6 @@
 // @ts-check
 
-import { ContentCopy, FacebookRounded, LinkedIn, WhatsApp, X } from '@mui/icons-material';
+import { ContentCopy, Delete, FacebookRounded, LinkedIn, WhatsApp, X } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -39,6 +39,7 @@ import EventSection from '../../components/EventSection';
 import GoogleMapsFrame from '../../components/GoogleMapsFrame';
 import PaymentPage from '../../components/PaymentPage';
 import TicketOverlay from '../../components/TicketOverlay';
+import GroupableIconButton from '../../components/GroupableIconButton';
 
 /**
  * @import Category from "../../models/Category";
@@ -247,9 +248,176 @@ const fields = {
   "tickets": {
     title: "Edit Ticket Information",
     input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
+      const [ticketId, setTicketId] = useState(ctx.event.ticketOptions?.map(to => to.id) ?? []);
+      const [ticketName, setTicketName]
+        = useState(ctx.event.ticketOptions?.map(to => to.name) ?? []);
+      const [ticketPrice, setTicketPrice]
+        = useState(ctx.event.ticketOptions?.map(to => to.additionalPrice) ?? []);
+      const [ticketCount, setTicketCount]
+        = useState(ctx.event.ticketOptions?.map(to => to.amountAvailable) ?? []);
+      const [price, setPrice]
+        = useState(ctx.event.price);
+
+      const empty = "00000000-0000-0000-0000-000000000000";
+
       return (
         <Box>
+          <Stack spacing={2} sx={{ py: 2 }}>
+            {Array(ticketId.length).fill(0).map((_, index) =>
+              <Grid key={index} size={12} container={true} spacing={4}>
+                <Box display="none">
+                  <input
+                    name="ticketId"
+                    value={ticketId[index]}
+                    required={true}
+                    readOnly={true}
+                    hidden={true}
+                  />
+                </Box>
 
+                <Grid size={1}>
+                  <Stack direction="row" height="100%" alignItems="center">
+                    <GroupableIconButton
+                      variant="contained"
+                      color="error"
+                      size="large"
+                      disabled={ticketId.length <= 1 || ticketId[index] !== empty}
+                      startIcon={<Delete />}
+                      onClick={() => {
+                        setTicketId(
+                          arr => [...arr.slice(0, index), ...arr.slice(index + 1)]
+                        );
+                        setTicketName(
+                          arr => [...arr.slice(0, index), ...arr.slice(index + 1)]
+                        );
+                        setTicketCount(
+                          arr => [...arr.slice(0, index), ...arr.slice(index + 1)]
+                        );
+
+                        let prices = ticketPrice;
+                        prices = [...prices.slice(0, index), ...prices.slice(index + 1)];
+                        const diff = Math.min(...prices);
+                        setPrice(price + diff);
+                        prices = prices.map(p => p - diff);
+
+                        setTicketPrice(prices);
+                      }}
+                    />
+                  </Stack>
+                </Grid>
+
+                <Grid size={6}>
+                  <TextField
+                    name="ticketName"
+                    value={ticketName[index]}
+                    required={true}
+                    fullWidth={true}
+                    label="Ticket Name"
+                    placeholder="Ticket Name e.g. General Admission"
+                    onChange={(e) =>
+                      setTicketName(arr => {
+                        arr[index] = e.target.value; return [...arr];
+                      })}
+                  />
+                </Grid>
+
+                <Grid size={2}>
+                  <TextField
+                    value={price + ticketPrice[index]}
+                    required={true}
+                    fullWidth={true}
+                    type="number"
+                    label="Ticket Price"
+                    placeholder="0.00"
+                    onChange={(e) => {
+                      let prices = [...ticketPrice];
+                      let newPrice = Math.trunc(Number.parseFloat(e.target.value) * 100) / 100;
+
+                      const basePrice = price;
+                      newPrice -= basePrice;
+                      prices[index] = newPrice;
+
+                      if (newPrice < 0) {
+                        const diff = -newPrice;
+                        setPrice(basePrice - diff);
+                        prices = prices.map(p => p + diff);
+                      } else {
+                        const diff = Math.min(...prices);
+                        if (diff > 0) {
+                          setPrice(basePrice + diff);
+                          prices = prices.map(p => p - diff);
+                        }
+                      }
+
+                      setTicketPrice(prices);
+                    }}
+                    slotProps={{
+                      htmlInput: { step: 0.01, min: 0.00 }
+                    }}
+                  />
+                </Grid>
+                <Box display="none">
+                  <input
+                    name="ticketPrice"
+                    value={ticketPrice[index]}
+                    type="number"
+                    required={true}
+                    readOnly={true}
+                    hidden={true}
+                  />
+                </Box>
+
+                <Grid size={2}>
+                  <TextField
+                    name="ticketCount"
+                    value={ticketCount[index]}
+                    required={true}
+                    fullWidth={true}
+                    type="number"
+                    label="Ticket Count"
+                    placeholder="0"
+                    onChange={(e) =>
+                      setTicketCount(arr => {
+                        arr[index] = Number.parseInt(e.target.value); return [...arr];
+                      })}
+                    slotProps={{ htmlInput: { min: ticketId[index] !== empty ? 0 : 1 } }}
+                  />
+                </Grid>
+              </Grid>
+            )}
+            <Stack direction="row">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setTicketId(
+                    arr => [...arr, empty]
+                  );
+                  setTicketName(
+                    arr => [...arr, ""]
+                  );
+                  setTicketPrice(
+                    arr => [...arr, 0]
+                  );
+                  setTicketCount(
+                    arr => [...arr, 0]
+                  );
+                }}
+              >
+                Add Ticket
+              </Button>
+            </Stack>
+          </Stack>
+          <Box display="none">
+            <input
+              name="price"
+              value={price}
+              hidden={true}
+              required={true}
+              type="number"
+              onChange={() => {}}
+            />
+          </Box>
         </Box>
       )
     }, ctx)
@@ -510,33 +678,29 @@ export default function EventDetailsPage(props) {
                   <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
                     <IconButton
                       color="primary"
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <FacebookRounded />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.x.com/share?url=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://www.x.com/share?url=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <X />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://api.whatsapp.com/send?text=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <WhatsApp />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${
-                        encodeURIComponent(getEventUrl() || "")
-                      }`}
+                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(getEventUrl() || "")
+                        }`}
                       target="_blank">
                       <LinkedIn />
                     </IconButton>
