@@ -636,6 +636,15 @@ export default function EventDetailsPage(props) {
                       Save
                     </Button>
                   </Stack>
+                  <Box display="none">
+                    <input
+                      name="event"
+                      value={event.id}
+                      hidden={true}
+                      readOnly={true}
+                      required={true}
+                    />
+                  </Box>
                 </Box>
               </DialogContent>
             </Dialog>

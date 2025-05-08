@@ -80,9 +80,12 @@ export default function EventDetailsView(props) {
     if (hourDiff < 1) {
       numeric = endDate.diff(startDate, "minute");
       unit = "minute";
-    } else {
+    } else if (hourDiff < 24) {
       numeric = Math.round(hourDiff * 10) / 10;
       unit = "hour";
+    } else {
+      numeric = endDate.diff(startDate, "day");
+      unit = "day";
     }
     if (numeric > 1) {
       unit += "s";
