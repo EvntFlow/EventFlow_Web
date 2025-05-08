@@ -1,10 +1,10 @@
 // @ts-check
 
+import { CheckCircle, Search } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
-  Box,
   Button,
   Dialog,
   DialogContent,
@@ -18,55 +18,26 @@ import {
   TableRow,
   TextField, Typography
 } from '@mui/material';
-import React, { useCallback, useState } from 'react';
-import Authorized from '../../components/Authorized';
-import { CheckCircle, Search } from '@mui/icons-material';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { getEvents } from '../../backend';
+import Authorized from '../../components/Authorized';
 
-// Dummy data for demonstration
-const sampleEvents = [
-  {
-    id: 1,
-    image: 'https://source.unsplash.com/random/80x80?sig=1',
-    name: 'Event 1',
-    category: 'Digital',
-    price: '$10.00',
-    soldTickets: 63,
-    status: 'Upcoming',
-  },
-  {
-    id: 2,
-    image: 'https://source.unsplash.com/random/80x80?sig=2',
-    name: 'Event 2',
-    category: 'Digital',
-    price: '$19.00',
-    soldTickets: 13,
-    status: 'Closed',
-  },
-  {
-    id: 3,
-    image: 'https://source.unsplash.com/random/80x80?sig=3',
-    name: 'Women\'s Day',
-    category: 'Fashion',
-    price: '$64.00',
-    soldTickets: 635,
-    status: 'Happening',
-  },
-  {
-    id: 4,
-    image: 'https://source.unsplash.com/random/80x80?sig=4',
-    name: 'Event 3',
-    category: 'Art',
-    price: '$40.00',
-    soldTickets: 67,
-    status: 'Upcoming',
-  },
-];
+/**
+ * @import Event from "../../models/Event";
+ */
 
 export default function ManageEventPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [keywords, setKeywords] = useState("");
+  const [events, setEvents] = useState(/** @type {Event[] | null} */(null));
+
+  useEffect(() => {
+    (async function() {
+      setEvents(await getEvents());
+    })();
+  }, [])
 
   const clearDialog = useCallback(
     /**
@@ -123,16 +94,16 @@ export default function ManageEventPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sampleEvents.map((event) => (
+            {events?.map((event) => (
               <TableRow key={event.id}>
                 <TableCell>
-                  <Avatar src={event.image} sx={{ width: 40, height: 40 }} />
+                  <Avatar src={event.bannerUri} sx={{ width: 40, height: 40 }} />
                 </TableCell>
                 <TableCell>{event.name}</TableCell>
-                <TableCell>{event.category}</TableCell>
+                <TableCell>{event.categories?.map(c => c.name).join(", ")}</TableCell>
                 <TableCell>{event.price}</TableCell>
-                <TableCell>{event.soldTickets}</TableCell>
-                <TableCell>
+                {/* <TableCell>{event.soldTickets}</TableCell> */}
+                {/* <TableCell>
                   <Box
                     sx={{
                       bgcolor:
@@ -147,7 +118,7 @@ export default function ManageEventPage() {
                   >
                     {event.status}
                   </Box>
-                </TableCell>
+                </TableCell> */}
                 <TableCell align="right">
                   <IconButton color="primary" size="small">
                     <EditIcon />

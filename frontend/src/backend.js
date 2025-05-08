@@ -98,6 +98,17 @@ export async function getEvent(eventId) {
 }
 
 /**
+ * @returns {Promise<Event[]>}
+ */
+export async function getEvents() {
+    let response = await fetchApi("Event");
+    if (!response.ok) {
+        return [];
+    }
+    return await response.json();
+}
+
+/**
  * @param {string} eventId
  * @returns {Promise<SavedEvent | null>}
  */
