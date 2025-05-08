@@ -236,7 +236,7 @@ export default function CreateEventBanner({ context, step }) {
             context.next();
           }}
         >
-          Next
+          {!!context.get.bannerUri || !!context.get.bannerFile ? "Next" : "Skip"}
         </Button>
         <Button
           variant="text"

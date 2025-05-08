@@ -4,25 +4,50 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { useSearchParams } from 'react-router-dom';
 import { fetchApi, getApiUrl, postApi } from '../api';
 
-/** @import Account from "../models/Account"; */
+/**
+ * @import Account from "../models/Account";
+ * @import Attendee from "../models/Attendee";
+ * @import Organizer from "../models/Organizer";
+ */
 
 /**
  * @typedef {("guest" | "attendee" | "organizer")} AccountRole
  */
 
-/** @interface */
-export class AuthContextProvider {
-    /** @type {Account | null | undefined} */
-    user;
-    /** @type {AccountRole} */
-    role;
-    /** @type {boolean} */
-    isComplete;
-    /** @type {() => Promise<void>} */
-    logout;
-    /** @type {(r: AccountRole, i?: boolean) => Promise<void>} */
-    switchRole;
-}
+/**
+ * @typedef BaseAuthContextProvider
+ * @property {Account | null | undefined} user
+ * @property {boolean} isComplete
+ * @property {() => Promise<void>} logout
+ * @property {(r: AccountRole, i?: boolean) => Promise<void>} switchRole
+ */
+
+/**
+ * @typedef { BaseAuthContextProvider & {
+ *  role: "guest"
+ * }} GuestAuthContextProvider
+*/
+
+/**
+ * @typedef { BaseAuthContextProvider & {
+ *  role: "attendee"
+ *  attendee: Attendee
+ * }} AttendeeAuthContextProvider
+ */
+
+/**
+ * @typedef { BaseAuthContextProvider & {
+ *  role: "organizer",
+ *  organizer: Organizer
+ * }} OrganizerAuthContextProvider
+ */
+
+/**
+ * @typedef { GuestAuthContextProvider
+ *  | AttendeeAuthContextProvider
+ *  | OrganizerAuthContextProvider
+ * } AuthContextProvider
+ */
 
 const AuthContext = createContext(/** @type {AuthContextProvider} */ ({}));
 export const useAuth = () => useContext(AuthContext);
@@ -30,6 +55,7 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(/** @type {Account | null} */(null));
     const [role, setRole] = useState(/** @type {AccountRole} */("guest"));
+    const [organizer, setOrganizer] = useState(/** @type {Organizer | null} */(null));
     const [isAuthComplete, setIsAuthComplete] = useState(false);
 
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -63,10 +89,16 @@ export function AuthProvider({ children }) {
             // If they don't, create that profile using the API.
             if (!hasDesiredRole) {
                 await postApi(`Account/${desiredRole}`);
-                let response = await fetchApi(`Account/${desiredRole}`);
+                response = await fetchApi(`Account/${desiredRole}`);
                 if (!response.ok) {
                     return;
                 }
+            }
+
+            if (desiredRole === "organizer") {
+                setOrganizer(await response.json());
+            } else {
+                setOrganizer(null);
             }
 
             setRole(desiredRole);
@@ -147,6 +179,7 @@ export function AuthProvider({ children }) {
         <AuthContext.Provider value={{
             user: user,
             role: role,
+            organizer: organizer,
             isComplete: isAuthComplete,
             logout: logout,
             switchRole: switchRole

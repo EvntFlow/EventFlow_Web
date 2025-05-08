@@ -100,6 +100,18 @@ export default function CreateEventDetails({ context, step }) {
                 </Stack>
               )}
             </CategorySelect>
+            <Box display="none">
+              {context.get.category.map(c =>
+                <input
+                  key={c}
+                  name="category"
+                  value={c}
+                  hidden={true}
+                  readOnly={true}
+                  required={true}
+                />
+              )}
+            </Box>
           </Grid>
         </Grid>
       </Stack>
