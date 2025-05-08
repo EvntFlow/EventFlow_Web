@@ -22,7 +22,6 @@ import Homepage from './views/Attendee/Homepage';
 import TicketPage from './views/Attendee/TicketPage';
 import CreateEventPage from './views/Organizer/CreateEventPage';
 import Dashboard from './views/Organizer/Dashboard/Dashboard';
-import EventDetail from './views/Organizer/EventDetail/EventDetail';
 import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 import ManageEventPage from './views/Organizer/ManageEventPage';
 
