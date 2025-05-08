@@ -230,7 +230,8 @@ export default function CreateEventPage() {
         method="post"
         encType="multipart/form-data"
         action={getApiUrl("Event", {
-          returnUrl: searchParams.has("returnUrl") ? searchParams.get("returnUrl") : "/Dashboard"
+          returnUrl: searchParams.has("returnUrl") ?
+            searchParams.get("returnUrl") : "/Event/Manage?isCreated=1"
         })}
       >
         {steps.map((step, index) =>

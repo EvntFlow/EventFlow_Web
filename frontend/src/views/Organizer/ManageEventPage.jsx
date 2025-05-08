@@ -5,6 +5,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
   Box,
+  Button,
+  Dialog,
+  DialogContent,
   Grid,
   IconButton, Paper,
   Stack,
@@ -15,9 +18,10 @@ import {
   TableRow,
   TextField, Typography
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Authorized from '../../components/Authorized';
-import { Search } from '@mui/icons-material';
+import { CheckCircle, Search } from '@mui/icons-material';
+import { useSearchParams } from 'react-router-dom';
 
 // Dummy data for demonstration
 const sampleEvents = [
@@ -60,7 +64,19 @@ const sampleEvents = [
 ];
 
 export default function ManageEventPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [keywords, setKeywords] = useState("");
+
+  const clearDialog = useCallback(
+    /**
+     * @param {string} key
+     */
+    function (key) {
+      searchParams.delete(key);
+      setSearchParams(searchParams);
+    }
+  , [searchParams, setSearchParams]);
 
   return (
     <Stack spacing={3} sx={{ m: 4 }}>
@@ -145,6 +161,32 @@ export default function ManageEventPage() {
           </TableBody>
         </Table>
       </Paper>
+
+      <Dialog
+        open={searchParams.has("isCreated")}
+        onClose={() => clearDialog("isCreated")}>
+          <DialogContent>
+            <Stack alignItems="center" spacing={4}>
+              <CheckCircle color="success" style={{ height: "8rem", width: "8rem" }} />
+              <Typography variant="h5" fontWeight="bold" textAlign="center">
+                Your event has been created!
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                Your event has been saved to the system.
+                Please check your notifications regularly for
+                updates on attendee registration.
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => clearDialog("isCreated")}
+                sx={{ minWidth: "16rem" }}
+              >
+                OK
+              </Button>
+            </Stack>
+          </DialogContent>
+      </Dialog>
     </Stack>
   );
 }
