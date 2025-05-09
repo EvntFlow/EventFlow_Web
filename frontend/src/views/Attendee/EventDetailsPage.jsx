@@ -689,29 +689,33 @@ export default function EventDetailsPage(props) {
                   <Stack direction="row" minHeight="5rem" spacing={4} alignItems="center">
                     <IconButton
                       color="primary"
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <FacebookRounded />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.x.com/share?url=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://www.x.com/share?url=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <X />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://api.whatsapp.com/send?text=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <WhatsApp />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(getEventUrl() || "")
-                        }`}
+                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${
+                        encodeURIComponent(getEventUrl() || "")
+                      }`}
                       target="_blank">
                       <LinkedIn />
                     </IconButton>

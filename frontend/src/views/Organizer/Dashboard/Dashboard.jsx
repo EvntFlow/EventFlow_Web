@@ -107,7 +107,7 @@ function Dashboard() {
                     </Avatar>
                 </Box>
                 <Typography variant="h5">123</Typography>
-                <Button size="small" endIcon={<VisibilityIcon />}>
+                <Button href="/Ticket/Attendance" size="small" endIcon={<VisibilityIcon />}>
                     View attendance list
                 </Button>
                 </CardContent>
