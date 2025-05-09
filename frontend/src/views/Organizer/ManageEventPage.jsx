@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getEvents } from '../../backend';
+import { getEvents, deleteEvent } from '../../backend';
 import Authorized from '../../components/Authorized';
 
 /**
@@ -35,7 +35,10 @@ export default function ManageEventPage() {
 
   useEffect(() => {
     (async function() {
-      setEvents(await getEvents());
+    const fetchedEvents = await getEvents();
+    // Log all events
+    // console.log('All Events from Server:', fetchedEvents);      
+    setEvents(fetchedEvents);
     })();
   }, [])
 
@@ -44,120 +47,137 @@ export default function ManageEventPage() {
      * @param {string} key
      */
     function (key) {
-      searchParams.delete(key);
-      setSearchParams(searchParams);
+    searchParams.delete(key);
+    setSearchParams(searchParams);
     }
   , [searchParams, setSearchParams]);
 
+  const handleDelete = async (eventId) => {
+    if (window.confirm('Are you sure you want to delete this event?')) {
+      const success = await deleteEvent(eventId);
+      if (success) {
+        // Remove the deleted event from the state
+        setEvents(prevEvents => prevEvents?.filter(event => event.id !== eventId) ?? null);
+      } else {
+        alert('Failed to delete event. Please try again.');
+      }
+    }
+  };
+
   return (
     <Stack spacing={3} sx={{ m: 4 }}>
-      <Authorized role="organizer" />
+    <Authorized role="organizer" />
 
-      <Grid container={true} size={12}>
-        <Grid size={6}>
-          <Stack direction="row" sx={{ width: "100%" }}>
-            <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
-              Events
-            </Typography>
-          </Stack>
-        </Grid>
-        <Grid size={6}>
-          <Stack direction="row-reverse">
-            <TextField
-              variant="outlined"
-              size="small"
-              placeholder="Search Events"
-              value={keywords}
-              onChange={(e) => setKeywords(e.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: <Search sx={{ mr: 1 }} />,
-                  sx: { borderRadius: "8rem" }
-                }
-              }}
-            />
-          </Stack>
-        </Grid>
+    <Grid container={true} size={12}>
+      <Grid size={6}>
+      <Stack direction="row" sx={{ width: "100%" }}>
+        <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
+        Events
+        </Typography>
+      </Stack>
       </Grid>
+      <Grid size={6}>
+      <Stack direction="row-reverse">
+          <TextField
+          variant="outlined"
+          size="small"
+          placeholder="Search Events"
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          slotProps={{
+              input: {
+              startAdornment: <Search sx={{ mr: 1 }} />,
+              sx: { borderRadius: "8rem" }
+              }
+          }}
+          />
+      </Stack>
+      </Grid>
+    </Grid>
 
-      <Paper elevation={2}>
+    <Paper elevation={2}>
         <Table>
-          <TableHead>
+        <TableHead>
             <TableRow>
-              <TableCell>Image</TableCell>
-              <TableCell>Event Name</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Sold tickets</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Action</TableCell>
+            <TableCell>Image</TableCell>
+            <TableCell>Event Name</TableCell>
+            <TableCell>Category</TableCell>
+            <TableCell>Price</TableCell>
+            <TableCell>Sold tickets</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell align="right">Action</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
+        </TableHead>
+        <TableBody>
             {events?.map((event) => (
-              <TableRow key={event.id}>
+            <TableRow key={event.id}>
                 <TableCell>
-                  <Avatar src={event.bannerUri} sx={{ width: 40, height: 40 }} />
+                <Avatar src={event.bannerUri} sx={{ width: 40, height: 40 }} />
                 </TableCell>
                 <TableCell>{event.name}</TableCell>
                 <TableCell>{event.categories?.map(c => c.name).join(", ")}</TableCell>
                 <TableCell>{event.price}</TableCell>
                 {/* <TableCell>{event.soldTickets}</TableCell> */}
                 {/* <TableCell>
-                  <Box
+                <Box
                     sx={{
-                      bgcolor:
+                    bgcolor:
                         event.status === 'Upcoming' ? 'success.light' : event.status === 'Closed' ? 'error.light' : event.status === 'Happening' ? 'purple.light' : 'grey.300',
-                      color:
+                    color:
                         event.status === 'Upcoming' ? 'success.main' : event.status === 'Closed' ? 'error.main' : event.status === 'Happening' ? 'purple.main' : 'grey.800',
-                      borderRadius: '4px',
-                      padding: '4px 8px',
-                      display: 'inline-block',
-                      fontSize: '0.8rem',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                    display: 'inline-block',
+                    fontSize: '0.8rem',
                     }}
-                  >
+                >
                     {event.status}
-                  </Box>
+                </Box>
                 </TableCell> */}
                 <TableCell align="right">
-                  <IconButton color="primary" size="small">
+                <IconButton color="primary" size="small">
                     <EditIcon />
-                  </IconButton>
-                  <IconButton color="error" size="small">
-                    <DeleteIcon />
-                  </IconButton>
+                </IconButton>
+                <IconButton 
+                color="error" 
+                size="small"
+                onClick={() => {
+                  console.log('Deleting event:', event.id);
+                  handleDelete(event.id)}}>
+                  <DeleteIcon />
+                </IconButton>
                 </TableCell>
-              </TableRow>
+            </TableRow>
             ))}
-          </TableBody>
+        </TableBody>
         </Table>
-      </Paper>
+    </Paper>
 
-      <Dialog
-        open={searchParams.has("isCreated")}
-        onClose={() => clearDialog("isCreated")}>
-          <DialogContent>
-            <Stack alignItems="center" spacing={4}>
-              <CheckCircle color="success" style={{ height: "8rem", width: "8rem" }} />
-              <Typography variant="h5" fontWeight="bold" textAlign="center">
-                Your event has been created!
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                Your event has been saved to the system.
-                Please check your notifications regularly for
-                updates on attendee registration.
-              </Typography>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => clearDialog("isCreated")}
-                sx={{ minWidth: "16rem" }}
-              >
-                OK
-              </Button>
-            </Stack>
-          </DialogContent>
-      </Dialog>
+    <Dialog
+      open={searchParams.has("isCreated")}
+      onClose={() => clearDialog("isCreated")}>
+      <DialogContent>
+          <Stack alignItems="center" spacing={4}>
+          <CheckCircle color="success" style={{ height: "8rem", width: "8rem" }} />
+          <Typography variant="h5" fontWeight="bold" textAlign="center">
+              Your event has been created!
+          </Typography>
+          <Typography variant="body1" color="textSecondary">
+              Your event has been saved to the system.
+              Please check your notifications regularly for
+              updates on attendee registration.
+          </Typography>
+          <Button
+              variant="contained"
+              size="large"
+              onClick={() => clearDialog("isCreated")}
+              sx={{ minWidth: "16rem" }}
+          >
+              OK
+          </Button>
+          </Stack>
+      </DialogContent>
+    </Dialog>
     </Stack>
   );
 }
