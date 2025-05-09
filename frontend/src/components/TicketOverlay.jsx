@@ -45,11 +45,18 @@ export default function TicketOverlay(props) {
     /** @type {Map<string, number>}> */
     const newQuantity = new Map();
     const ticketOptions = searchParams.getAll(KEY_TICKET_OPTION);
-    for (let to of ticketOptions) {
-      if (!availableOptions.has(to)) {
+    for (let id of ticketOptions) {
+      const to = availableOptions.get(id);
+      if (!to) {
         continue;
       }
-      newQuantity.set(to, (newQuantity.get(to) ?? 0) + 1);
+      newQuantity.set(
+        to.id,
+        Math.min(
+          (newQuantity.get(to.id) ?? 0) + 1,
+          to.amountAvailable
+        )
+      );
     }
     setQuantity(newQuantity);
   }, [availableOptions, searchParams])
@@ -66,20 +73,18 @@ export default function TicketOverlay(props) {
      * @param {number} change
      */
     function (id, change) {
-      let newQuantity = quantity.get(id) ?? 0 + change;
-      newQuantity = Math.max(0, newQuantity);
-      newQuantity = Math.min(availableOptions.get(id)?.amountAvailable ?? 0);
-
-      quantity.set(id, newQuantity);
-      searchParams.delete(KEY_TICKET_OPTION);
-      for (const [to, count] of quantity) {
-        for (let i = 0; i < count; ++i) {
-          searchParams.append(KEY_TICKET_OPTION, to);
+      setSearchParams(params => {
+        const newQuantity = Math.max(0,
+          params.getAll(KEY_TICKET_OPTION).filter(to => to === id).length + change
+        );
+        params.delete(KEY_TICKET_OPTION, id);
+        for (let i = 0; i < newQuantity; ++i) {
+          params.append(KEY_TICKET_OPTION, id);
         }
-      }
-      setSearchParams(searchParams);
+        return params;
+      });
     },
-    [quantity, availableOptions, searchParams, setSearchParams]);
+    [setSearchParams]);
 
   useEffect(() => {
     setTotalQuantity(
