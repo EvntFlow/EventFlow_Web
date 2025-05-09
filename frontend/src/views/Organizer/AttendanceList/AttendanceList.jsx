@@ -38,7 +38,6 @@ export default function AttendanceList() {
   const [eventFilter, setEventFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
 
   const handleFilterChange = (event) => {
     setFilterBy(event.target.value);
@@ -58,11 +57,6 @@ export default function AttendanceList() {
   const handleStatusFilterChange = (event) => {
     setStatusFilter(event.target.value);
     // Implement your status filtering logic
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    // Implement your search logic
   };
 
   const handleResetFilter = () => {
@@ -149,7 +143,6 @@ export default function AttendanceList() {
               </InputAdornment>
             ),
           }}
-          onChange={handleSearchChange}
         />
       </Toolbar>
 
