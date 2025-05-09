@@ -155,6 +155,7 @@ export default function CreateEventPage() {
     if (context.step - 1 >= 0) {
       setSearchParams((params) => {
         params.set("step", `${context.step - 1}`);
+        params.delete("error");
         return params;
       });
     }

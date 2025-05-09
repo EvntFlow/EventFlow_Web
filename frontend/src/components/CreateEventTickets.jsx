@@ -1,17 +1,19 @@
 // @ts-check
 
-import React, { useEffect, useState } from 'react';
+import { ConfirmationNumberOutlined, Delete } from '@mui/icons-material';
 import {
-  Typography,
-  TextField,
   Box,
   Button,
+  Grid,
   Stack,
-  Grid, ToggleButtonGroup,
-  ToggleButton
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { ConfirmationNumberOutlined, Delete } from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { getPaymentMethods } from '../backend';
 
 /**
  * @import { CreateEventStepElementProps } from "../views/Organizer/CreateEventPage";
@@ -29,6 +31,16 @@ export default function CreateEventTickets({ context, step }) {
 
   const [isTicketed, setIsTicketed] = useState(false);
   const [ticketCount, setTicketCount] = useState(0);
+  const [hasPaymentMethods, setHasPaymentMethods] = useState(false);
+
+  useEffect(() =>
+  {
+    (async function ()
+    {
+      const paymentMethods = await getPaymentMethods();
+      setHasPaymentMethods(paymentMethods.length > 0);
+    })();
+  }, []);
 
   useEffect(() => {
     if (context.get.price > 0) {
@@ -84,6 +96,7 @@ export default function CreateEventTickets({ context, step }) {
           <Grid size={5}>
             <ToggleButton
               value="true"
+              disabled={!hasPaymentMethods}
               sx={{
                 textTransform: "inherit",
                 width: "100%",
@@ -99,9 +112,16 @@ export default function CreateEventTickets({ context, step }) {
                   <Typography variant="subtitle1" color="inherit" fontWeight="bold">
                     Ticketed Event
                   </Typography>
-                  <Typography variant="body2" color="inherit" align="center">
-                    My event requires tickets for entry
-                  </Typography>
+
+                  {hasPaymentMethods ? (
+                    <Typography variant="body2" color="inherit" align="center">
+                      My event requires tickets for entry
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2" color="error" align="center">
+                      Please add a payment method to host ticketed events
+                    </Typography>
+                  )}
                 </Stack>
               </Stack>
             </ToggleButton>
