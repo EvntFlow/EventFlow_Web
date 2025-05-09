@@ -132,7 +132,11 @@ export default function PaymentMethodsView(props) {
         props.onSelectedPaymentMethodChange?.apply(this, [firstMethod.id]);
       }
     }
-  }, [paymentMethods, props.selectedPaymentMethod, searchParams, setSearchParams]);
+  }, [
+      paymentMethods,
+      props.selectedPaymentMethod, props.onSelectedPaymentMethodChange,
+      searchParams, setSearchParams
+  ]);
 
   const [isAddingCardUserRequested, setIsAddingCardUserRequested] = useState(false);
 
