@@ -10,7 +10,13 @@ import {
   Chip,
   CircularProgress,
   Dialog,
-  DialogContent, DialogTitle, Grid, Stack, TextField, Tooltip, Typography
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -271,7 +277,7 @@ export default function ManageEventPage() {
               getActions: ({ row }) => {
                 return [
                   <ButtonGroup variant="outlined" color="inherit">
-                    <Tooltip title="Edit">
+                    <Tooltip title="Edit Event">
                       <GroupableIconButton
                         startIcon={<EditIcon />}
                         href={`/Event/Edit?event=${row.id}`}
@@ -283,7 +289,7 @@ export default function ManageEventPage() {
                         href={`/Ticket/Attendance?event=${row.id}`}
                       />
                     </Tooltip>
-                    <Tooltip title="Edit">
+                    <Tooltip title="Cancel Event">
                       <GroupableIconButton
                         color="error"
                         startIcon={<DeleteIcon />}
@@ -415,6 +421,7 @@ export default function ManageEventPage() {
 
 function DeleteEventForm({ events, id }) {
   const [event, setEvent] = useState(/** @type {Event | null} */(null));
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -427,6 +434,11 @@ function DeleteEventForm({ events, id }) {
       <Typography>
         Are you sure you want to delete the{" "}
         <em>{event.name}</em> event{" "}?
+      </Typography>
+
+      <Typography color="error">
+        All <strong>{event.sold}</strong> sold tickets{" "}
+        will be canceled and refunded.
       </Typography>
 
       <Typography>
@@ -447,7 +459,7 @@ function DeleteEventForm({ events, id }) {
         action={getApiUrl("Event/CancelEvent", { returnUrl: "/Event/Manage?isCanceled=1" })}
       >
         <Box display="none">
-          <input name="ticket" value={event.id} hidden={true} readOnly={true} required={true} />
+          <input name="event" value={event.id} hidden={true} readOnly={true} required={true} />
         </Box>
 
         <Stack spacing={2}>
@@ -466,7 +478,11 @@ function DeleteEventForm({ events, id }) {
           <Button
             variant="contained"
             color="error"
-            type="submit"
+            disabled={isSubmitting}
+            onClick={(e) => {
+              setIsSubmitting(true);
+              e.currentTarget.closest("form")?.requestSubmit();
+            }}
           >
             Delete
           </Button>

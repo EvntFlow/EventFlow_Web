@@ -152,7 +152,7 @@ export default function AttendanceList() {
         </Stack>
       ) : !matchingTickets.length ? (
         <Alert severity="error">
-          No Attendee Found
+          No Attendees Found
         </Alert>
       ) : (
         <DataGrid
