@@ -248,15 +248,26 @@ const fields = {
   "tickets": {
     title: "Edit Ticket Information",
     input: (ctx) => createElement(/** @param {EventDetailsInputContext} ctx */(ctx) => {
-      const [ticketId, setTicketId] = useState(ctx.event.ticketOptions?.map(to => to.id) ?? []);
-      const [ticketName, setTicketName]
-        = useState(ctx.event.ticketOptions?.map(to => to.name) ?? []);
-      const [ticketPrice, setTicketPrice]
-        = useState(ctx.event.ticketOptions?.map(to => to.additionalPrice) ?? []);
-      const [ticketCount, setTicketCount]
-        = useState(ctx.event.ticketOptions?.map(to => to.amountAvailable) ?? []);
-      const [price, setPrice]
-        = useState(ctx.event.price);
+      const [searchParams] = useSearchParams();
+      const [ticketId, setTicketId] = useState(
+        searchParams.has("ticketId") ?
+          searchParams.getAll("ticketId") : ctx.event.ticketOptions?.map(to => to.id) ?? []
+      );
+      const [ticketName, setTicketName] = useState(
+        searchParams.has("ticketName") ?
+          searchParams.getAll("ticketName") : ctx.event.ticketOptions?.map(to => to.name) ?? []
+      );
+      const [ticketPrice, setTicketPrice] = useState(
+        searchParams.has("ticketPrice") ?
+          searchParams.getAll("ticketPrice").map(Number.parseFloat) :
+          ctx.event.ticketOptions?.map(to => to.additionalPrice) ?? []
+      );
+      const [ticketCount, setTicketCount] = useState(
+        searchParams.has("ticketCount") ?
+          searchParams.getAll("ticketCount").map(Number.parseInt) :
+          ctx.event.ticketOptions?.map(to => to.amountAvailable) ?? []
+      );
+      const [price, setPrice] = useState(ctx.event.price);
 
       const empty = "00000000-0000-0000-0000-000000000000";
 
