@@ -86,7 +86,10 @@ const Header = () => {
               <IconButton
                 color="inherit"
                 sx={{ mr: 2 }}
-                onClick={(e) => setAnchorEl(e.currentTarget)}>
+                onClick={async (e) => {
+                  setAnchorEl(e.currentTarget);
+                  setNotifications(await getNotifications());
+                }}>
                   <Badge
                     color="error"
                     badgeContent={notifications?.length ?? 0}
