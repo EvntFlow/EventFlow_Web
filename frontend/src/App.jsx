@@ -26,7 +26,6 @@ import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
 import ManageEventPage from './views/Organizer/ManageEventPage';
 import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
 
-
 const App = () => {
   return (
     <AuthProvider>

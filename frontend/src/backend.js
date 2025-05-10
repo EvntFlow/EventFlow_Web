@@ -131,15 +131,6 @@ export async function unsaveEvent(savedEventId) {
 }
 
 /**
- * @param {string} eventId
- * @returns {Promise<boolean>}
- */
-export async function deleteEvent(eventId) {
-    let response = await deleteApi("Event/Saved", { event: eventId });
-    return response.ok;
-}
-
-/**
  * @returns {Promise<Ticket[]>}
  */
 export async function getTickets() {

@@ -77,41 +77,41 @@ export default function ManageEventPage() {
      * @param {string} key
      */
     function (key) {
-    searchParams.delete(key);
-    setSearchParams(searchParams);
+      searchParams.delete(key);
+      setSearchParams(searchParams);
     }
     , [searchParams, setSearchParams]);
 
   return (
     <Stack spacing={3} sx={{ m: 4 }}>
-    <Authorized role="organizer" />
+      <Authorized role="organizer" />
 
-    <Grid container={true} size={12}>
-      <Grid size={6}>
-      <Stack direction="row" sx={{ width: "100%" }}>
-        <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
-        Events
-        </Typography>
-      </Stack>
+      <Grid container={true} size={12}>
+        <Grid size={6}>
+          <Stack direction="row" sx={{ width: "100%" }}>
+            <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
+              Events
+            </Typography>
+          </Stack>
+        </Grid>
+        <Grid size={6}>
+          <Stack direction="row-reverse">
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search Events"
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: <Search sx={{ mr: 1 }} />,
+                  sx: { borderRadius: "8rem" }
+                }
+              }}
+            />
+          </Stack>
+        </Grid>
       </Grid>
-      <Grid size={6}>
-      <Stack direction="row-reverse">
-          <TextField
-          variant="outlined"
-          size="small"
-          placeholder="Search Events"
-          value={keywords}
-          onChange={(e) => setKeywords(e.target.value)}
-          slotProps={{
-              input: {
-              startAdornment: <Search sx={{ mr: 1 }} />,
-              sx: { borderRadius: "8rem" }
-              }
-          }}
-          />
-      </Stack>
-      </Grid>
-    </Grid>
 
       {matchingEvents ? (matchingEvents.length ? (
         <DataGrid
@@ -371,7 +371,6 @@ export default function ManageEventPage() {
               updates on attendee registration.
             </Typography>
             <Button
-
               variant="contained"
               size="large"
               onClick={() => clearDialog("isCreated")}
