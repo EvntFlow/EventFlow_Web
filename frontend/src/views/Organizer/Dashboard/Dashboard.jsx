@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
   Grid,
@@ -20,11 +20,8 @@ import {
 
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import { useSearchParams } from 'react-router-dom';
 import Authorized from '../../../components/Authorized';
 import { getEvents, findEvents, getTickets } from '../../../backend';
 import { Link } from 'react-router-dom';
@@ -48,10 +45,10 @@ import {
 
 function Dashboard() {
     // fetch data for dashboard and recent sales and total events/tickets/sales 
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [keywords, setKeywords] = useState("");
     const [events, setEvents] = useState(/** @type {Event[] | null} */(null));
-    const [tickets, setTickets] = useState();
+
+    // const [tickets, setTickets] = useState();
+
     useEffect(() => {
         (async function() {
             const fetchedEvents = await getEvents();
@@ -62,38 +59,123 @@ function Dashboard() {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [loading, setLoading] = useState(true);
     const [dashboardData, setDashboardData] = useState({
-        totalCheckedIn: 0,
+        totalEvents: 0,
         totalTickets: 0,
         totalSales: 0,
-        totalRegistered: 0,
         monthlyData: [],
         recentSales: []
     });
 
-    const months = [
+    const months = useMemo(() => [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
-    ];
+    ], []); // Empty dependency array since this array never changes
 
-    useEffect(() => {
-        fetchDashboardData();
-    }, []);
+    const processData = useCallback((events, tickets) => {
+        if (!events || !tickets) {
+            console.error('Events or tickets data is missing');
+            return {
+                totalEvents: 0,
+                totalTickets: 0,
+                totalSales: 0,
+                monthlyData: [],
+                recentSales: []
+            };
+        }
 
-    const fetchDashboardData = async () => {
+        // Initialize monthly data structure
+        const monthlyData = months.map(month => ({
+            month,
+            tickets: 0,
+            sales: 0,
+            dailyData: []
+        }));
+
+        // Process events and tickets
+        events.forEach(event => {
+            try {
+                const eventDate = new Date(event.startDate);
+                const monthIndex = eventDate.getMonth();
+                const day = eventDate.getDate();
+
+                // Get tickets for this event
+                const eventTickets = tickets.filter(ticket => ticket.eventId === event._id);
+                const eventTotalTickets = eventTickets.length;
+                const eventTotalSales = eventTickets.reduce((sum, ticket) => sum + (ticket.price || 0), 0);
+
+                // Update monthly totals
+                monthlyData[monthIndex].tickets += eventTotalTickets;
+                monthlyData[monthIndex].sales += eventTotalSales;
+
+                // Add to daily data
+                if (!monthlyData[monthIndex].dailyData[day - 1]) {
+                    monthlyData[monthIndex].dailyData[day - 1] = {
+                        day: `${day}${getDaySuffix(day)}`,
+                        value: 0
+                    };
+                }
+                monthlyData[monthIndex].dailyData[day - 1].value += eventTotalSales;
+            } catch (error) {
+                console.error('Error processing event:', event, error);
+            }
+        });
+
+        // Calculate totals
+        const totals = monthlyData.reduce((acc, month) => ({
+            totalTickets: acc.totalTickets + month.tickets,
+            totalSales: acc.totalSales + month.sales,
+        }), {
+            totalTickets: 0,
+            totalSales: 0
+        });
+
+        // Get recent sales (last 5 events)
+        const recentSales = events
+            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+            .slice(0, 5)
+            .map(event => {
+                try {
+                    const eventTickets = tickets.filter(ticket => ticket.eventId === event._id);
+                    return {
+                        attendee: event.name,
+                        eventName: event.name,
+                        location: event.location,
+                        dateTime: new Date(event.startDate).toLocaleString(),
+                        quantity: eventTickets.length,
+                        amount: eventTickets.reduce((sum, ticket) => sum + (ticket.price || 0), 0)
+                    };
+                } catch (error) {
+                    console.error('Error processing recent sale:', event, error);
+                    return null;
+                }
+            })
+            .filter(sale => sale !== null);
+
+        return {
+            totalEvents: events.length,
+            ...totals,
+            monthlyData,
+            recentSales
+        };
+    }, [months]);
+
+    const fetchDashboardData = useCallback(async () => {
         try {
             setLoading(true);
             
             // Fetch events using findEvents from backend.js
-            const events = await findEvents({
+            setEvents(await findEvents({
                 // Add any filters you need for organizer's events
                 // For example, you might want to filter by date range
                 minDate: new Date(new Date().getFullYear(), 0, 1).toISOString(), // Start of year
                 maxDate: new Date(new Date().getFullYear(), 11, 31).toISOString(), // End of year
-            });
-
+            }));
+            
             // Fetch tickets using getTickets from backend.js
             const tickets = await getTickets();
 
+            console.log("Check data", events, tickets);
+            
             // Process data
             const processedData = processData(events, tickets);
             setDashboardData(processedData);
@@ -102,82 +184,11 @@ function Dashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [events, processData]);
 
-    const processData = (events, tickets) => {
-        // Initialize monthly data structure
-        const monthlyData = months.map(month => ({
-            month,
-            checkedIn: 0,
-            tickets: 0,
-            sales: 0,
-            registered: 0,
-            dailyData: []
-        }));
-
-        // Process events and tickets
-        events.forEach(event => {
-            const eventDate = new Date(event.date);
-            const monthIndex = eventDate.getMonth();
-            const day = eventDate.getDate();
-
-            // Get tickets for this event
-            const eventTickets = tickets.filter(ticket => ticket.eventId === event.id);
-            const eventTotalTickets = eventTickets.length;
-            const eventTotalSales = eventTickets.reduce((sum, ticket) => sum + (ticket.price || 0), 0);
-            const eventCheckedIn = eventTickets.filter(ticket => ticket.checkedIn).length;
-
-            // Update monthly totals
-            monthlyData[monthIndex].tickets += eventTotalTickets;
-            monthlyData[monthIndex].sales += eventTotalSales;
-            monthlyData[monthIndex].registered += eventTotalTickets;
-            monthlyData[monthIndex].checkedIn += eventCheckedIn;
-
-            // Add to daily data
-            if (!monthlyData[monthIndex].dailyData[day - 1]) {
-                monthlyData[monthIndex].dailyData[day - 1] = {
-                    day: `${day}${getDaySuffix(day)}`,
-                    value: 0
-                };
-            }
-            monthlyData[monthIndex].dailyData[day - 1].value += eventTotalSales;
-        });
-
-        // Calculate totals
-        const totals = monthlyData.reduce((acc, month) => ({
-            totalCheckedIn: acc.totalCheckedIn + month.checkedIn,
-            totalTickets: acc.totalTickets + month.tickets,
-            totalSales: acc.totalSales + month.sales,
-            totalRegistered: acc.totalRegistered + month.registered
-        }), {
-            totalCheckedIn: 0,
-            totalTickets: 0,
-            totalSales: 0,
-            totalRegistered: 0
-        });
-
-        // Get recent sales (last 5 events)
-        const recentSales = events
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .slice(0, 5)
-            .map(event => {
-                const eventTickets = tickets.filter(ticket => ticket.eventId === event.id);
-                return {
-                    attendee: event.organizerName,
-                    eventName: event.name,
-                    location: event.location,
-                    dateTime: new Date(event.date).toLocaleString(),
-                    quantity: eventTickets.length,
-                    amount: eventTickets.reduce((sum, ticket) => sum + (ticket.price || 0), 0)
-                };
-            });
-
-        return {
-            ...totals,
-            monthlyData,
-            recentSales
-        };
-    };
+    useEffect(() => {
+        fetchDashboardData();
+    }, [fetchDashboardData]);
 
     const getDaySuffix = (day) => {
         if (day > 3 && day < 21) return 'th';
@@ -197,6 +208,22 @@ function Dashboard() {
         );
     }
 
+
+    // Generate data for all months
+    const generateMonthlyData = (month) => {
+        const daysInMonth = new Date(2024, month + 1, 0).getDate();
+        return Array.from({ length: daysInMonth }, (_, i) => ({
+            day: `${i + 1}${getDaySuffix(i + 1)}`,
+            value: Math.floor(Math.random() * 50) + 20 // Random value between 20-70
+        }));
+    };
+
+    const monthlyDataExample = months.map((_, index) => generateMonthlyData(index));
+    const currentMonthDataExample = monthlyDataExample[selectedMonth];
+    console.log("Check exmple data for chart", monthlyDataExample, currentMonthDataExample, selectedMonth);
+
+    console.log("Check data for dashboard", dashboardData);
+    
     return (
         <Box sx={{ p: 3 }}>
             <Authorized role="organizer" />
@@ -205,9 +232,8 @@ function Dashboard() {
             </Typography>
 
             <Grid container spacing={3}>
-
-                {/* Total Event */}
-                <Grid item xs={12} sm={6} md={3}>
+                {/* Total Events */}
+                <Grid item xs={12} sm={6} md={4}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
@@ -218,12 +244,12 @@ function Dashboard() {
                                     <ConfirmationNumberIcon />
                                 </Avatar>
                             </Box>
-                            <Typography variant="h5">{dashboardData.totalTickets}</Typography>
+                            <Typography variant="h5">{dashboardData.totalEvents}</Typography>
                             <Button 
-                            component={Link}
-                            size="small" 
-                            endIcon={<VisibilityIcon />}
-                            to="/Event/Manage"
+                                component={Link}
+                                size="small" 
+                                endIcon={<VisibilityIcon />}
+                                to="/Event/Manage"
                             >
                                 View event list
                             </Button>
@@ -232,31 +258,27 @@ function Dashboard() {
                 </Grid>
 
                 {/* Total Tickets */}
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                                 <Typography variant="subtitle1" color="textSecondary">
                                     Total Tickets
                                 </Typography>
-                                <Avatar sx={{ bgcolor: 'primary.light' }}>
-                                    <PersonAddIcon />
+                                <Avatar sx={{ bgcolor: 'secondary.light' }}>
+                                    <ConfirmationNumberIcon />
                                 </Avatar>
                             </Box>
-                            <Typography variant="h5">{dashboardData.totalCheckedIn}</Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                <TrendingUpIcon sx={{ color: 'success.main', fontSize: 'small', mr: 0.5 }} />
-                                <Typography variant="caption" color="success.main">
-                                    {((dashboardData.totalCheckedIn / dashboardData.totalRegistered) * 100).toFixed(1)}% Check-in Rate
-                                </Typography>
-                            </Box>
+                            <Typography variant="h5">{dashboardData.totalTickets}</Typography>
+                            <Button href="/Event/Manage" size="small" endIcon={<VisibilityIcon />}>
+                                View event list
+                            </Button>
                         </CardContent>
                     </Card>
                 </Grid>
 
-
                 {/* Total Sales */}
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
@@ -277,26 +299,6 @@ function Dashboard() {
                         </CardContent>
                     </Card>
                 </Grid>
-
-                {/* Total Registered */}
-                {/* <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Total Registered
-                                </Typography>
-                                <Avatar sx={{ bgcolor: 'warning.light' }}>
-                                    <PersonAddIcon />
-                                </Avatar>
-                            </Box>
-                            <Typography variant="h5">{dashboardData.totalRegistered}</Typography>
-                            <Button size="small" endIcon={<VisibilityIcon />}>
-                                View attendance list
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </Grid> */}
             </Grid>
 
             {/* Sales Details Chart */}
@@ -323,7 +325,7 @@ function Dashboard() {
                     <CardContent>
                         <ResponsiveContainer width="100%" height={300}>
                             <AreaChart
-                                data={dashboardData.monthlyData[selectedMonth]?.dailyData || []}
+                                data={currentMonthDataExample}
                                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                             >
                                 <defs>
@@ -332,7 +334,11 @@ function Dashboard() {
                                         <stop offset="95%" stopColor="#1976d2" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
-                                <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+                                <XAxis 
+                                    dataKey="day" 
+                                    tick={{ fontSize: 12 }}
+                                    ticks={['1st', '5th', '10th', '15th', '20th', '25th']}
+                                />
                                 <YAxis tickFormatter={(val) => `$${val}`} />
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <Tooltip formatter={(val) => `$${val}`} />

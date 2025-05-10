@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Button, Stack, useTheme
+  Button, CircularProgress, Stack, useTheme
 } from '@mui/material';
 import EventDetailsView from './EventDetailsView';
 import { useAuth } from '../context/AuthContext';
@@ -24,6 +24,7 @@ export default function CreateEventReview({ context, step }) {
   const theme = useTheme();
   const auth = useAuth();
   const [urlBlob, setUrlBlob] = useState(/** @type {string | null} */(null));
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (context.step && context.get.bannerFile) {
@@ -60,6 +61,7 @@ export default function CreateEventReview({ context, step }) {
               location: context.get.location,
               price: context.get.price,
               interested: 0,
+              sold: 0,
               categories: context.get.category
                 .map(id => context.availableCategories?.find(c => c.id === id))
                 .filter(c => !!c),
@@ -80,15 +82,26 @@ export default function CreateEventReview({ context, step }) {
 
       {/* Navigation Buttons */}
       <Stack direction="row-reverse" spacing={2}>
-        <Button
-          variant="contained"
-          size="large"
-          color="primary"
-          sx={{ minWidth: "10rem" }}
-          type="submit"
-        >
-          Publish
-        </Button>
+        {!isSubmitting ? (
+          <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            sx={{ minWidth: "10rem" }}
+            type="submit"
+            disabled={isSubmitting}
+            onClick={(e) => {
+              setIsSubmitting(true);
+              e.currentTarget.closest("form")?.requestSubmit();
+            }}
+          >
+            Publish
+          </Button>
+        ) : (
+          <Stack alignItems={"center"} sx={{ minWidth: "10rem" }}>
+            <CircularProgress />
+          </Stack>
+        )}
 
         <Button
           variant="text"
@@ -98,6 +111,7 @@ export default function CreateEventReview({ context, step }) {
             color: theme.palette.text.primary
           }}
           onClick={() => {
+            setIsSubmitting(false);
             context.prev();
           }}
         >

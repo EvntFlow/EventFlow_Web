@@ -37,6 +37,9 @@ import GoogleMapsFrame from './GoogleMapsFrame';
 export default function CreateEventDetails({ context, step }) {
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
 
+  const [startDateError, setStartDateError] = useState(/** @type {string | null} */(null));
+  const [endDateError, setEndDateError] = useState(/** @type {string | null} */(null));
+
   return (
     <Stack spacing={8}>
 
@@ -172,7 +175,8 @@ export default function CreateEventDetails({ context, step }) {
                   slotProps={{
                     field: { openPickerButtonPosition: "start" },
                     textField: {
-                      required: context.step >= step
+                      required: context.step >= step,
+                      helperText: startDateError
                     }
                   }}
                 />
@@ -188,7 +192,8 @@ export default function CreateEventDetails({ context, step }) {
                   slotProps={{
                     field: { openPickerButtonPosition: "start" },
                     textField: {
-                      required: context.step >= step
+                      required: context.step >= step,
+                      helperText: endDateError
                     }
                   }}
                 />
@@ -347,6 +352,18 @@ export default function CreateEventDetails({ context, step }) {
           size="large"
           sx={{ minWidth: "10rem" }}
           onClick={() => {
+            if (!context.get.startDate) {
+              context.set.startDate(dayjs().startOf("day").toDate());
+              setStartDateError("Please choose a start date.");
+            } else {
+              setStartDateError(null);
+            }
+            if (!context.get.endDate) {
+              context.set.endDate(dayjs().startOf("day").toDate());
+              setEndDateError("Please choose an end date.");
+            } else {
+              setEndDateError(null);
+            }
             context.next();
           }}
         >

@@ -49,7 +49,6 @@ export default function TicketPage() {
 
   useEffect(() => {
     if (tickets) {
-      console.log(keywords);
       if (keywords) {
         const words = keywords.toLowerCase().split(/\s/).filter(w => !!w);
         if (words.length !== 0) {

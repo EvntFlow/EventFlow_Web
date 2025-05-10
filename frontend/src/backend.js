@@ -152,6 +152,19 @@ export async function getTickets() {
 }
 
 /**
+ * @param {string=} eventId
+ * @returns {Promise<Ticket[]>}
+ */
+export async function getAttendance(eventId) {
+    let response = await fetchApi("Ticket/GetAttendance", eventId ? { event: eventId } : undefined);
+    if (!response.ok) {
+        return [];
+    } else {
+        return await response.json();
+    }
+}
+
+/**
  * @returns {Promise<PaymentMethod[]>}
  */
 export async function getPaymentMethods() {

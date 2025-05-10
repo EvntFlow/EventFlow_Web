@@ -1,219 +1,653 @@
-import React, { useState } from 'react';
+// @ts-check
+
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Box,
-  Toolbar,
   Typography,
-  TextField,
-  InputAdornment,
+  TextField, Button, Stack,
+  Grid,
+  Alert,
+  CircularProgress,
+  Chip,
+  ButtonGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Box,
   IconButton,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Select,
-  MenuItem,
-  Button,
-  Paper,
+  useTheme
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import Authorized from '../../../components/Authorized';
+import { AccountCircle, ArrowBack, CalendarMonth, Delete, Info, Search } from '@mui/icons-material';
+import { useSearchParams } from 'react-router-dom';
+import { getAttendance, getEvent } from '../../../backend';
+import { DataGrid } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
+import GroupableIconButton from '../../../components/GroupableIconButton';
+import { getApiUrl } from '../../../api';
 
-// Dummy data for demonstration
-const sampleAttendees = [
-  { id: 1, name: 'Christine Brooks', email: 'abc@gmail.com', date: '04 Sep 2019', event: 'Event name', status: 'Approved' },
-  { id: 2, name: 'Rosie Pearson', email: 'abc@gmail.com', date: '28 May 2019', event: 'Event name', status: 'Approved' },
-  { id: 3, name: 'Darrell Caldwell', email: 'abc@gmail.com', date: '23 Nov 2019', event: 'Event name', status: 'Rejected' },
-  { id: 4, name: 'Gilbert Johnston', email: 'abc@gmail.com', date: '05 Feb 2019', event: 'Event name', status: 'Approved' },
-  { id: 5, name: 'Alan Cain', email: 'abc@gmail.com', date: '29 Jul 2019', event: 'Event name', status: 'Approved' },
-  { id: 6, name: 'Alfred Murray', email: 'abc@gmail.com', date: '15 Aug 2019', event: 'Event name', status: 'Approved' },
-];
+/**
+ * @import { DataGridProps, GridColDef } from "@mui/x-data-grid";
+ * @import Event from "../../../models/Event";
+ * @import Ticket from "../../../models/Ticket";
+ */
 
-function AttendanceList() {
-  const [filterBy, setFilterBy] = useState('');
-  const [eventFilter, setEventFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+export default function AttendanceList() {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleFilterChange = (event) => {
-    setFilterBy(event.target.value);
-    // Implement your filtering logic based on the selected field
-  };
+  const [isInvalidEvent, setIsInvalidEvent] = useState(false);
+  const [event, setEvent] = useState(/** @type {Event | null} */(null));
+  const [tickets, setTickets] = useState(/** @type {Ticket[] | null} */(null));
+  const [matchingTickets, setMatchingTickets] = useState(/** @type {Ticket[] | null} */(null));
+  const [keywords, setKeywords] = useState("");
 
-  const handleEventFilterChange = (event) => {
-    setEventFilter(event.target.value);
-    // Implement your event filtering logic
-  };
+  useEffect(() => {
+    (async function() {
+      if (searchParams.has("event")) {
+        setIsInvalidEvent(false);
+        let event;
+        try {
+          const eventId = searchParams.get("event") || "";
+          event = await getEvent(eventId);
+          setEvent(event);
+        } finally {
+          setIsInvalidEvent(!event);
+        }
+      } else {
+        setIsInvalidEvent(false);
+      }
+    })();
+  }, [searchParams]);
 
-  const handleDateFilterChange = (event) => {
-    setDateFilter(event.target.value);
-    // Implement your date filtering logic
-  };
+  useEffect(() => {
+    (async function() {
+      if (isInvalidEvent) {
+        setTickets(null);
+      } else {
+        setTickets(event ? await getAttendance(event.id) : await getAttendance());
+      }
+    })();
+  }, [event, isInvalidEvent]);
 
-  const handleStatusFilterChange = (event) => {
-    setStatusFilter(event.target.value);
-    // Implement your status filtering logic
-  };
+  useEffect(() => {
+    if (tickets) {
+      if (keywords) {
+        const words = keywords.toLowerCase().split(/\s/).filter(w => !!w);
+        if (words.length !== 0) {
+          setMatchingTickets(
+            tickets
+              .map(t => /** @type {[Ticket, string]} */
+                ([ t, t.holderFullName ]))
+              .map(([t, str]) => /** @type {[Ticket, Set<string>]} */
+                ([t, new Set(str.toLowerCase().split(/\s/).filter(s => !!s))]))
+              .filter(([_, wordSet]) => !words.every(w => !wordSet.has(w)))
+              .map(([t, _]) => t)
+          );
+          return;
+        }
+      }
+      setMatchingTickets(tickets);
+    }
+  }, [keywords, tickets]);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    // Implement your search logic
-  };
-
-  const handleResetFilter = () => {
-    setFilterBy('');
-    setEventFilter('');
-    setDateFilter('');
-    setStatusFilter('');
-    // Reset your filtering logic
-  };
+  const clearDialog = useCallback(
+    /**
+     * @param {string} key
+     */
+    function (key) {
+      searchParams.delete(key);
+      setSearchParams(searchParams);
+    }
+  , [searchParams, setSearchParams]);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        ATTENDANCE LIST
-      </Typography>
+    <Stack spacing={3} sx={{ m: 4 }}>
+      <Authorized role="organizer" />
 
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-          <Select
-            value={filterBy}
-            onChange={handleFilterChange}
-            displayEmpty
-            size="small"
-            sx={{ mr: 1 }}
-          >
-            <MenuItem value="" disabled>
-              Filter By
-            </MenuItem>
-            <MenuItem value="name">Name</MenuItem>
-            <MenuItem value="email">Email</MenuItem>
-            {/* Add other filter options */}
-          </Select>
-          <TextField
-            select
-            value={eventFilter}
-            onChange={handleEventFilterChange}
-            size="small"
-            label="Event"
-            sx={{ mr: 1 }}
-          >
-            <MenuItem value="">All Events</MenuItem>
-            <MenuItem value="event1">Event 1</MenuItem>
-            <MenuItem value="event2">Event 2</MenuItem>
-            {/* Populate with actual event names */}
-          </TextField>
-          <TextField
-            select
-            value={dateFilter}
-            onChange={handleDateFilterChange}
-            size="small"
-            label="Date"
-            sx={{ mr: 1 }}
-          >
-            <MenuItem value="">All Dates</MenuItem>
-            {/* Add date filter options */}
-          </TextField>
-          <TextField
-            select
-            value={statusFilter}
-            onChange={handleStatusFilterChange}
-            size="small"
-            label="Status"
-            sx={{ mr: 2 }}
-          >
-            <MenuItem value="">All Statuses</MenuItem>
-            <MenuItem value="Approved">Approved</MenuItem>
-            <MenuItem value="Rejected">Rejected</MenuItem>
-            {/* Populate with actual status options */}
-          </TextField>
-          <Button size="small" onClick={handleResetFilter}>
-            Reset Filter
-          </Button>
-        </Box>
-        <TextField
-          size="small"
-          label="Search attendee name"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
+      <Grid container={true} size={12}>
+        <Grid size={6}>
+          <Stack direction="row" sx={{ width: "100%" }}>
+            <Stack>
+              <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
+                Attendance
+              </Typography>
+              {event &&
+                <Typography
+                  variant="h4"
+                  textTransform="uppercase"
+                  noWrap={true}
+                  textOverflow="ellipsis"
+                >
+                  {event.name}
+                </Typography>
+              }
+            </Stack>
+          </Stack>
+        </Grid>
+        <Grid size={6}>
+          <Stack direction="row-reverse">
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search Attendee"
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: <Search sx={{ mr: 1 }} />,
+                  sx: { borderRadius: "8rem" }
+                }
+              }}
+            />
+          </Stack>
+        </Grid>
+      </Grid>
+
+      {isInvalidEvent ? (
+        <Alert severity="error">
+          Invalid Event
+        </Alert>
+      ) : !matchingTickets ? (
+        <Stack alignItems="center">
+          <CircularProgress />
+        </Stack>
+      ) : !matchingTickets.length ? (
+        <Alert severity="error">
+          No Attendee Found
+        </Alert>
+      ) : (
+        <DataGrid
+          {.../** @type {DataGridProps<Ticket>} */({})}
+          rows={matchingTickets}
+          columns={[
+            /** @type {GridColDef<Ticket, string>} */
+            ({
+              field: "holderFullName",
+              headerName: "Name",
+              flex: 1,
+              type: "string",
+              display: "flex",
+              valueGetter: (_, t) => t.holderFullName,
+            }),
+            /** @type {GridColDef<Ticket, string>} */
+            ({
+              field: "holderEmail",
+              headerName: "Email",
+              flex: 1,
+              type: "string",
+              display: "flex",
+              valueGetter: (_, t) => t.holderEmail,
+            }),
+            /** @type {GridColDef<Ticket, Date, string>} */
+            ({
+              field: "timestamp",
+              headerName: "Purchase Date",
+              flex: 1,
+              type: "dateTime",
+              display: "flex",
+              valueGetter: (_, t) => new Date(t.timestamp),
+              renderCell: (params) => (
+                <Typography noWrap={true}>
+                  {dayjs(params.value).format("DD/MM/YYYY HH:mm")}
+                </Typography>
+              )
+            }),
+            ...(event ? [] : ([
+                /** @type {GridColDef<Ticket, string>} */(
+                {
+                field: "eventName",
+                headerName: "Event",
+                flex: 1,
+                type: "string",
+                valueGetter: (_, t) => t.ticketOption.name,
+                renderCell: (params) => (
+                  <Stack direction="row" alignItems="center" sx={{ height: "100%" }}>
+                    <Stack>
+                      {!event &&
+                        <Button
+                          href={`/Event/Details?event=${params.row?.event?.id}`}
+                          target="_blank"
+                          variant="text"
+                          sx={{
+                            textTransform: "inherit",
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            justifyContent: "start",
+                            maxWidth: "100%",
+                            display: "inline-block",
+                            m: 0,
+                            p: 0
+                          }}
+                        >
+                          {params.row?.event?.name}
+                        </Button>
+                      }
+                    </Stack>
+                  </Stack>
+                )
+              }
+            )])),
+            /** @type {GridColDef<Ticket, string>} */
+            ({
+              field: "name",
+              headerName: "Ticket",
+              flex: 0.75,
+              type: "string",
+              display: "flex",
+              valueGetter: (_, t) => t.ticketOption.name,
+            }),
+            /** @type {GridColDef<Ticket, "pending" | "approved", string>} */
+            ({
+              field: "status",
+              headerName: "Status",
+              flex: 0.75,
+              type: "singleSelect",
+              valueGetter: (_, t) => t.isReviewed ? "approved" : "pending",
+              getOptionValue: (/** @type {string} */value) => value,
+              getOptionLabel: (/** @type {string} */value) =>
+                value ? value[0].toUpperCase() + value.substring(1) : null,
+              valueOptions: ["pending", "approved"],
+              sortComparator: (v1, v2) => {
+                /** @param {typeof v1} v */
+                function toNumber(v) {
+                  switch (v) {
+                    case "pending":
+                      return 0;
+                    case "approved":
+                      return 1;
+                    default:
+                      return 2;
+                  }
+                }
+                return toNumber(v1) - toNumber(v2);
+              },
+              renderCell: (params) => (
+                <Stack flexDirection="row" alignItems="center" sx={{ height: "100%" }}>
+                  <Chip
+                    variant="filled"
+                    size="small"
+                    label={params.formattedValue}
+                    color={(() => {
+                      switch (params.value) {
+                        case "pending":
+                          return "info";
+                        case "approved":
+                          return "success";
+                        default:
+                          return "primary";
+                      }
+                    })()}
+                    sx={{ width: "6rem", borderRadius: 2 }}
+                  />
+                </Stack>
+              )
+            }),
+            {
+              field: 'actions',
+              type: 'actions',
+              flex: 0.5,
+              headerName: 'Actions',
+              cellClassName: 'actions',
+              getActions: ({ row }) => {
+                return [
+                  <ButtonGroup variant="outlined" color="inherit">
+                    <GroupableIconButton
+                      startIcon={<AccountCircle />}
+                      onClick={() => {
+                        searchParams.set("review", row.id);
+                        setSearchParams(searchParams);
+                      }}
+                    />,
+                    <GroupableIconButton
+                      color="error"
+                      startIcon={<Delete />}
+                      onClick={() => {
+                        searchParams.set("reject", row.id);
+                        setSearchParams(searchParams);
+                      }}
+                    />,
+                  </ButtonGroup>
+                ];
+              },
+            },
+          ]}
+          getRowId={(t) => t.id}
+          rowHeight={64}
+          pageSizeOptions={[8, 10, 25, 50, 100]}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 8,
+              },
+            },
+            sorting: {
+              sortModel: [
+                { field: "timestamp", sort: "desc" },
+                { field: "status", sort: "desc" },
+              ]
+            }
           }}
-          onChange={handleSearchChange}
+          autosizeOptions={{
+            columns: ["price", "timestamp", "status", "actions"],
+            includeOutliers: false,
+            includeHeaders: true,
+          }}
+          disableRowSelectionOnClick={true}
         />
-      </Toolbar>
+      )}
 
-      <Paper elevation={2}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ACTION</TableCell>
-              <TableCell>NAME</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>DATE</TableCell>
-              <TableCell>Event</TableCell>
-              <TableCell>STATUS</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sampleAttendees.map((attendee) => (
-              <TableRow key={attendee.id}>
-                <TableCell>
-                  <IconButton color="error" size="small">
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton color="primary" size="small">
-                    <PersonIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell>{attendee.name}</TableCell>
-                <TableCell>{attendee.email}</TableCell>
-                <TableCell>{attendee.date}</TableCell>
-                <TableCell>{attendee.event}</TableCell>
-                <TableCell>
-                  <Box
-                    sx={{
-                      bgcolor:
-                        attendee.status === 'Approved' ? 'success.light' : attendee.status === 'Rejected' ? 'error.light' : 'warning.light',
-                      color:
-                        attendee.status === 'Approved' ? 'success.main' : attendee.status === 'Rejected' ? 'error.main' : 'warning.main',
-                      borderRadius: '4px',
-                      padding: '4px 8px',
-                      display: 'inline-block',
-                    }}
-                  >
-                    {attendee.status}
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
+      {tickets &&
+      <>
+        <Dialog
+          open={searchParams.has("reject")}
+          onClose={() => {
+            searchParams.delete("reject");
+            searchParams.delete("error");
+            setSearchParams(searchParams);
+          }}
+        >
+          <DialogTitle>
+            Reject Ticket
+          </DialogTitle>
+          <DialogContent>
+            <RejectTicketFormProps
+              event={event} tickets={tickets} id={searchParams.get("reject") ?? ""}
+            />
+          </DialogContent>
+        </Dialog>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-        <Typography variant="body2">Showing 1-09 of 78</Typography>
-        <Box>
-          <IconButton>
-            <ArrowLeftIcon />
-          </IconButton>
-          <IconButton>
-            <ArrowRightIcon />
-          </IconButton>
-        </Box>
-      </Box>
-    </Box>
+        <Dialog
+          open={searchParams.has("review")}
+          onClose={() => {
+            searchParams.delete("review");
+            searchParams.delete("error");
+            setSearchParams(searchParams);
+          }}
+
+          fullWidth={true}
+        >
+          <DialogTitle sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 2,
+            bgcolor: 'background.paper',
+            borderBottom: '1px solid',
+            borderColor: 'divider'
+          }}>
+            <IconButton
+              edge="start"
+              onClick={() => {
+                searchParams.delete("review");
+                searchParams.delete("error");
+                setSearchParams(searchParams);
+              }}
+              sx={{ mr: 1 }}
+              size="large"
+            >
+              <ArrowBack />
+            </IconButton>
+            <Typography variant="h6">Attendee Details</Typography>
+          </DialogTitle>
+          <DialogContent>
+            <ReviewTicketFormProps
+              event={event} tickets={tickets} id={searchParams.get("review") ?? ""}
+            />
+          </DialogContent>
+        </Dialog>
+      </>
+      }
+
+      <Dialog
+        open={searchParams.has("isRejected")}
+        onClose={() => clearDialog("isRejected")}>
+          <DialogContent>
+            <Stack alignItems="center" spacing={4}>
+              <Info color="info" style={{ height: "8rem", width: "8rem" }} />
+              <Typography variant="h5" fontWeight="bold" textAlign="center">
+                This ticket has been rejected.
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                A refund to the holder has been processed.
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => clearDialog("isRejected")}
+                sx={{ minWidth: "16rem" }}
+              >
+                OK
+              </Button>
+            </Stack>
+          </DialogContent>
+      </Dialog>
+    </Stack>
   );
 }
 
-export default AttendanceList;
+/**
+ * @typedef RejectTicketFormProps
+ * @property {Event | null=} event
+ * @property {Ticket[]} tickets
+ * @property {string} id
+ */
+
+/**
+ * @param {RejectTicketFormProps} props
+ */
+
+function RejectTicketFormProps({ event, tickets, id }) {
+  const [ticket, setTicket] = useState(/** @type {Ticket | null} */(null));
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const found = tickets.find(t => t.id === id);
+    setTicket(found ?? null);
+  }, [tickets, id]);
+
+  return ticket ? (
+    <Stack spacing={3}>
+      <Typography>
+        Are you sure you want to reject the{" "}
+        <em>{ticket.ticketOption.name}</em> ticket held by{" "}
+        <span style={{ whiteSpace: "pre" }}>
+          <strong>{ticket.holderFullName}</strong>{" "}
+          (<a href={`mailto:${encodeURIComponent(
+                    `${ticket.holderFullName}<${ticket.holderEmail}>`)
+                    }`}>{ticket.holderEmail}</a>
+          )?
+        </span>
+      </Typography>
+
+      {searchParams.has("error") &&
+        <Alert severity="error">
+          {searchParams.get("error")}
+        </Alert>
+      }
+
+      <Box
+        component={"form"}
+        method="post"
+        action={
+          getApiUrl("Ticket/CancelTicket",
+            { returnUrl: `/Ticket/Attendance?${event ? `event=${event.id}&` : ""}isRejected=1` }
+          )}
+      >
+        <Box display="none">
+          <input name="ticket" value={ticket.id} hidden={true} readOnly={true} required={true} />
+        </Box>
+
+        <Stack width="100%">
+          <Button
+            variant="contained"
+            color="error"
+            type="submit"
+            fullWidth={true}
+          >
+            Delete
+          </Button>
+        </Stack>
+      </Box>
+    </Stack>
+  ) : (
+    <Alert severity="error">
+      Invalid Ticket.
+    </Alert>
+  );
+}
+
+/**
+ * @typedef ReviewTicketFormProps
+ * @property {Event | null=} event
+ * @property {Ticket[]} tickets
+ * @property {string} id
+ */
+
+/**
+ * @param {ReviewTicketFormProps} props
+ */
+
+function ReviewTicketFormProps({ event, tickets, id }) {
+  const theme = useTheme();
+  const [ticket, setTicket] = useState(/** @type {Ticket | null} */(null));
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const found = tickets.find(t => t.id === id);
+    setTicket(found ?? null);
+  }, [tickets, id]);
+
+  return ticket ? (
+    <Box
+      component="form"
+      method="post"
+      action={
+        getApiUrl("Ticket/ReviewTicket",
+          { returnUrl: `/Ticket/Attendance?${event ? `event=${event.id}&` : ""}isApproved=1` }
+        )}
+    >
+      <Stack spacing={3} sx={{ py: 2 }}>
+        <Grid container={true} size={12} spacing={4}>
+          <Grid size={6}>
+            <Typography variant="body1" color="textSecondary">
+              {ticket.event?.name}
+            </Typography>
+          </Grid>
+          <Grid size={6}>
+            <Stack direction="row-reverse" alignItems="center" spacing={1}>
+              <Typography variant="body1" color="textSecondary">
+                {dayjs(ticket.event?.startDate).format("dddd, D MMMM YYYY")}
+              </Typography>
+              <CalendarMonth sx={{ color: theme.palette.text.secondary }} />
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Box display="none">
+          <input hidden={true} readOnly={true} required={true} name="ticket" value={ticket.id} />
+        </Box>
+
+        <Stack spacing={1}>
+          <Typography variant="subtitle2">
+              {ticket.ticketOption.name}
+          </Typography>
+
+          <Box
+            sx={{
+              borderStyle: "solid",
+              borderWidth: "thin",
+              borderColor: theme.palette.divider,
+              borderTopStyle: "solid",
+              borderTopWidth: "medium",
+              borderTopColor: theme.palette.primary.main,
+              padding: 2
+            }}
+          >
+            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              Full Name
+            </Typography>
+            <TextField
+              fullWidth={true}
+              required={true}
+              placeholder="Enter your full name"
+              value={ticket.holderFullName}
+              name="fullName"
+              variant="outlined"
+              size="small"
+              sx={{ mb: 2 }}
+              slotProps={{ htmlInput: { readOnly: true } }}
+            />
+
+            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              Email
+            </Typography>
+            <TextField
+              fullWidth
+              required={true}
+              placeholder="Enter your email"
+              value={ticket.holderEmail}
+              name="email"
+              type="email"
+              variant="outlined"
+              size="small"
+              sx={{ mb: 2 }}
+              slotProps={{ htmlInput: { readOnly: true } }}
+            />
+
+            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              Phone Number
+            </Typography>
+            <TextField
+              fullWidth
+              required={true}
+              value={ticket.holderPhoneNumber}
+              placeholder="Enter your phone number"
+              name="phoneNumber"
+              type="tel"
+              variant="outlined"
+              size="small"
+              slotProps={{ htmlInput: { readOnly: true } }}
+            />
+          </Box>
+        </Stack>
+
+        {searchParams.has("error") &&
+          <Alert severity="error">
+            {searchParams.get("error")}
+          </Alert>
+        }
+
+        <Grid size={12} container={true}>
+          <Grid size={4}>
+            <Button
+              variant="contained"
+              color="error"
+              fullWidth={true}
+              onClick={() => setSearchParams(params => {
+                params.delete("review");
+                params.delete("error");
+                params.set("reject", ticket.id);
+                return params;
+              })}
+            >
+              Reject
+            </Button>
+          </Grid>
+          <Grid size={4}></Grid>
+          <Grid size={4}>
+            <Button
+              variant="contained"
+              type="submit"
+              fullWidth={true}
+              disabled={ticket.isReviewed}
+            >
+              {ticket.isReviewed ? "Approved" : "Approve"}
+            </Button>
+          </Grid>
+        </Grid>
+      </Stack>
+    </Box>
+    ) : (
+      <Alert severity="error">
+        Invalid Ticket.
+      </Alert>
+    );
+}
