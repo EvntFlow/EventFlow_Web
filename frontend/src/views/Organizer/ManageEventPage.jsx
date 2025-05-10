@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getEvents, deleteEvent } from '../../backend';
+import { getEvents } from '../../backend';
 import Authorized from '../../components/Authorized';
 import { DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
