@@ -6,10 +6,6 @@ import {
   CardContent,
   Typography,
   Button,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   Avatar,
   Select,
   MenuItem,
@@ -163,28 +159,27 @@ function Dashboard() {
         try {
             setLoading(true);
             
-            // Fetch events using findEvents from backend.js
-            setEvents(await findEvents({
-                // Add any filters you need for organizer's events
-                // For example, you might want to filter by date range
-                minDate: new Date(new Date().getFullYear(), 0, 1).toISOString(), // Start of year
-                maxDate: new Date(new Date().getFullYear(), 11, 31).toISOString(), // End of year
-            }));
-            
-            // Fetch tickets using getTickets from backend.js
-            const tickets = await getTickets();
+            // Fetch events and tickets in parallel
+            const [fetchedEvents, tickets] = await Promise.all([
+                findEvents({
+                    minDate: new Date(new Date().getFullYear(), 0, 1).toISOString(),
+                    maxDate: new Date(new Date().getFullYear(), 11, 31).toISOString(),
+                }),
+                getTickets()
+            ]);
 
-            console.log("Check data", events, tickets);
+            // Update events state
+            setEvents(fetchedEvents);
             
-            // Process data
-            const processedData = processData(events, tickets);
+            // Process and update dashboard data
+            const processedData = processData(fetchedEvents, tickets);
             setDashboardData(processedData);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
         } finally {
             setLoading(false);
         }
-    }, [events, processData]);
+    }, [processData]); // Only depend on processData
 
     useEffect(() => {
         fetchDashboardData();
@@ -200,6 +195,19 @@ function Dashboard() {
         }
     };
 
+    // Get the current month's data from dashboardData
+    const currentMonthData = useMemo(() => {
+        if (!dashboardData.monthlyData[selectedMonth]?.dailyData) {
+            return [];
+        }
+        return dashboardData.monthlyData[selectedMonth].dailyData
+            .filter(data => data !== undefined) // Filter out undefined entries
+            .map(data => ({
+                day: data.day,
+                value: data.value
+            }));
+    }, [dashboardData.monthlyData, selectedMonth]);
+
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -208,21 +216,8 @@ function Dashboard() {
         );
     }
 
-
-    // Generate data for all months
-    const generateMonthlyData = (month) => {
-        const daysInMonth = new Date(2024, month + 1, 0).getDate();
-        return Array.from({ length: daysInMonth }, (_, i) => ({
-            day: `${i + 1}${getDaySuffix(i + 1)}`,
-            value: Math.floor(Math.random() * 50) + 20 // Random value between 20-70
-        }));
-    };
-
-    const monthlyDataExample = months.map((_, index) => generateMonthlyData(index));
-    const currentMonthDataExample = monthlyDataExample[selectedMonth];
-    console.log("Check exmple data for chart", monthlyDataExample, currentMonthDataExample, selectedMonth);
-
-    console.log("Check data for dashboard", dashboardData);
+    console.log("Check data for dashboard", dashboardData, events);
+    console.log("Current month data for chart:", currentMonthData);
     
     return (
         <Box sx={{ p: 3 }}>
@@ -325,7 +320,7 @@ function Dashboard() {
                     <CardContent>
                         <ResponsiveContainer width="100%" height={300}>
                             <AreaChart
-                                data={currentMonthDataExample}
+                                data={currentMonthData}
                                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                             >
                                 <defs>
@@ -362,21 +357,38 @@ function Dashboard() {
                 </Typography>
                 <Card>
                     <CardContent>
-                        <List>
-                            {dashboardData.recentSales.map((sale, index) => (
-                                <React.Fragment key={index}>
-                                    <ListItem>
-                                        <ListItemText primary="Attendee" secondary={sale.attendee} />
-                                        <ListItemText primary="Event Name" secondary={sale.eventName} />
-                                        <ListItemText primary="Location" secondary={sale.location} />
-                                        <ListItemText primary="Date - Time" secondary={sale.dateTime} />
-                                        <ListItemText primary="Quantity" secondary={sale.quantity} />
-                                        <ListItemText primary="Amount" secondary={`$${sale.amount}`} />
-                                    </ListItem>
-                                    {index < dashboardData.recentSales.length - 1 && <Divider />}
-                                </React.Fragment>
-                            ))}
-                        </List>
+                        <Box sx={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid #e0e0e0' }}>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>Attendee</th>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>Event Name</th>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>Location</th>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>Date - Time</th>
+                                        <th style={{ padding: '12px', textAlign: 'right' }}>Quantity</th>
+                                        <th style={{ padding: '12px', textAlign: 'right' }}>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {dashboardData.recentSales.map((sale, index) => (
+                                        <tr 
+                                            key={index}
+                                            style={{ 
+                                                borderBottom: index < dashboardData.recentSales.length - 1 ? '1px solid #e0e0e0' : 'none',
+                                                '&:hover': { backgroundColor: '#f5f5f5' }
+                                            }}
+                                        >
+                                            <td style={{ padding: '12px' }}>{sale.attendee}</td>
+                                            <td style={{ padding: '12px' }}>{sale.eventName}</td>
+                                            <td style={{ padding: '12px' }}>{sale.location}</td>
+                                            <td style={{ padding: '12px' }}>{sale.dateTime}</td>
+                                            <td style={{ padding: '12px', textAlign: 'right' }}>{sale.quantity}</td>
+                                            <td style={{ padding: '12px', textAlign: 'right' }}>${sale.amount}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </Box>
                     </CardContent>
                 </Card>
             </Box>
