@@ -76,18 +76,6 @@ export default function ManageEventPage() {
     }
     , [searchParams, setSearchParams]);
 
-  const handleDelete = async (eventId) => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      const success = await deleteEvent(eventId);
-      if (success) {
-        // Remove the deleted event from the state
-        setEvents(prevEvents => prevEvents?.filter(event => event.id !== eventId) ?? null);
-      } else {
-        alert('Failed to delete event. Please try again.');
-      }
-    }
-  };
-
   return (
     <Stack spacing={3} sx={{ m: 4 }}>
     <Authorized role="organizer" />
