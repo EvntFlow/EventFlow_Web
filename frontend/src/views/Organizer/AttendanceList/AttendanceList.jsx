@@ -1,29 +1,40 @@
 // @ts-check
 
-import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Typography,
-  TextField, Button, Stack,
-  Grid,
+  AccountCircle,
+  ArrowBack,
+  CalendarMonth,
+  CheckCircle,
+  Delete,
+  Info,
+  Search
+} from '@mui/icons-material';
+import {
   Alert,
-  CircularProgress,
-  Chip,
-  ButtonGroup,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Box,
+  Button,
+  ButtonGroup,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
   IconButton,
-  useTheme
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
 } from '@mui/material';
-import Authorized from '../../../components/Authorized';
-import { AccountCircle, ArrowBack, CalendarMonth, Delete, Info, Search } from '@mui/icons-material';
-import { useSearchParams } from 'react-router-dom';
-import { getAttendance, getEvent } from '../../../backend';
 import { DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
-import GroupableIconButton from '../../../components/GroupableIconButton';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getApiUrl } from '../../../api';
+import { getAttendance, getEvent } from '../../../backend';
+import Authorized from '../../../components/Authorized';
+import GroupableIconButton from '../../../components/GroupableIconButton';
+import SubmitButton from '../../../components/SubmitButton';
 
 /**
  * @import { DataGridProps, GridColDef } from "@mui/x-data-grid";
@@ -41,7 +52,7 @@ export default function AttendanceList() {
   const [keywords, setKeywords] = useState("");
 
   useEffect(() => {
-    (async function() {
+    (async function () {
       if (searchParams.has("event")) {
         setIsInvalidEvent(false);
         let event;
@@ -59,7 +70,7 @@ export default function AttendanceList() {
   }, [searchParams]);
 
   useEffect(() => {
-    (async function() {
+    (async function () {
       if (isInvalidEvent) {
         setTickets(null);
       } else {
@@ -76,7 +87,7 @@ export default function AttendanceList() {
           setMatchingTickets(
             tickets
               .map(t => /** @type {[Ticket, string]} */
-                ([ t, t.holderFullName ]))
+                ([t, t.holderFullName]))
               .map(([t, str]) => /** @type {[Ticket, Set<string>]} */
                 ([t, new Set(str.toLowerCase().split(/\s/).filter(s => !!s))]))
               .filter(([_, wordSet]) => !words.every(w => !wordSet.has(w)))
@@ -97,7 +108,7 @@ export default function AttendanceList() {
       searchParams.delete(key);
       setSearchParams(searchParams);
     }
-  , [searchParams, setSearchParams]);
+    , [searchParams, setSearchParams]);
 
   return (
     <Stack spacing={3} sx={{ m: 4 }}>
@@ -141,6 +152,20 @@ export default function AttendanceList() {
           </Stack>
         </Grid>
       </Grid>
+
+      {event &&
+        <Button
+          variant="contained"
+          size="large"
+          sx={{ maxWidth: "15rem" }}
+          onClick={() => setSearchParams(params => {
+            params.set("remind", "1");
+            return params;
+          })}
+        >
+          Send Event Reminder
+        </Button>
+      }
 
       {isInvalidEvent ? (
         <Alert severity="error">
@@ -194,38 +219,38 @@ export default function AttendanceList() {
             ...(event ? [] : ([
                 /** @type {GridColDef<Ticket, string>} */(
                 {
-                field: "eventName",
-                headerName: "Event",
-                flex: 1,
-                type: "string",
-                valueGetter: (_, t) => t.ticketOption.name,
-                renderCell: (params) => (
-                  <Stack direction="row" alignItems="center" sx={{ height: "100%" }}>
-                    <Stack>
-                      {!event &&
-                        <Button
-                          href={`/Event/Details?event=${params.row?.event?.id}`}
-                          target="_blank"
-                          variant="text"
-                          sx={{
-                            textTransform: "inherit",
-                            textOverflow: "ellipsis",
-                            overflow: "hidden",
-                            justifyContent: "start",
-                            maxWidth: "100%",
-                            display: "inline-block",
-                            m: 0,
-                            p: 0
-                          }}
-                        >
-                          {params.row?.event?.name}
-                        </Button>
-                      }
+                  field: "eventName",
+                  headerName: "Event",
+                  flex: 1,
+                  type: "string",
+                  valueGetter: (_, t) => t.ticketOption.name,
+                  renderCell: (params) => (
+                    <Stack direction="row" alignItems="center" sx={{ height: "100%" }}>
+                      <Stack>
+                        {!event &&
+                          <Button
+                            href={`/Event/Details?event=${params.row?.event?.id}`}
+                            target="_blank"
+                            variant="text"
+                            sx={{
+                              textTransform: "inherit",
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              justifyContent: "start",
+                              maxWidth: "100%",
+                              display: "inline-block",
+                              m: 0,
+                              p: 0
+                            }}
+                          >
+                            {params.row?.event?.name}
+                          </Button>
+                        }
+                      </Stack>
                     </Stack>
-                  </Stack>
-                )
-              }
-            )])),
+                  )
+                }
+              )])),
             /** @type {GridColDef<Ticket, string>} */
             ({
               field: "name",
@@ -336,88 +361,131 @@ export default function AttendanceList() {
       )}
 
       {tickets &&
-      <>
+        <>
+          <Dialog
+            open={searchParams.has("reject")}
+            onClose={() => {
+              searchParams.delete("reject");
+              searchParams.delete("error");
+              setSearchParams(searchParams);
+            }}
+          >
+            <DialogTitle>
+              Reject Ticket
+            </DialogTitle>
+            <DialogContent>
+              <RejectTicketForm
+                event={event} tickets={tickets} id={searchParams.get("reject") ?? ""}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={searchParams.has("review")}
+            onClose={() => {
+              searchParams.delete("review");
+              searchParams.delete("error");
+              setSearchParams(searchParams);
+            }}
+
+            fullWidth={true}
+          >
+            <DialogTitle sx={{
+              display: 'flex',
+              alignItems: 'center',
+              p: 2,
+              bgcolor: 'background.paper',
+              borderBottom: '1px solid',
+              borderColor: 'divider'
+            }}>
+              <IconButton
+                edge="start"
+                onClick={() => {
+                  searchParams.delete("review");
+                  searchParams.delete("error");
+                  setSearchParams(searchParams);
+                }}
+                sx={{ mr: 1 }}
+                size="large"
+              >
+                <ArrowBack />
+              </IconButton>
+              <Typography variant="h6">Attendee Details</Typography>
+            </DialogTitle>
+            <DialogContent>
+              <ReviewTicketForm
+                event={event} tickets={tickets} id={searchParams.get("review") ?? ""}
+              />
+            </DialogContent>
+          </Dialog>
+        </>
+      }
+
+      {event &&
+
         <Dialog
-          open={searchParams.has("reject")}
+          open={searchParams.has("remind")}
           onClose={() => {
-            searchParams.delete("reject");
+            searchParams.delete("remind");
             searchParams.delete("error");
             setSearchParams(searchParams);
           }}
         >
           <DialogTitle>
-            Reject Ticket
+            Send Event Reminder
           </DialogTitle>
           <DialogContent>
-            <RejectTicketFormProps
-              event={event} tickets={tickets} id={searchParams.get("reject") ?? ""}
-            />
+            <SendEventReminderForm event={event} />
           </DialogContent>
         </Dialog>
-
-        <Dialog
-          open={searchParams.has("review")}
-          onClose={() => {
-            searchParams.delete("review");
-            searchParams.delete("error");
-            setSearchParams(searchParams);
-          }}
-
-          fullWidth={true}
-        >
-          <DialogTitle sx={{
-            display: 'flex',
-            alignItems: 'center',
-            p: 2,
-            bgcolor: 'background.paper',
-            borderBottom: '1px solid',
-            borderColor: 'divider'
-          }}>
-            <IconButton
-              edge="start"
-              onClick={() => {
-                searchParams.delete("review");
-                searchParams.delete("error");
-                setSearchParams(searchParams);
-              }}
-              sx={{ mr: 1 }}
-              size="large"
-            >
-              <ArrowBack />
-            </IconButton>
-            <Typography variant="h6">Attendee Details</Typography>
-          </DialogTitle>
-          <DialogContent>
-            <ReviewTicketFormProps
-              event={event} tickets={tickets} id={searchParams.get("review") ?? ""}
-            />
-          </DialogContent>
-        </Dialog>
-      </>
       }
 
       <Dialog
         open={searchParams.has("isRejected")}
         onClose={() => clearDialog("isRejected")}>
-          <DialogContent>
-            <Stack alignItems="center" spacing={4}>
-              <Info color="info" style={{ height: "8rem", width: "8rem" }} />
-              <Typography variant="h5" fontWeight="bold" textAlign="center">
-                This ticket has been rejected.
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                A refund to the holder has been processed.
-              </Typography>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => clearDialog("isRejected")}
-                sx={{ minWidth: "16rem" }}
-              >
-                OK
-              </Button>
-            </Stack>
-          </DialogContent>
+        <DialogContent>
+          <Stack alignItems="center" spacing={4}>
+            <Info color="info" style={{ height: "8rem", width: "8rem" }} />
+            <Typography variant="h5" fontWeight="bold" textAlign="center">
+              This ticket has been rejected.
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              A refund to the holder has been processed.
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => clearDialog("isRejected")}
+              sx={{ minWidth: "16rem" }}
+            >
+              OK
+            </Button>
+          </Stack>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={searchParams.has("isSent")}
+        onClose={() => clearDialog("isSent")}>
+        <DialogContent>
+          <Stack alignItems="center" spacing={4}>
+            <CheckCircle color="success" style={{ height: "8rem", width: "8rem" }} />
+            <Typography variant="h5" fontWeight="bold" textAlign="center">
+              Your reminder has been sent!
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Attendees will be notified shortly via email and EventFlow notifications.
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => clearDialog("isSent")}
+              sx={{ minWidth: "16rem" }}
+            >
+              OK
+            </Button>
+          </Stack>
+        </DialogContent>
       </Dialog>
     </Stack>
   );
@@ -434,7 +502,7 @@ export default function AttendanceList() {
  * @param {RejectTicketFormProps} props
  */
 
-function RejectTicketFormProps({ event, tickets, id }) {
+function RejectTicketForm({ event, tickets, id }) {
   const [ticket, setTicket] = useState(/** @type {Ticket | null} */(null));
   const [searchParams] = useSearchParams();
 
@@ -451,8 +519,8 @@ function RejectTicketFormProps({ event, tickets, id }) {
         <span style={{ whiteSpace: "pre" }}>
           <strong>{ticket.holderFullName}</strong>{" "}
           (<a href={`mailto:${encodeURIComponent(
-                    `${ticket.holderFullName}<${ticket.holderEmail}>`)
-                    }`}>{ticket.holderEmail}</a>
+            `${ticket.holderFullName}<${ticket.holderEmail}>`)
+            }`}>{ticket.holderEmail}</a>
           )?
         </span>
       </Typography>
@@ -505,7 +573,7 @@ function RejectTicketFormProps({ event, tickets, id }) {
  * @param {ReviewTicketFormProps} props
  */
 
-function ReviewTicketFormProps({ event, tickets, id }) {
+function ReviewTicketForm({ event, tickets, id }) {
   const theme = useTheme();
   const [ticket, setTicket] = useState(/** @type {Ticket | null} */(null));
   const [searchParams, setSearchParams] = useSearchParams();
@@ -547,7 +615,7 @@ function ReviewTicketFormProps({ event, tickets, id }) {
 
         <Stack spacing={1}>
           <Typography variant="subtitle2">
-              {ticket.ticketOption.name}
+            {ticket.ticketOption.name}
           </Typography>
 
           <Box
@@ -645,9 +713,81 @@ function ReviewTicketFormProps({ event, tickets, id }) {
         </Grid>
       </Stack>
     </Box>
-    ) : (
-      <Alert severity="error">
-        Invalid Ticket.
-      </Alert>
-    );
+  ) : (
+    <Alert severity="error">
+      Invalid Ticket.
+    </Alert>
+  );
+}
+
+/**
+ * @typedef SendEventReminderFormProps
+ * @property {Event} event
+ */
+
+/**
+ * @param {SendEventReminderFormProps} props
+ */
+
+function SendEventReminderForm({ event }) {
+  const theme = useTheme();
+  const [searchParams] = useSearchParams();
+
+  return (
+    <Box
+      component="form"
+      method="post"
+      action={
+        getApiUrl("Event/SendReminder",
+          { returnUrl: `/Ticket/Attendance?event=${event.id}&isSent=1` }
+        )}
+    >
+      <Stack spacing={3} sx={{ py: 2 }}>
+        <Grid container={true} size={12} spacing={4}>
+          <Grid size={6}>
+            <Typography variant="body1" color="textSecondary">
+              {event.name}
+            </Typography>
+          </Grid>
+          <Grid size={6}>
+            <Stack direction="row-reverse" alignItems="center" spacing={1}>
+              <Typography variant="body1" color="textSecondary">
+                {dayjs(event.startDate).format("dddd, D MMMM YYYY")}
+              </Typography>
+              <CalendarMonth sx={{ color: theme.palette.text.secondary }} />
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Box display="none">
+          <input hidden={true} readOnly={true} required={true} name="event" value={event.id} />
+        </Box>
+
+        <TextField
+          name="message"
+          required={true}
+          defaultValue={`${event.name} is coming soon!`}
+          multiline={true}
+          rows={4}
+          slotProps={{
+            htmlInput: { maxLength: 128 }
+          }}
+        />
+
+        {searchParams.has("error") &&
+          <Alert severity="error">
+            {searchParams.get("error")}
+          </Alert>
+        }
+
+        <SubmitButton
+          variant="contained"
+          color="primary"
+          type="submit"
+          fullWidth={true}
+          label="Send Reminder"
+        />
+      </Stack>
+    </Box>
+  )
 }
