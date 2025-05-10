@@ -45,11 +45,18 @@ export default function TicketOverlay(props) {
     /** @type {Map<string, number>}> */
     const newQuantity = new Map();
     const ticketOptions = searchParams.getAll(KEY_TICKET_OPTION);
-    for (let to of ticketOptions) {
-      if (!availableOptions.has(to)) {
+    for (let id of ticketOptions) {
+      const to = availableOptions.get(id);
+      if (!to) {
         continue;
       }
-      newQuantity.set(to, (newQuantity.get(to) ?? 0) + 1);
+      newQuantity.set(
+        to.id,
+        Math.min(
+          (newQuantity.get(to.id) ?? 0) + 1,
+          to.amountAvailable
+        )
+      );
     }
     setQuantity(newQuantity);
   }, [availableOptions, searchParams])
@@ -66,16 +73,18 @@ export default function TicketOverlay(props) {
      * @param {number} change
      */
     function (id, change) {
-      quantity.set(id, Math.max(0, (quantity.get(id) ?? 0) + change));
-      searchParams.delete(KEY_TICKET_OPTION);
-      for (const [to, count] of quantity) {
-        for (let i = 0; i < count; ++i) {
-          searchParams.append(KEY_TICKET_OPTION, to);
+      setSearchParams(params => {
+        const newQuantity = Math.max(0,
+          params.getAll(KEY_TICKET_OPTION).filter(to => to === id).length + change
+        );
+        params.delete(KEY_TICKET_OPTION, id);
+        for (let i = 0; i < newQuantity; ++i) {
+          params.append(KEY_TICKET_OPTION, id);
         }
-      }
-      setSearchParams(searchParams);
+        return params;
+      });
     },
-    [quantity, searchParams, setSearchParams]);
+    [setSearchParams]);
 
   useEffect(() => {
     setTotalQuantity(
@@ -85,9 +94,13 @@ export default function TicketOverlay(props) {
     );
     setTotalPrice(
       [...quantity]
-        .map(([to, _]) => availableOptions.get(to))
-        .filter(to => !!to)
-        .reduce((sum, to) => sum + props.event.price + to.additionalPrice, 0)
+        .reduce((sum, [id, count]) => {
+          const to = availableOptions.get(id);
+          if (to) {
+            return sum + (props.event.price + to.additionalPrice) * count;
+          }
+          return sum;
+        }, 0)
     )
   }, [props.event, availableOptions, quantity]);
 
@@ -118,7 +131,12 @@ export default function TicketOverlay(props) {
         onClose={props.onClose}
         maxWidth="sm"
         fullWidth>
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        }}>
           Select Tickets
           <IconButton onClick={props.onClose} size="small">
             <Close />
@@ -133,54 +151,54 @@ export default function TicketOverlay(props) {
           {props.event.ticketOptions
             ?.sort((to1, to2) => to1.additionalPrice - to2.additionalPrice)
             .map((to) =>
-          (
-            <Paper
-              key={to.id}
-              elevation={0}
-              sx={{
-                p: 2,
-                mb: 2,
-                bgcolor: to.additionalPrice ? 'primary.50' : 'warning.50',
-                borderLeft: 4,
-                borderColor: to.additionalPrice ? 'primary.main' : 'warning.main'
-              }}
-            >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography variant="subtitle1">{to.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {formatPrice(to)}
-                  </Typography>
+            (
+              <Paper
+                key={to.id}
+                elevation={0}
+                sx={{
+                  p: 2,
+                  mb: 2,
+                  bgcolor: to.additionalPrice ? 'primary.50' : 'warning.50',
+                  borderLeft: 4,
+                  borderColor: to.additionalPrice ? 'primary.main' : 'warning.main'
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box>
+                    <Typography variant="subtitle1">{to.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatPrice(to)}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton
+                      onClick={() => updateQuantity(to.id, -1)}
+                      size="small"
+                      sx={{ bgcolor: 'grey.200' }}
+                    >
+                      <Remove fontSize="small" />
+                    </IconButton>
+                    <Typography sx={{ mx: 2 }}>{quantity.get(to.id) ?? 0}</Typography>
+                    <IconButton
+                      onClick={() => updateQuantity(to.id, 1)}
+                      size="small"
+                      sx={{ bgcolor: 'grey.200' }}
+                    >
+                      <Add fontSize="small" />
+                    </IconButton>
+                  </Box>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton
-                    onClick={() => updateQuantity(to.id, -1)}
-                    size="small"
-                    sx={{ bgcolor: 'grey.200' }}
-                  >
-                    <Remove fontSize="small" />
-                  </IconButton>
-                  <Typography sx={{ mx: 2 }}>{quantity.get(to.id) ?? 0}</Typography>
-                  <IconButton
-                    onClick={() => updateQuantity(to.id, 1)}
-                    size="small"
-                    sx={{ bgcolor: 'grey.200' }}
-                  >
-                    <Add fontSize="small" />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Paper>
-          ))}
+              </Paper>
+            ))}
         </DialogContent>
         <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
             <Typography>Qty: {totalQuantity}</Typography>
             <Typography>
               Total:{' '}
-                <Box component="span" color="primary.main">
-                  {totalPrice ? `$${totalPrice.toFixed(2)}` : "Free"}
-                </Box>
+              <Box component="span" color="primary.main">
+                {totalPrice ? `$${totalPrice.toFixed(2)}` : "Free"}
+              </Box>
             </Typography>
           </Box>
           <Button
@@ -199,7 +217,7 @@ export default function TicketOverlay(props) {
       <AttendeeDetailsForm
         isOpen={showAttendeeForm}
         onClose={() => setShowAttendeeForm(false)}
-        onContinue={() => {}}
+        onContinue={() => { }}
         event={props.event}
         ticketDetails={[...quantity]
           .map(([id, count]) =>

@@ -44,6 +44,7 @@ import GroupableIconButton from '../../components/GroupableIconButton';
 /**
  * @import Category from "../../models/Category";
  * @import Event from "../../models/Event";
+ * @import { FindEventParams } from "../../backend";
  */
 
 
@@ -505,6 +506,7 @@ const fields = {
 export default function EventDetailsPage(props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [event, setEvent] = useState(/** @type {Event | null} */(null));
+  const [otherEventsQuery, setOtherEventsQuery] = useState(/** @type {FindEventParams} */({}));
   const [eventError, setEventError] = useState(/** @type {string | null} */(null));
 
   const [anchorShare, setAnchorShare] = useState(/** @type {HTMLElement | null} */(null));
@@ -518,15 +520,17 @@ export default function EventDetailsPage(props) {
       const eventId = searchParams.get("event");
       if (!eventId) {
         setEvent(null);
-      } else {
+      } else if (eventId !== event?.id) {
         const result = await getEvent(eventId);
         if (!result) {
           setEventError("Failed to retrieve event.");
         }
         setEvent(await getEvent(eventId));
+        // In reality we would base this on the current event.
+        setOtherEventsQuery({});
       }
     })();
-  }, [searchParams]);
+  }, [searchParams, event]);
 
   useEffect(() => {
     if (searchParams.has("ticketOption") && !isTicketOverlayOpen) {
@@ -643,7 +647,7 @@ export default function EventDetailsPage(props) {
                   <Grid container spacing={4}>
                     <EventSection
                       title="Other events you may like"
-                      query={{}}
+                      query={otherEventsQuery}
                       rowSize={3}
                       limit={3} />
                   </Grid>

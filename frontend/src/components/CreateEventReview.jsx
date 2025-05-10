@@ -1,12 +1,17 @@
 // @ts-check
 
-import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Box,
-  Button, CircularProgress, Stack, useTheme
+  Button,
+  CircularProgress,
+  Stack,
+  useTheme
 } from '@mui/material';
-import EventDetailsView from './EventDetailsView';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import EventDetailsView from './EventDetailsView';
 
 /**
  * @import { CreateEventStepElementProps } from "../views/Organizer/CreateEventPage";
@@ -22,6 +27,7 @@ import { useAuth } from '../context/AuthContext';
  */
 export default function CreateEventReview({ context, step }) {
   const theme = useTheme();
+  const [searchParams] = useSearchParams();
   const auth = useAuth();
   const [urlBlob, setUrlBlob] = useState(/** @type {string | null} */(null));
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,6 +84,12 @@ export default function CreateEventReview({ context, step }) {
             isPreview={true}
           />
         </Box>
+      }
+
+      {searchParams.has("error") &&
+        <Alert severity="error">
+          {searchParams.get("error")}
+        </Alert>
       }
 
       {/* Navigation Buttons */}

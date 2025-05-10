@@ -97,7 +97,7 @@ export default function EventDetailsView(props) {
     <Stack spacing={3}>
       <Box
         component="img"
-        src={event.bannerUri}
+        src={event.bannerUri || "/img/TopEvent.png"}
         onError={(e) =>
           /** @type {HTMLImageElement} */(e.target).src = "/img/TopEvent.png"
         }
@@ -122,18 +122,20 @@ export default function EventDetailsView(props) {
               </IconButton>
             }
             <SaveEvent event={event} />
-            <AuthorizedView role="organizer">
-              <Stack direction="row-reverse">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<LocalActivity />}
-                  href={`/Ticket/Attendance?event=${event.id}`}
-                >
-                  View Attendance
-                </Button>
-              </Stack>
-            </AuthorizedView>
+            {!props.isPreview &&
+              <AuthorizedView role="organizer">
+                <Stack direction="row-reverse">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<LocalActivity />}
+                    href={`/Ticket/Attendance?event=${event.id}`}
+                  >
+                    View Attendance
+                  </Button>
+                </Stack>
+              </AuthorizedView>
+            }
           </Stack>
         </Grid>
       </Grid>

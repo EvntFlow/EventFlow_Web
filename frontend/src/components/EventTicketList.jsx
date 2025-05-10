@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Email, Person, Phone } from '@mui/icons-material';
+import { ConfirmationNumber, Email, Person, Phone } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -22,6 +22,7 @@ import {
   Select,
   Stack,
   TextField,
+  Tooltip,
   Typography,
   useTheme
 } from '@mui/material';
@@ -29,10 +30,12 @@ import {
   DataGrid
 } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import { toBlob } from "html-to-image";
+import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getApiUrl } from '../api';
 import GroupableIconButton from './GroupableIconButton';
+import TicketView from './TicketView';
 
 // See: https://github.com/facebook/create-react-app/issues/8779#issuecomment-1214839590
 import FORCE_IMPORT_POLYFILL from 'core-js/modules/es.regexp.escape';
@@ -58,6 +61,7 @@ FORCE_IMPORT_POLYFILL;
  */
 export default function EventTicketList(props) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const ticketViewRef = useRef(/** @type {HTMLElement | null} */(null));
 
   return (
     <Box component="div" sx={{ display: "flex", flexDirection: "column" }}>
@@ -268,27 +272,40 @@ export default function EventTicketList(props) {
           {
             field: 'actions',
             type: 'actions',
-            flex: 0.5,
+            flex: 0.75,
             headerName: 'Actions',
             cellClassName: 'actions',
             getActions: ({ row }) => {
               return [
                 <ButtonGroup variant="outlined" color="inherit">
-                  <GroupableIconButton
-                    startIcon={<EditIcon />}
-                    onClick={() => {
-                      searchParams.set("edit", row.id);
-                      setSearchParams(searchParams);
-                    }}
-                  />,
-                  <GroupableIconButton
-                    color="error"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => {
-                      searchParams.set("delete", row.id);
-                      setSearchParams(searchParams);
-                    }}
-                  />,
+                  <Tooltip title="Edit Details">
+                    <GroupableIconButton
+                      startIcon={<EditIcon />}
+                      onClick={() => {
+                        searchParams.set("edit", row.id);
+                        setSearchParams(searchParams);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="View Ticket">
+                    <GroupableIconButton
+                      startIcon={<ConfirmationNumber />}
+                      onClick={() => {
+                        searchParams.set("view", row.id);
+                        setSearchParams(searchParams);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Cancel Ticket">
+                    <GroupableIconButton
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => {
+                        searchParams.set("delete", row.id);
+                        setSearchParams(searchParams);
+                      }}
+                    />
+                  </Tooltip>
                 </ButtonGroup>
               ];
             },
@@ -340,6 +357,61 @@ export default function EventTicketList(props) {
         </DialogTitle>
         <DialogContent>
           <DeleteTicketForm tickets={props.tickets} id={searchParams.get("delete") ?? ""} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={searchParams.has("view")}
+        onClose={() => setSearchParams((params) => {
+          params.delete("view");
+          return params;
+        })}
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle>
+          View Ticket
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={2}>
+            <Box ref={ticketViewRef}>
+              <TicketView tickets={props.tickets} id={searchParams.get("view") ?? ""} />
+            </Box>
+            <Grid size={12} container={true}>
+              <Grid size={4}>
+                <Button
+                  variant="outlined"
+                  fullWidth={true}
+                  onClick={async () => {
+                    if (ticketViewRef.current) {
+                      const blob = await toBlob(ticketViewRef.current);
+                      if (blob) {
+                        let a = document.createElement("a");
+                        a.href = URL.createObjectURL(blob);
+                        a.download = "ticket.png";
+                        a.click();
+                      }
+                    }
+                  }}
+                >
+                  Save as PNG
+                </Button>
+              </Grid>
+              <Grid size={4}></Grid>
+              <Grid size={4}>
+                <Button
+                  variant="contained"
+                  fullWidth={true}
+                  onClick={() => setSearchParams(params => {
+                    params.delete("view");
+                    return params;
+                  })}
+                >
+                  OK
+                </Button>
+              </Grid>
+            </Grid>
+          </Stack>
         </DialogContent>
       </Dialog>
 
