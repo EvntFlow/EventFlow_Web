@@ -9,9 +9,11 @@ import {
   Verified
 } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Card,
   CardContent,
+  CircularProgress,
   Grid,
   Stack,
   Typography,
@@ -34,6 +36,7 @@ import QRCode from "react-qr-code";
 export default function TicketView({ tickets, id }) {
   const theme = useTheme();
   const [ticket, setTicket] = useState(/** @type {Ticket | null} */(null));
+  const [isTicketValid, setIsTicketValid] = useState(true);
   const [ticketUrl, setTicketUrl] = useState("");
 
   useEffect(() => {
@@ -44,14 +47,22 @@ export default function TicketView({ tickets, id }) {
         new URL(`/Ticket/Attendance/?review=${found.id}`, window.location.href).toString()
       );
     } else {
+      setIsTicketValid(false);
       setTicketUrl("");
     }
   }, [tickets, id]);
 
-
   return (
     <Box>
-      {ticket && (
+      {!ticket ? ( isTicketValid ? (
+        <Stack alignItems="center">
+          <CircularProgress />
+        </Stack>
+      ) : (
+        <Alert severity="error">
+          Invalid Ticket.
+        </Alert>
+      )) : (
         <Stack spacing={3} sx={{ p: 2 }}>
           <Card sx={{
             borderTop: 4,
