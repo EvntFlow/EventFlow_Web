@@ -37,7 +37,7 @@ export default function CategoryView({ category }) {
         sx={{ width: "100%", height: "100%" }}>
         <Box
           component="img"
-          src={category.imageUri || undefined}
+          src={category.imageUri || "/img/TopEvent.png"}
           alt={category.name}
           onError={(e) => /** @type {HTMLImageElement} */(e.target).src = "/img/TopEvent.png"}
           sx={{
