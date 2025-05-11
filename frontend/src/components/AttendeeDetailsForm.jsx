@@ -131,7 +131,8 @@ export default function AttendeeDetailsForm(props) {
                 required={true}
                 placeholder="Enter your full name"
                 defaultValue={
-                  searchParams.get("fullName") || `${user?.firstName} ${user?.lastName}`
+                  searchParams.get("fullName") ||
+                    `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim()
                 }
                 name="fullName"
                 variant="outlined"
@@ -144,7 +145,7 @@ export default function AttendeeDetailsForm(props) {
                 fullWidth
                 required={true}
                 placeholder="Enter your email"
-                defaultValue={searchParams.get("email") || `${user?.email}`}
+                defaultValue={searchParams.get("email") || `${user?.email ?? ""}`}
                 name="email"
                 type="email"
                 variant="outlined"
@@ -156,7 +157,7 @@ export default function AttendeeDetailsForm(props) {
               <TextField
                 fullWidth
                 required={true}
-                defaultValue={searchParams.get("phoneNumber") || `${user?.phoneNumber}`}
+                defaultValue={searchParams.get("phoneNumber") || `${user?.phoneNumber ?? ""}`}
                 placeholder="Enter your phone number"
                 name="phoneNumber"
                 type="tel"
