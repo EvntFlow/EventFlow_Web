@@ -236,7 +236,7 @@ export default function Dashboard() {
                     previous={
                       lastMonthStats?.dailySales
                         .slice(0, dayjs().utc().date())
-                        .reduce((a, b) => a + b)
+                        .reduce((a, b) => a + b, 0)
                     }
                     label="last month"
                   />
