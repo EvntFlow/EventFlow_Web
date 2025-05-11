@@ -135,13 +135,13 @@ export default function EventTicketList(props) {
             type: "string",
             valueGetter: (_, t) => t.event?.categories,
             renderCell: (params) => (
-              <Grid size={12} direction="row" alignItems="center" sx={{ height: "100%" }}>
-                {params.value?.slice(0, Math.min(params.value?.length ?? 0, 3)).map((cat) => (
-                  <Grid size={4} key={cat.id}>
-                    <Chip label={cat.name} size="small" />
-                  </Grid>
-                ))}
-              </Grid>
+              <Stack direction="row" alignItems="center" height="100%">
+                <Grid size={12} container={true} spacing={1}>
+                  {params.value?.slice(0, Math.min(params.value?.length ?? 0, 3)).map((cat) => (
+                      <Chip key={cat.id} label={cat.name} size="small" />
+                  ))}
+                </Grid>
+              </Stack>
             ),
             filterOperators: [{
               label: "Contains",
