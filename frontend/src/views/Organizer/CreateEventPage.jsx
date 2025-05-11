@@ -162,52 +162,56 @@ export default function CreateEventPage() {
   }, [context.step, setSearchParams]);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.has("name")) {
-        context.set.name(params.get("name") || "");
-        params.delete("name");
-      } else if (params.has("category")) {
-        context.set.category(params.getAll("category"));
-        params.delete("category");
-      } else if (params.has("startDate")) {
-        const date = Date.parse(params.get("startDate") || "");
-        if (!Number.isNaN(date)) {
-          context.set.startDate(new Date(date));
-        }
-        params.delete("startDate");
-      } else if (params.has("endDate")) {
-        const date = Date.parse(params.get("endDate") || "");
-        if (!Number.isNaN(date)) {
-          context.set.endDate(new Date(date));
-        }
-        params.delete("endDate");
-      } else if (params.has("location")) {
-        context.set.location(params.get("location") || "");
-        params.delete("location");
-      } else if (params.has("description")) {
-        context.set.description(params.get("description") || "");
-        params.delete("description");
-      } else if (params.has("bannerUri")) {
-        context.set.bannerUri(params.get("bannerUri") || "");
-        params.delete("bannerUri");
-      } else if (params.has("price")) {
-        const price = Date.parse(params.get("price") || "");
-        if (!Number.isNaN(price)) {
-          context.set.price(price);
-        }
-        params.delete("price");
-      } else if (params.has("ticketName")) {
-        context.set.ticketName(params.getAll("ticketName"));
-        params.delete("ticketName");
-      } else if (params.has("ticketPrice")) {
-        context.set.ticketPrice(params.getAll("ticketPrice").map(Number.parseFloat));
-        params.delete("ticketPrice");
-      } else if (params.has("ticketCount")) {
-        context.set.ticketCount(params.getAll("ticketCount").map(Number.parseInt));
-        params.delete("ticketCount");
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("name")) {
+      context.set.name(params.get("name") || "");
+      params.delete("name");
+    } else if (params.has("category")) {
+      context.set.category(params.getAll("category"));
+      params.delete("category");
+    } else if (params.has("startDate")) {
+      const date = Date.parse(params.get("startDate") || "");
+      if (!Number.isNaN(date)) {
+        context.set.startDate(new Date(date));
       }
-      return params;
-    });
+      params.delete("startDate");
+    } else if (params.has("endDate")) {
+      const date = Date.parse(params.get("endDate") || "");
+      if (!Number.isNaN(date)) {
+        context.set.endDate(new Date(date));
+      }
+      params.delete("endDate");
+    } else if (params.has("location")) {
+      context.set.location(params.get("location") || "");
+      params.delete("location");
+    } else if (params.has("description")) {
+      context.set.description(params.get("description") || "");
+      params.delete("description");
+    } else if (params.has("bannerUri")) {
+      context.set.bannerUri(params.get("bannerUri") || "");
+      params.delete("bannerUri");
+    } else if (params.has("price")) {
+      const price = Date.parse(params.get("price") || "");
+      if (!Number.isNaN(price)) {
+        context.set.price(price);
+      }
+      params.delete("price");
+    } else if (params.has("ticketName")) {
+      context.set.ticketName(params.getAll("ticketName"));
+      params.delete("ticketName");
+    } else if (params.has("ticketPrice")) {
+      context.set.ticketPrice(params.getAll("ticketPrice").map(Number.parseFloat));
+      params.delete("ticketPrice");
+    } else if (params.has("ticketCount")) {
+      context.set.ticketCount(params.getAll("ticketCount").map(Number.parseInt));
+      params.delete("ticketCount");
+    }
+
+    const originalParams = new URLSearchParams(window.location.search);
+    if (params.toString() !== originalParams.toString()) {
+      setSearchParams(params);
+    }
   }, [setSearchParams, context.set]);
 
   const formRef = useRef(/** @type {HTMLFormElement | null} */(null));
