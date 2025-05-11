@@ -422,7 +422,6 @@ export default function AttendanceList() {
       }
 
       {event &&
-
         <Dialog
           open={searchParams.has("remind")}
           onClose={() => {

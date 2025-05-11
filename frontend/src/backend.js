@@ -8,6 +8,7 @@ import { deleteApi, fetchApi, putApi } from "./api";
  * @import Notification from "./models/Notification";
  * @import SavedEvent from "./models/SavedEvent";
  * @import { PaymentMethod } from "./models/PaymentMethod";
+ * @import Statistics from "./models/Statistics";
  * @import Ticket from "./models/Ticket";
 */
 
@@ -153,6 +154,25 @@ export async function getAttendance(eventId) {
     } else {
         return await response.json();
     }
+}
+
+/**
+ * @param {Date=} month
+ * @returns {Promise<Statistics | null>}
+ */
+export async function getStatistics(month) {
+    let response =
+        await fetchApi("Ticket/Statistics", month ? { month: month.toISOString() } : undefined);
+    if (!response.ok) {
+        return {
+            totalEvents: 0,
+            totalTickets: 0,
+            totalSales: 0,
+            totalReviewed: 0,
+            dailySales: []
+        }
+    }
+    return await response.json();
 }
 
 /**

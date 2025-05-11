@@ -1,399 +1,602 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+// @ts-check
+
+import {
+  Analytics,
+  AppRegistration,
+  ArrowForward,
+  CalendarMonth,
+  People,
+  TrendingDown,
+  TrendingUp
+} from '@mui/icons-material';
 import {
   Box,
-  Grid,
+  Button,
   Card,
   CardContent,
-  Typography,
-  Button,
-  Avatar,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   CircularProgress,
+  Grid,
+  MenuItem,
+  Select,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme
 } from '@mui/material';
-
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { DataGrid } from '@mui/x-data-grid';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import React, { useEffect, useRef, useState } from 'react';
+import { getAttendance, getStatistics } from '../../../backend';
 import Authorized from '../../../components/Authorized';
-import { getEvents, findEvents, getTickets } from '../../../backend';
-import { Link } from 'react-router-dom';
 
 // Recharts imports
 import {
-    ResponsiveContainer,
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-  } from 'recharts';
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Dot,
+  ResponsiveContainer,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 /**
- * @import Event from "../../models/Event";
+ * @import { ComponentRef } from "react";
+ * @import { DataGridProps, GridColDef } from "@mui/x-data-grid";
+ * @import Statistics from "../../../models/Statistics";
+ * @import Ticket from "../../../models/Ticket";
  */
 
- 
+dayjs.extend(utc);
 
-function Dashboard() {
-    // fetch data for dashboard and recent sales and total events/tickets/sales 
-    const [events, setEvents] = useState(/** @type {Event[] | null} */(null));
+export default function Dashboard() {
+  const theme = useTheme();
 
-    // const [tickets, setTickets] = useState();
+  const [recentTickets, setRecentTickets] = useState(/** @type {Ticket[] | null} */(null));
+  const [currentMonthStats, setCurrentMonthStats]
+    = useState(/** @type {Statistics | null} */(null));
+  const [lastMonthStats, setLastMonthStats]
+    = useState(/** @type {Statistics | null} */(null));
+  const [selectedMonth, setSelectedMonth]
+    = useState(dayjs().utc().startOf("month").toISOString());
+  const [selectedMonthStats, setSelectedMonthStats]
+    = useState(/** @type {Statistics | null} */(null));
 
-    useEffect(() => {
-        (async function() {
-            const fetchedEvents = await getEvents();
-            setEvents(fetchedEvents);
-        })();
-    }, [])
+  useEffect(() => {
+    (async function () {
+      setRecentTickets((await getAttendance()).slice(0, 3));
+    })();
+  }, []);
 
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-    const [loading, setLoading] = useState(true);
-    const [dashboardData, setDashboardData] = useState({
-        totalEvents: 0,
-        totalTickets: 0,
-        totalSales: 0,
-        monthlyData: [],
-        recentSales: []
-    });
+  useEffect(() => {
+    (async function () {
+      setCurrentMonthStats(await getStatistics());
+      setLastMonthStats(
+        await getStatistics(dayjs().utc().subtract(1, 'month').startOf('month').toDate())
+      );
+    })();
+  }, []);
 
-    const months = useMemo(() => [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ], []); // Empty dependency array since this array never changes
+  useEffect(() => {
+    (async function () {
+      setSelectedMonthStats(await getStatistics(new Date(selectedMonth)));
+    })();
+  }, [selectedMonth]);
 
-    const processData = useCallback((events, tickets) => {
-        if (!events || !tickets) {
-            console.error('Events or tickets data is missing');
-            return {
-                totalEvents: 0,
-                totalTickets: 0,
-                totalSales: 0,
-                monthlyData: [],
-                recentSales: []
-            };
-        }
+  const [position, setPosition] = useState(/** @type {{x: number, y: number} | null} */(null));
+  const [tooltipLabel, setTooltipLabel] = useState("");
+  const chartRef = useRef(/** @type {import('react').ComponentRef<AreaChart> | null} */(null));
 
-        // Initialize monthly data structure
-        const monthlyData = months.map(month => ({
-            month,
-            tickets: 0,
-            sales: 0,
-            dailyData: []
-        }));
-
-        // Process events and tickets
-        events.forEach(event => {
-            try {
-                const eventDate = new Date(event.startDate);
-                const monthIndex = eventDate.getMonth();
-                const day = eventDate.getDate();
-
-                // Get tickets for this event
-                const eventTickets = tickets.filter(ticket => ticket.eventId === event._id);
-                const eventTotalTickets = eventTickets.length;
-                const eventTotalSales = eventTickets.reduce((sum, ticket) => sum + (ticket.price || 0), 0);
-
-                // Update monthly totals
-                monthlyData[monthIndex].tickets += eventTotalTickets;
-                monthlyData[monthIndex].sales += eventTotalSales;
-
-                // Add to daily data
-                if (!monthlyData[monthIndex].dailyData[day - 1]) {
-                    monthlyData[monthIndex].dailyData[day - 1] = {
-                        day: `${day}${getDaySuffix(day)}`,
-                        value: 0
-                    };
+  return (
+    <Stack sx={{ p: 4 }} spacing={2}>
+      <Authorized role="organizer" />
+      <Typography variant="h4" fontWeight="bold" textTransform="uppercase">
+        Dashboard
+      </Typography>
+      <Grid size={12} container={true} spacing={4}>
+        {/* Total Checked-in (reviewed tickets) */}
+        <Grid size={3}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Stack spacing={1}>
+                <Grid size={12} container={true}>
+                  <Grid size={6}>
+                    <Stack spacing={2}>
+                      <Typography variant="subtitle2" color="textSecondary">
+                        Total Checked-in
+                      </Typography>
+                      {currentMonthStats ? (
+                        <Typography fontWeight="bold" variant="h5">
+                          {currentMonthStats.totalReviewed}
+                        </Typography>
+                      ) : (
+                        <CircularProgress size={theme.typography.h5.fontSize} />
+                      )}
+                    </Stack>
+                  </Grid>
+                  <Grid size={6}>
+                    <Stack direction="row-reverse">
+                      <Box
+                        sx={{
+                          backgroundColor:
+                            `color-mix(in srgb, ${theme.palette.primary.light} 40%, transparent)`,
+                          color: theme.palette.primary.dark,
+                          p: 1,
+                          borderRadius: "1rem"
+                        }}>
+                        <People fontSize="large" />
+                      </Box>
+                    </Stack>
+                  </Grid>
+                </Grid>
+                <Box sx={{ height: "100%" }} />
+                {currentMonthStats &&
+                  <PercentageDiffView
+                    current={currentMonthStats.totalReviewed}
+                    previous={lastMonthStats?.totalReviewed}
+                    label="last month"
+                  />
                 }
-                monthlyData[monthIndex].dailyData[day - 1].value += eventTotalSales;
-            } catch (error) {
-                console.error('Error processing event:', event, error);
-            }
-        });
-
-        // Calculate totals
-        const totals = monthlyData.reduce((acc, month) => ({
-            totalTickets: acc.totalTickets + month.tickets,
-            totalSales: acc.totalSales + month.sales,
-        }), {
-            totalTickets: 0,
-            totalSales: 0
-        });
-
-        // Get recent sales (last 5 events)
-        const recentSales = events
-            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-            .slice(0, 5)
-            .map(event => {
-                try {
-                    const eventTickets = tickets.filter(ticket => ticket.eventId === event._id);
-                    return {
-                        attendee: event.name,
-                        eventName: event.name,
-                        location: event.location,
-                        dateTime: new Date(event.startDate).toLocaleString(),
-                        quantity: eventTickets.length,
-                        amount: eventTickets.reduce((sum, ticket) => sum + (ticket.price || 0), 0)
-                    };
-                } catch (error) {
-                    console.error('Error processing recent sale:', event, error);
-                    return null;
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+        {/* Total events */}
+        <Grid size={3}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Stack spacing={1}>
+                <Grid size={12} container={true} spacing={4}>
+                  <Grid size={6}>
+                    <Stack spacing={2}>
+                      <Typography variant="subtitle2" color="textSecondary">
+                        Total Events
+                      </Typography>
+                      {currentMonthStats ? (
+                        <Typography fontWeight="bold" variant="h5">
+                          {currentMonthStats.totalEvents}
+                        </Typography>
+                      ) : (
+                        <CircularProgress size={theme.typography.h5.fontSize} />
+                      )}
+                    </Stack>
+                  </Grid>
+                  <Grid size={6}>
+                    <Stack direction="row-reverse">
+                      <Box
+                        sx={{
+                          backgroundColor:
+                            `color-mix(in srgb, ${theme.palette.warning.light} 40%, transparent)`,
+                          color: theme.palette.warning.dark,
+                          p: 1,
+                          borderRadius: "1rem"
+                        }}>
+                        <CalendarMonth fontSize="large" />
+                      </Box>
+                    </Stack>
+                  </Grid>
+                </Grid>
+                <Stack direction="row-reverse">
+                  <Button
+                    href="/Event/Manage"
+                    variant="contained"
+                    endIcon={<ArrowForward />}
+                    sx={{
+                      textTransform: "inherit",
+                      borderRadius: "4rem"
+                    }}
+                  >
+                    View event list
+                  </Button>
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+        {/* Total sales */}
+        <Grid size={3}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Stack spacing={1}>
+                <Grid size={12} container={true}>
+                  <Grid size={6}>
+                    <Stack spacing={2}>
+                      <Typography variant="subtitle2" color="textSecondary">
+                        Total Sales
+                      </Typography>
+                      {currentMonthStats ? (
+                        <Typography fontWeight="bold" variant="h5">
+                          ${currentMonthStats.totalSales.toFixed(2)}
+                        </Typography>
+                      ) : (
+                        <CircularProgress size={theme.typography.h5.fontSize} />
+                      )}
+                    </Stack>
+                  </Grid>
+                  <Grid size={6}>
+                    <Stack direction="row-reverse">
+                      <Box
+                        sx={{
+                          backgroundColor:
+                            `color-mix(in srgb, ${theme.palette.success.light} 40%, transparent)`,
+                          color: theme.palette.success.dark,
+                          p: 1,
+                          borderRadius: "1rem"
+                        }}>
+                        <Analytics fontSize="large" />
+                      </Box>
+                    </Stack>
+                  </Grid>
+                </Grid>
+                <Box sx={{ height: "100%" }} />
+                {currentMonthStats &&
+                  <PercentageDiffView
+                    current={currentMonthStats.totalSales}
+                    previous={
+                      lastMonthStats?.dailySales
+                        .slice(0, dayjs().utc().date())
+                        .reduce((a, b) => a + b)
+                    }
+                    label="last month"
+                  />
                 }
-            })
-            .filter(sale => sale !== null);
-
-        return {
-            totalEvents: events.length,
-            ...totals,
-            monthlyData,
-            recentSales
-        };
-    }, [months]);
-
-    const fetchDashboardData = useCallback(async () => {
-        try {
-            setLoading(true);
-            
-            // Fetch events and tickets in parallel
-            const [fetchedEvents, tickets] = await Promise.all([
-                findEvents({
-                    minDate: new Date(new Date().getFullYear(), 0, 1).toISOString(),
-                    maxDate: new Date(new Date().getFullYear(), 11, 31).toISOString(),
-                }),
-                getTickets()
-            ]);
-
-            // Update events state
-            setEvents(fetchedEvents);
-            
-            // Process and update dashboard data
-            const processedData = processData(fetchedEvents, tickets);
-            setDashboardData(processedData);
-        } catch (error) {
-            console.error('Error fetching dashboard data:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [processData]); // Only depend on processData
-
-    useEffect(() => {
-        fetchDashboardData();
-    }, [fetchDashboardData]);
-
-    const getDaySuffix = (day) => {
-        if (day > 3 && day < 21) return 'th';
-        switch (day % 10) {
-            case 1: return 'st';
-            case 2: return 'nd';
-            case 3: return 'rd';
-            default: return 'th';
-        }
-    };
-
-    // Get the current month's data from dashboardData
-    const currentMonthData = useMemo(() => {
-        if (!dashboardData.monthlyData[selectedMonth]?.dailyData) {
-            return [];
-        }
-        return dashboardData.monthlyData[selectedMonth].dailyData
-            .filter(data => data !== undefined) // Filter out undefined entries
-            .map(data => ({
-                day: data.day,
-                value: data.value
-            }));
-    }, [dashboardData.monthlyData, selectedMonth]);
-
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
-
-    console.log("Check data for dashboard", dashboardData, events);
-    console.log("Current month data for chart:", currentMonthData);
-    
-    return (
-        <Box sx={{ p: 3 }}>
-            <Authorized role="organizer" />
-            <Typography variant="h4" gutterBottom>
-                Dashboard
-            </Typography>
-
-            <Grid container spacing={3}>
-                {/* Total Events */}
-                <Grid item xs={12} sm={6} md={4}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Total Events
-                                </Typography>
-                                <Avatar sx={{ bgcolor: 'secondary.light' }}>
-                                    <ConfirmationNumberIcon />
-                                </Avatar>
-                            </Box>
-                            <Typography variant="h5">{dashboardData.totalEvents}</Typography>
-                            <Button 
-                                component={Link}
-                                size="small" 
-                                endIcon={<VisibilityIcon />}
-                                to="/Event/Manage"
-                            >
-                                View event list
-                            </Button>
-                        </CardContent>
-                    </Card>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+        {/* Total registered */}
+        <Grid size={3}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Stack spacing={1}>
+                <Grid size={12} container={true} spacing={4}>
+                  <Grid size={6}>
+                    <Stack spacing={2}>
+                      <Typography variant="subtitle2" color="textSecondary">
+                        Total Registered
+                      </Typography>
+                      {currentMonthStats ? (
+                        <Typography fontWeight="bold" variant="h5">
+                          {currentMonthStats.totalTickets}
+                        </Typography>
+                      ) : (
+                        <CircularProgress size={theme.typography.h5.fontSize} />
+                      )}
+                    </Stack>
+                  </Grid>
+                  <Grid size={6}>
+                    <Stack direction="row-reverse">
+                      <Box
+                        sx={{
+                          backgroundColor:
+                            `color-mix(in srgb, ${theme.palette.error.light} 40%, transparent)`,
+                          color: theme.palette.error.dark,
+                          p: 1,
+                          borderRadius: "1rem"
+                        }}>
+                        <AppRegistration fontSize="large" />
+                      </Box>
+                    </Stack>
+                  </Grid>
                 </Grid>
+                <Stack direction="row-reverse">
+                  <Button
+                    href="/Ticket/Attendance"
+                    variant="contained"
+                    endIcon={<ArrowForward />}
+                    sx={{
+                      textTransform: "inherit",
+                      borderRadius: "4rem"
+                    }}
+                  >
+                    View attendance list
+                  </Button>
+                </Stack>
+              </Stack>
 
-                {/* Total Tickets */}
-                <Grid item xs={12} sm={6} md={4}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Total Tickets
-                                </Typography>
-                                <Avatar sx={{ bgcolor: 'secondary.light' }}>
-                                    <ConfirmationNumberIcon />
-                                </Avatar>
-                            </Box>
-                            <Typography variant="h5">{dashboardData.totalTickets}</Typography>
-                            <Button href="/Event/Manage" size="small" endIcon={<VisibilityIcon />}>
-                                View event list
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
-                {/* Total Sales */}
-                <Grid item xs={12} sm={6} md={4}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Total Sales
-                                </Typography>
-                                <Avatar sx={{ bgcolor: 'success.light' }}>
-                                    <MonetizationOnIcon />
-                                </Avatar>
-                            </Box>
-                            <Typography variant="h5">${dashboardData.totalSales.toLocaleString()}</Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                <TrendingUpIcon sx={{ color: 'success.main', fontSize: 'small', mr: 0.5 }} />
-                                <Typography variant="caption" color="success.main">
-                                    Average ${(dashboardData.totalSales / dashboardData.totalTickets).toFixed(2)} per ticket
-                                </Typography>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+      {/* Sales Details Chart */}
+      <Card>
+        <CardContent>
+          <Stack spacing={2}>
+            <Grid size={12} container={true}>
+              <Grid size={6}>
+                <Typography variant="h5" fontWeight={theme.typography.fontWeightMedium}>
+                  Sales Details
+                </Typography>
+              </Grid>
+              <Grid size={6}>
+                <Stack direction="row-reverse">
+                  <Select
+                    sx={{ minWidth: "8rem" }}
+                    value={selectedMonth}
+                    size="small"
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                  >
+                    {Array(12).fill(0)
+                      .map((_, index) => dayjs().utc().subtract(index, "month").startOf("month"))
+                      .map((day, index) =>
+                        <MenuItem key={index} value={day.toISOString()}>
+                          {day.format("MMMM")}
+                        </MenuItem>
+                      )}
+                  </Select>
+                </Stack>
+              </Grid>
             </Grid>
 
-            {/* Sales Details Chart */}
-            <Box sx={{ mt: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6">
-                        Sales Details
-                    </Typography>
-                    <FormControl sx={{ minWidth: 120 }}>
-                        <InputLabel id="month-select-label">Month</InputLabel>
-                        <Select
-                            labelId="month-select-label"
-                            value={selectedMonth}
-                            label="Month"
-                            onChange={(e) => setSelectedMonth(e.target.value)}
-                        >
-                            {months.map((month, index) => (
-                                <MenuItem key={month} value={index}>{month}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Box>
-                <Card>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart
-                                data={currentMonthData}
-                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                            >
-                                <defs>
-                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#1976d2" stopOpacity={0.4}/>
-                                        <stop offset="95%" stopColor="#1976d2" stopOpacity={0}/>
-                                    </linearGradient>
-                                </defs>
-                                <XAxis 
-                                    dataKey="day" 
-                                    tick={{ fontSize: 12 }}
-                                    ticks={['1st', '5th', '10th', '15th', '20th', '25th']}
-                                />
-                                <YAxis tickFormatter={(val) => `$${val}`} />
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <Tooltip formatter={(val) => `$${val}`} />
-                                <Area
-                                    type="monotone"
-                                    dataKey="value"
-                                    stroke="#1976d2"
-                                    fillOpacity={1}
-                                    fill="url(#colorValue)"
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-            </Box>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart
+                ref={chartRef}
+                data={
+                  selectedMonthStats?.dailySales
+                    .map((value, index) => { return { "day": `${index + 1}`, "value": value } })
+                }
+                width={730} height={250}
+                onMouseMove={(e) => {
+                  if (e.activeCoordinate) {
+                    const domain = chartRef.current?.getYScales()["0"]["domain"]();
+                    const range = chartRef.current?.getYScales()["0"]["range"]();
+                    const value = e.activePayload?.at(0).payload.value.toFixed(2);
 
-            {/* Recent Sales */}
-            <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" gutterBottom>
-                    Recent Sales
-                </Typography>
-                <Card>
-                    <CardContent>
-                        <Box sx={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid #e0e0e0' }}>
-                                        <th style={{ padding: '12px', textAlign: 'left' }}>Attendee</th>
-                                        <th style={{ padding: '12px', textAlign: 'left' }}>Event Name</th>
-                                        <th style={{ padding: '12px', textAlign: 'left' }}>Location</th>
-                                        <th style={{ padding: '12px', textAlign: 'left' }}>Date - Time</th>
-                                        <th style={{ padding: '12px', textAlign: 'right' }}>Quantity</th>
-                                        <th style={{ padding: '12px', textAlign: 'right' }}>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {dashboardData.recentSales.map((sale, index) => (
-                                        <tr 
-                                            key={index}
-                                            style={{ 
-                                                borderBottom: index < dashboardData.recentSales.length - 1 ? '1px solid #e0e0e0' : 'none',
-                                                '&:hover': { backgroundColor: '#f5f5f5' }
-                                            }}
-                                        >
-                                            <td style={{ padding: '12px' }}>{sale.attendee}</td>
-                                            <td style={{ padding: '12px' }}>{sale.eventName}</td>
-                                            <td style={{ padding: '12px' }}>{sale.location}</td>
-                                            <td style={{ padding: '12px' }}>{sale.dateTime}</td>
-                                            <td style={{ padding: '12px', textAlign: 'right' }}>{sale.quantity}</td>
-                                            <td style={{ padding: '12px', textAlign: 'right' }}>${sale.amount}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </Box>
-                    </CardContent>
-                </Card>
-            </Box>
-        </Box>
-    );
+                    const yCoords = range[0] +
+                      ((value - domain[0]) * ((range[1] - range[0]) / (domain[1] - domain[0])));
+
+                    const box = chartRef.current?.container?.getBoundingClientRect();
+                    if (box) {
+                      setTooltipLabel(`$${value}`);
+                      setPosition({
+                        x: e.activeCoordinate.x + box.x,
+                        y: yCoords + box.y
+                      });
+                      return;
+                    }
+                    setPosition(null);
+                  }
+                }}
+                onMouseLeave={(_) => setPosition(null)}
+              >
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset={0} stopColor={theme.palette.primary.main} stopOpacity={0.6} />
+                    <stop offset={1} stopColor={theme.palette.primary.main} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="day"
+                  tickFormatter={(v) => {
+                    /** @param {Number} day */
+                    function getDaySuffix(day) {
+                      if (day > 3 && day < 21) return 'th';
+                      switch (day % 10) {
+                        case 1: return 'st';
+                        case 2: return 'nd';
+                        case 3: return 'rd';
+                        default: return 'th';
+                      }
+                    };
+                    return `${v}${getDaySuffix(Number.parseInt(v))}`
+                  }}
+                  tick={{
+                    fontSize: theme.typography.body2.fontSize,
+                    fontFamily: theme.typography.fontFamily,
+                    fontWeight: theme.typography.fontWeightMedium,
+                    color: theme.palette.text.secondary,
+                  }}
+                  tickMargin={10}
+                  type="number"
+                  ticks={['1', '5', '10', '15', '20', '25', '30']}
+                  domain={[1, dayjs(selectedMonth).utc().daysInMonth()]}
+                />
+                <YAxis
+                  tickFormatter={(v) => `$${v}`}
+                  tick={{
+                    fontFamily: theme.typography.fontFamily,
+                    fontWeight: theme.typography.fontWeightMedium,
+                    color: theme.palette.text.secondary
+                  }} />
+                <CartesianGrid vertical={false} />
+                <Area
+                  type="linear"
+                  dataKey="value"
+                  stroke={theme.palette.primary.main}
+                  fillOpacity={1}
+                  dot={<Dot fill={theme.palette.primary.main} />}
+                  fill="url(#colorValue)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </Stack>
+        </CardContent>
+
+        <Tooltip
+          title={tooltipLabel}
+          placement="top"
+          arrow
+          open={!!position}
+          slotProps={{
+            popper: {
+              anchorEl: {
+                getBoundingClientRect: () => {
+                  if (!position) {
+                    return new DOMRect(-Number.MAX_VALUE, -Number.MAX_VALUE, 0, 0);
+                  } else {
+                    return new DOMRect(position.x, position.y, 0, 0);
+                  }
+                },
+              },
+            },
+            tooltip: {
+              sx: {
+                backgroundColor: `color-mix(in srgb, ${theme.palette.primary.main}, transparent 20%)`,
+                border: "none"
+              }
+            },
+            arrow: {
+              sx: { color: `color-mix(in srgb, ${theme.palette.primary.main}, transparent 20%)` }
+            }
+          }}
+        >
+          <Box display="none" />
+        </Tooltip>
+      </Card>
+
+      {/* Recent Sales */}
+      <Card>
+        <CardContent>
+          <Stack spacing={2}>
+            <Typography variant="h5" fontWeight={theme.typography.fontWeightMedium}>
+              Recent Sales
+            </Typography>
+
+            <DataGrid
+              {.../** @type {DataGridProps<Ticket>} */({})}
+              rows={recentTickets || undefined}
+              columns={[
+                /** @type {GridColDef<Ticket, string>} */
+                ({
+                  field: "holderFullName",
+                  headerName: "Attendee",
+                  flex: 1,
+                  type: "string",
+                  display: "flex",
+                  valueGetter: (_, t) => t.holderFullName,
+                }),
+                /** @type {GridColDef<Ticket, string>} */
+                ({
+                  field: "eventName",
+                  headerName: "Event",
+                  flex: 1,
+                  type: "string",
+                  valueGetter: (_, t) => t.ticketOption.name,
+                  renderCell: (params) => (
+                    <Stack direction="row" alignItems="center" sx={{ height: "100%" }}>
+                      <Stack>
+                        <Button
+                          href={`/Ticket/Attendance?event=${params.row?.event?.id}`}
+                          target="_blank"
+                          variant="text"
+                          sx={{
+                            textTransform: "inherit",
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            justifyContent: "start",
+                            maxWidth: "100%",
+                            display: "inline-block",
+                            m: 0,
+                            p: 0
+                          }}
+                        >
+                          {params.row?.event?.name}
+                        </Button>
+                      </Stack>
+                    </Stack>
+                  )
+                }),
+                /** @type {GridColDef<Ticket, string>} */
+                ({
+                  field: "name",
+                  headerName: "Ticket",
+                  flex: 0.75,
+                  type: "string",
+                  display: "flex",
+                  valueGetter: (_, t) => t.ticketOption.name,
+                }),
+                /** @type {GridColDef<Ticket, Date, string>} */
+                ({
+                  field: "timestamp",
+                  headerName: "Date",
+                  flex: 1,
+                  type: "dateTime",
+                  display: "flex",
+                  valueGetter: (_, t) => new Date(t.timestamp),
+                  renderCell: (params) => (
+                    <Typography noWrap={true}>
+                      {dayjs(params.value).format("DD/MM/YYYY HH:mm")}
+                    </Typography>
+                  )
+                }),
+                /** @type {GridColDef<Ticket, number, string>} */
+                ({
+                  field: "price",
+                  headerName: "Price",
+                  flex: 0.5,
+                  type: "string",
+                  display: "flex",
+                  valueGetter: (_, t) => t.price,
+                  valueFormatter: (_, t) => t.price ?
+                    `$${t.price.toFixed(2)}` : "Free"
+                }),
+              ]}
+              getRowId={(t) => t.id}
+              rowHeight={64}
+              initialState={{
+                sorting: {
+                  sortModel: [
+                    { field: "timestamp", sort: "desc" },
+                    { field: "status", sort: "desc" },
+                  ]
+                }
+              }}
+              disableRowSelectionOnClick={true}
+              hideFooter={true}
+            />
+          </Stack>
+        </CardContent>
+      </Card>
+    </Stack>
+  );
 }
 
-export default Dashboard;
+/**
+ * @typedef PercentageDiffViewProps
+ * @property {string} label
+ * @property {number} current
+ * @property {number | null=} previous
+ */
+
+/**
+ * @param {PercentageDiffViewProps} props
+ */
+function PercentageDiffView({ label, current, previous }) {
+  const [percentage, setPercentage] = useState(0.0);
+
+  useEffect(() => {
+    if (!previous) {
+      setPercentage(0.0)
+    } else {
+      setPercentage(current / previous);
+    }
+  }, [current, previous]);
+
+  if (!previous) {
+    return null;
+  }
+
+  return percentage > 1.0 ? (
+    <Stack direction="row" spacing={1} height="100%" alignItems="center">
+      <TrendingUp color="success" />
+      <Typography variant="body2" color="success" fontWeight="bold">
+        {Math.round((percentage - 1.0) * 1000) / 10}%
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+        Up from {label}
+      </Typography>
+    </Stack>
+  ) : (
+    <Stack direction="row" spacing={1}>
+      <TrendingDown color="error" />
+      <Typography variant="body2" color="error" fontWeight="bold">
+        {Math.round((1.0 - percentage) * 1000) / 10}%
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+        Down from {label}
+      </Typography>
+    </Stack>
+  );
+}
