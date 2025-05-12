@@ -246,26 +246,41 @@ export default function EventTicketList(props) {
             },
             renderCell: (params) => (
               <Stack flexDirection="row" alignItems="center" sx={{ height: "100%" }}>
-                <Chip
-                  variant="filled"
-                  size="small"
-                  label={params.formattedValue}
-                  color={(() => {
-                    switch (params.value) {
-                      case "pending":
-                        return "info";
-                      case "upcoming":
-                        return "success";
-                      case "happening":
-                        return "secondary";
-                      case "ended":
-                        return "error";
-                      default:
-                        return "primary";
-                    }
-                  })()}
-                  sx={{ width: "6rem", borderRadius: 2 }}
-                />
+                <Tooltip title={(() => {
+                  switch (params.value) {
+                    case "pending":
+                      return "The ticket is pending review from the organizer.";
+                    case "upcoming":
+                      return "This event is coming soon.";
+                    case "happening":
+                      return "This event is happening now.";
+                    case "ended":
+                      return "This event has ended.";
+                    default:
+                      return ""
+                  }
+                })()}>
+                  <Chip
+                    variant="filled"
+                    size="small"
+                    label={params.formattedValue}
+                    color={(() => {
+                      switch (params.value) {
+                        case "pending":
+                          return "info";
+                        case "upcoming":
+                          return "success";
+                        case "happening":
+                          return "secondary";
+                        case "ended":
+                          return "error";
+                        default:
+                          return "primary";
+                      }
+                    })()}
+                    sx={{ width: "6rem", borderRadius: 2 }}
+                  />
+                </Tooltip>
               </Stack>
             )
           }),
