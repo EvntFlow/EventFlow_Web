@@ -1,6 +1,6 @@
 // @ts-check
 
-import { deleteApi, fetchApi, putApi } from "./api";
+import { deleteApi, fetchApi, postApi, putApi } from "./api";
 
 /**
  * @import Category from "./models/Category";
@@ -25,15 +25,24 @@ export async function getCategories() {
 }
 
 /**
+ * @param {boolean=} includeRead
  * @returns {Promise<Notification[]>}
  */
-export async function getNotifications() {
-    const response = await fetchApi("Notification");
+export async function getNotifications(includeRead) {
+    const response = await fetchApi("Notification", { includeRead: includeRead ?? false });
     if (!response.ok) {
         return [];
     } else {
         return await response.json();
     }
+}
+
+/**
+ * @returns {Promise<boolean>}
+ */
+export async function readNotifications() {
+    const response = await postApi("Notification");
+    return response.ok;
 }
 
 /**

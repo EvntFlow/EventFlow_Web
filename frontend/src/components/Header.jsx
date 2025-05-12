@@ -1,12 +1,13 @@
 // @ts-check
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, Popover, Stack, Alert, CircularProgress, AlertTitle, Badge } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import RoleSwitch from './RoleSwitch';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { getNotifications } from '../backend';
+import { getNotifications, readNotifications } from '../backend';
+import { CheckCircleOutline } from '@mui/icons-material';
 
 /** @import Notification from "../models/Notification"; */
 
@@ -35,16 +36,44 @@ const Header = () => {
   const links = navConfig[role];
 
   const [notifications, setNotifications] = useState(/** @type {Notification[] | null} */(null));
+  const [includeRead, setIncludeRead] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(/** @type {HTMLElement | null} */(null));
+
+  const updateNotifications = useCallback(async () => {
+    if (!user) {
+      setNotifications(null);
+      return;
+    }
+
+    const newNotifications = await getNotifications(includeRead);
+
+    setNotifications((notifications) => {
+      if (notifications) {
+        newNotifications.push(...notifications);
+      }
+      const [filteredNotifications] = newNotifications.reduce(
+        ([arr, set], n) => {
+          if (!set.has(n.id)) {
+            set.add(n.id);
+            arr.push(n);
+          }
+          return [arr, set];
+        },
+        /** @type {[Notification[], Set<string>]} */([[], new Set()])
+      );
+      return filteredNotifications;
+
+    });
+  }, [user, includeRead]);
 
   useEffect(() => {
     (async function(){
       if (!user) {
         return;
       }
-      setNotifications(await getNotifications());
+      updateNotifications();
     })();
-  }, [user]);
+  }, [user, updateNotifications]);
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: '#0284c7' }}>
@@ -88,12 +117,12 @@ const Header = () => {
                 sx={{ mr: 2 }}
                 onClick={async (e) => {
                   setAnchorEl(e.currentTarget);
-                  setNotifications(await getNotifications());
+                  await updateNotifications();
                 }}>
                   <Badge
                     color="error"
-                    badgeContent={notifications?.length ?? 0}
-                    invisible={!notifications || !notifications.length}>
+                    badgeContent={notifications?.filter(n => !n.isRead).length ?? 0}
+                    invisible={!notifications || !notifications?.filter(n => !n.isRead).length}>
                       <NotificationsIcon />
                   </Badge>
               </IconButton>
@@ -128,7 +157,16 @@ const Header = () => {
       <Popover
         open={anchorEl !== null}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
+        onClose={async () => {
+          setAnchorEl(null);
+          if (notifications && await readNotifications()) {
+            for (let notification of notifications) {
+              notification.isRead = true;
+            }
+            setNotifications([...notifications]);
+          }
+          setIncludeRead(false);
+        }}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "center",
@@ -153,21 +191,34 @@ const Header = () => {
                 notifications.map(n => (
                   <Alert
                     key={n.id}
-                    severity="info"
+                    severity={ "info" }
                     sx={{ width: "100%" }}
+                    icon={ n.isRead && <CheckCircleOutline/> }
                     slotProps={{ icon: { sx: { alignSelf: "center" }}}}>
                       <AlertTitle>{n.topic}</AlertTitle>
                       {n.message}
                   </Alert>
                 ))
               ) : (
-                <Alert
-                  severity="success"
-                  sx={{ width: "100%" }}
-                  slotProps={{ icon: { sx: { alignSelf: "center" }}}}>
-                    <AlertTitle>You're all set!</AlertTitle>
-                    You have no notifications.
-                </Alert>
+                <>
+                  <Alert
+                    severity="success"
+                    sx={{ width: "100%" }}
+                    slotProps={{ icon: { sx: { alignSelf: "center" }}}}>
+                      <AlertTitle>You're all set!</AlertTitle>
+                      You have no notifications.
+                  </Alert>
+                  <Button
+                    variant="contained"
+                    sx={{ width: "100%" }}
+                    onClick={async () => {
+                      setIncludeRead(true);
+                      await updateNotifications();
+                    }}
+                  >
+                    Show read notifications
+                  </Button>
+                </>
             )) : (
               <CircularProgress />
             )}

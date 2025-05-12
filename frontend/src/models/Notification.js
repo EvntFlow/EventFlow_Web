@@ -9,4 +9,6 @@ export default class Notification {
     topic;
     /** @type {string} */
     message;
+    /** @type {boolean=} */
+    isRead;
 }
