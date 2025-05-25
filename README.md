@@ -40,7 +40,7 @@ For all features to work, you will also need to run the
 
 To deploy the application, first export the project as a static website:
 
-```
+```sh
 cd frontend
 npm install
 npm run build
