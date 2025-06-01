@@ -27,8 +27,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import React, { useEffect, useRef, useState } from 'react';
-import { getAttendance, getStatistics } from '../../../backend';
-import Authorized from '../../../components/Authorized';
+import { getAttendance, getStatistics } from '../../backend';
+import Authorized from '../../components/Authorized';
 
 // Recharts imports
 import {
@@ -44,8 +44,8 @@ import {
 /**
  * @import { ComponentRef } from "react";
  * @import { DataGridProps, GridColDef } from "@mui/x-data-grid";
- * @import Statistics from "../../../models/Statistics";
- * @import Ticket from "../../../models/Ticket";
+ * @import Statistics from "../../models/Statistics";
+ * @import Ticket from "../../models/Ticket";
  */
 
 dayjs.extend(utc);

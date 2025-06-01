@@ -20,11 +20,12 @@ import EventDetailsPage from './views/Attendee/EventDetailsPage';
 import FinishTicketPaymentPage from './views/Attendee/FinishTicketPaymentPage';
 import Homepage from './views/Attendee/Homepage';
 import TicketPage from './views/Attendee/TicketPage';
+import AttendanceList from './views/Organizer/AttendanceList';
 import CreateEventPage from './views/Organizer/CreateEventPage';
-import Dashboard from './views/Organizer/Dashboard/Dashboard';
-import OrganizerHomepage from './views/Organizer/Homepage/OrganizerHomepage';
+import Dashboard from './views/Organizer/Dashboard';
+import EventEditPage from './views/Organizer/EventEditPage';
 import ManageEventPage from './views/Organizer/ManageEventPage';
-import AttendanceList from './views/Organizer/AttendanceList/AttendanceList';
+import OrganizerHomepage from './views/Organizer/OrganizerHomepage';
 
 const App = () => {
   return (
@@ -49,7 +50,7 @@ const App = () => {
             element={<ResetPasswordConfirmation />} />
           <Route path="/Account" element={<AccountPage />} />
 
-          <Route path="/Event/Details" element={<EventDetailsPage isEdit={false} />} />
+          <Route path="/Event/Details" element={<EventDetailsPage />} />
           <Route path="/Event/Search" element={<EventSearchPage />} />
 
           <Route path="/Ticket/FinishTicketPayment" element={<FinishTicketPaymentPage />} />
@@ -59,17 +60,11 @@ const App = () => {
 
           <Route path="/Event/Create" element={ <CreateEventPage /> } />
           <Route path="/Event/Manage" element={ <ManageEventPage /> } />
-          <Route path="/Event/Edit" element={ <EventDetailsPage isEdit={true} /> } />
+          <Route path="/Event/Edit" element={ <EventEditPage /> } />
 
           <Route path="/Ticket/Attendance" element={ <AttendanceList /> } />
 
-          <Route path="/dashboard" element={<Dashboard />} />
-          {/* <Route path="/organizer-homepage" element={<OrganizerHomepage />} />
-            <Route path="/create-event" element={<TicketingPage />} /> */}
-          {/* <Route path="/event-list" element={<EventList />} /> */}
-          {/* <Route path="/event-detail" element={<EventDetail />} /> */}
-          {/* <Route path="/attendance-list" element={<AttendanceList />} /> */}
-          {/* <Route path="/attendance-detail-card" element={<AttendanceDetailCard />} /> */}
+          <Route path="/Dashboard" element={<Dashboard />} />
         </Routes>
       </div>
       <Footer />

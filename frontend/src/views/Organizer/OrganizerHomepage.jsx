@@ -1,14 +1,14 @@
 // @ts-check
 
 import React from 'react';
-import OrganizerStartCard from '../../../components/organizer/OrganizerStartCard';
-import OrganizerSolutionsCard from '../../../components/organizer/OrganizerSolutionsCard';
-import OrganizerOfferCard from '../../../components/organizer/OrganizerOfferCard';
-import OrganizerFeature from '../../../components/organizer/OrganizerFeature';
-import OrganizerFeatureNews from '../../../components/organizer/OrganizerFeatureNews';
-import TestimonialSection from '../../../components/TestimonialSection';
-import SubscribeSection from '../../../components/SubscribeCard';
-import Authorized from '../../../components/Authorized';
+import OrganizerStartCard from '../../components/organizer/OrganizerStartCard';
+import OrganizerSolutionsCard from '../../components/organizer/OrganizerSolutionsCard';
+import OrganizerOfferCard from '../../components/organizer/OrganizerOfferCard';
+import OrganizerFeature from '../../components/organizer/OrganizerFeature';
+import OrganizerFeatureNews from '../../components/organizer/OrganizerFeatureNews';
+import TestimonialSection from '../../components/TestimonialSection';
+import SubscribeSection from '../../components/SubscribeCard';
+import Authorized from '../../components/Authorized';
 
 const testimonialsData = [
   {

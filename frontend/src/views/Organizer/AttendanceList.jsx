@@ -30,16 +30,16 @@ import { DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getApiUrl } from '../../../api';
-import { getAttendance, getEvent } from '../../../backend';
-import Authorized from '../../../components/Authorized';
-import GroupableIconButton from '../../../components/GroupableIconButton';
-import SubmitButton from '../../../components/SubmitButton';
+import { getApiUrl } from '../../api';
+import { getAttendance, getEvent } from '../../backend';
+import Authorized from '../../components/Authorized';
+import GroupableIconButton from '../../components/GroupableIconButton';
+import SubmitButton from '../../components/SubmitButton';
 
 /**
  * @import { DataGridProps, GridColDef } from "@mui/x-data-grid";
- * @import Event from "../../../models/Event";
- * @import Ticket from "../../../models/Ticket";
+ * @import Event from "../../models/Event";
+ * @import Ticket from "../../models/Ticket";
  */
 
 export default function AttendanceList() {
