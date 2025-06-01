@@ -69,17 +69,22 @@ export default function TicketOverlay(props) {
 
   const updateQuantity = useCallback(
     /**
-     * @param {string} id
+     * @param {TicketOption} to
      * @param {number} change
      */
-    function (id, change) {
+    function (to, change) {
       setSearchParams(params => {
-        const newQuantity = Math.max(0,
-          params.getAll(KEY_TICKET_OPTION).filter(to => to === id).length + change
-        );
-        params.delete(KEY_TICKET_OPTION, id);
+        const newQuantity =
+          Math.max(
+            0,
+            Math.min(
+              to.amountAvailable,
+              params.getAll(KEY_TICKET_OPTION).filter(id => id === to.id).length + change
+            )
+          );
+        params.delete(KEY_TICKET_OPTION, to.id);
         for (let i = 0; i < newQuantity; ++i) {
-          params.append(KEY_TICKET_OPTION, id);
+          params.append(KEY_TICKET_OPTION, to.id);
         }
         return params;
       });
@@ -172,7 +177,7 @@ export default function TicketOverlay(props) {
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <IconButton
-                      onClick={() => updateQuantity(to.id, -1)}
+                      onClick={() => updateQuantity(to, -1)}
                       size="small"
                       sx={{ bgcolor: 'grey.200' }}
                     >
@@ -180,7 +185,7 @@ export default function TicketOverlay(props) {
                     </IconButton>
                     <Typography sx={{ mx: 2 }}>{quantity.get(to.id) ?? 0}</Typography>
                     <IconButton
-                      onClick={() => updateQuantity(to.id, 1)}
+                      onClick={() => updateQuantity(to, 1)}
                       size="small"
                       sx={{ bgcolor: 'grey.200' }}
                     >
