@@ -23,6 +23,7 @@ const OrganizerFeature = () => {
         position: 'relative',
         // Replace with your background image
         backgroundImage: "url('/img/Feature_Background.png')", // use url() here
+        backgroundSize: 'cover',
         color: '#fff',
         py: { xs: 6, md: 10 },
       }}
@@ -41,7 +42,8 @@ const OrganizerFeature = () => {
           position: 'relative',
           zIndex: 1,
           textAlign: { xs: 'center', md: 'center' },
-          backgroundImage: '/img/Feature_Background.png'
+          backgroundImage: '/img/Feature_Background.png',
+          backgroundSize: 'cover'
         }}
       >
         {/* Title */}
